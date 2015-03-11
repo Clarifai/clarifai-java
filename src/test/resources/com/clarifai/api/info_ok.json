@@ -1,0 +1,1 @@
+{"status_code": "OK", "status_msg": "All images in request have completed successfully. ", "results": {"max_image_size": 1024, "max_video_size": 1024, "max_image_bytes": 10485760, "min_image_size": 224, "max_video_bytes": 104857600, "max_video_duration": 1800, "embed_allowed": true, "max_batch_size": 128, "max_video_batch_size": 1, "min_video_size": 224, "api_version": 0.1}}

@@ -1,0 +1,1 @@
+{"status_code": "ALL_ERROR", "status_msg": "The incoming request could not be be deserialized. Please ensure the format of the request matches the documentation.", "results": "Request must provide exactly one of the following fields: ('encoded_image', 'encoded_data', 'url')."}
