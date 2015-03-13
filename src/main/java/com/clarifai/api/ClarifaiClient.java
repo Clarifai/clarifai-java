@@ -116,8 +116,7 @@ public class ClarifaiClient {
 
   /**
    * Sets the timeout, in milliseconds, for establishing a connection. If the timeout expires
-   * before the connection is established, the request will fail with
-   * {@link ClarifaiServerErrorException}.
+   * before the connection is established, the request will fail with a {@link ClarifaiException}.
    */
   public void setConnectTimeout(int connectTimeoutMillis) {
     connectionFactory.setConnectTimeout(connectTimeoutMillis);
@@ -130,7 +129,7 @@ public class ClarifaiClient {
 
   /**
    * Sets the read timeout, in milliseconds. If the timeout expires before there is data available
-   * for read, the request will fail with a {@link ClarifaiServerErrorException}.
+   * for read, the request will fail with a {@link ClarifaiException}.
    */
   public void setReadTimeout(int readTimeoutMillis) {
     connectionFactory.setReadTimeout(readTimeoutMillis);
