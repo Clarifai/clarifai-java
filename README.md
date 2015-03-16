@@ -10,10 +10,19 @@ A simple client for the Clarifai image recognition API.
 Installation
 ------------
 
-We're currently in the process of adding this client to the Maven Central Repository.
-It should be available in a few days.
+Maven: add the following to the dependencies section of your pom.xml:
+```
+<dependency>
+  <groupId>com.clarifai</groupId>
+  <artifactId>clarifai-api-java</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 
-Until then, you can clone this repository and integrate the code into your project manually.
+Gradle: add the following to the dependencies section of your build.gradle:
+```
+compile "com.clarifai:clarifai-api-java:1.0.0"
+```
 
 
 Usage
