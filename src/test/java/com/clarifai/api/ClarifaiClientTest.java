@@ -22,8 +22,8 @@ import org.junit.Test;
 import com.clarifai.api.RecognitionResult.StatusCode;
 import com.clarifai.api.auth.Credential;
 import com.clarifai.api.auth.CredentialCache;
-import com.clarifai.api.exception.ClarifaiException;
 import com.clarifai.api.exception.ClarifaiBadRequestException;
+import com.clarifai.api.exception.ClarifaiException;
 import com.clarifai.api.exception.ClarifaiNotAuthorizedException;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -51,6 +51,7 @@ public class ClarifaiClientTest {
     server.play();
     String apiRoot = server.getUrl("/v1").toString();
     clarifai = new ClarifaiClient(apiRoot, "app123", "secret", credentialCache);
+    clarifai.setReadTimeout(1000);
   }
 
   @After public void tearDown() throws Exception {
@@ -215,7 +216,9 @@ public class ClarifaiClientTest {
       fail("Exception expected");
     } catch (ClarifaiBadRequestException e) {
       assertThat(e.getMessage(), equalTo("ALL_ERROR The incoming request could not be be " +
-          "deserialized. Please ensure the format of the request matches the documentation."));
+          "deserialized. Please ensure the format of the request matches the documentation. " +
+          "Request must provide exactly one of the following fields: ('encoded_image', "+
+          "'encoded_data', 'url')."));
     }
     server.takeRequest();
   }
@@ -242,7 +245,7 @@ public class ClarifaiClientTest {
       fail("Exception expected");
     } catch (ClarifaiException e) {
       assertSame(e.getClass(), ClarifaiException.class);
-      assertThat(e.getMessage(), startsWith("503 "));
+      assertThat(e.getMessage(), equalTo("Server returned an unparsable response"));
     }
     server.takeRequest();
   }
@@ -255,13 +258,37 @@ public class ClarifaiClientTest {
     assertThat(results.size(), equalTo(2));
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
-    assertThat(result.getStatusMessage(), equalTo("Data loading failed."));
+    assertThat(result.getStatusMessage(),
+        equalTo("Data loading failed. data 0 is not a valid because: Image of min dim 123 is " +
+                "below min allowed dimension of 224.."));
     assertThat(result.getTags(), nullValue());
     assertThat(result.getEmbedding(), nullValue());
     result = results.get(1);
     assertThat(result.getStatusMessage(), equalTo("OK"));
     assertThat(result.getDocId(), equalTo("10497191811558171183119837415392826925"));
     assertThat(result.getTags().size(), equalTo(20));
+    server.takeRequest();
+  }
+
+  @Test public void testRecognizeAllError() throws Exception {
+    server.enqueue(mockResponse(400, "tags_all_error.json"));
+    List<RecognitionResult> results = clarifai.recognize(
+        new RecognitionRequest("http://example.com/x.jpg", "http://example.com/y.jpg"));
+    assertThat(results.size(), equalTo(2));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
+    assertThat(result.getStatusMessage(),
+        equalTo("Data loading failed. data 0 is not a valid because: Image of min dim 165 is " +
+                "below min allowed dimension of 224.."));
+    assertThat(result.getTags(), nullValue());
+    assertThat(result.getEmbedding(), nullValue());
+    result = results.get(1);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
+    assertThat(result.getStatusMessage(),
+        equalTo("Data loading failed. data 1 is not a valid because: Image of min dim 102 is " +
+                "below min allowed dimension of 224.."));
+    assertThat(result.getTags(), nullValue());
+    assertThat(result.getEmbedding(), nullValue());
     server.takeRequest();
   }
 

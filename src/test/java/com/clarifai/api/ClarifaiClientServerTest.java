@@ -106,10 +106,19 @@ public class ClarifaiClientServerTest {
     assertThat(findTag(results.get(2), "sky"), notNullValue());
   }
 
+  @Test public void testAllErrorCase() throws IOException {
+    if (shouldSkipTest()) return;
+    List<RecognitionResult> results = clarifai.recognize(
+        new RecognitionRequest("not an image".getBytes(), "not an image".getBytes()));
+    assertThat(results.size(), equalTo(2));
+    assertThat(results.get(0).getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
+    assertThat(results.get(1).getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
+  }
+
   @Test public void testBadRequest() {
     if (shouldSkipTest()) return;
     try {
-      clarifai.recognize(new RecognitionRequest("not an image".getBytes()));
+      clarifai.recognize(new RecognitionRequest(new String[0]));
       fail("Exception expected");
     } catch (ClarifaiBadRequestException e) {
       assertThat(e.getMessage(), startsWith("ALL_ERROR"));
