@@ -1,7 +1,5 @@
 package com.clarifai.api;
 
-import static com.clarifai.api.ClarifaiRequester.GSON;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class RecognitionResult {
   static class Deserializer implements JsonDeserializer<RecognitionResult> {
     public RecognitionResult deserialize(JsonElement json, Type type,
         JsonDeserializationContext context) throws JsonParseException {
-      return new RecognitionResult(GSON.fromJson(json, MediaResultMessage.class));
+      return new RecognitionResult(ResponseUtil.GSON.fromJson(json, MediaResultMessage.class));
     }
   }
 
@@ -33,6 +31,7 @@ public class RecognitionResult {
   static class ResultMessage {
     private TagMessage tag;
     private double[] embed;
+    private String error;
   }
 
   static class TagMessage {
@@ -51,7 +50,7 @@ public class RecognitionResult {
   }
 
   private final StatusCode statusCode;
-  private final String statusMessage;
+  private String statusMessage;
   private final String docId;
   private List<Tag> tags;
   private double[] embedding;
@@ -77,6 +76,10 @@ public class RecognitionResult {
             tags.add(new Tag(tag.classes[i], tag.probs[i]));
           }
         }
+      }
+      if (message.result.error != null) {
+        // Additional error details can be stored in result.error.
+        statusMessage += " " + message.result.error;
       }
     }
   }

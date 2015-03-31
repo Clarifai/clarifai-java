@@ -50,8 +50,12 @@ class CredentialManager {
           .addParameter("client_secret", appSecret)
           .toByteArray());
 
-      ClarifaiRequester.checkHttpStatus(conn);
-      TokenResponse res = ClarifaiRequester.parseJsonAndClose(conn.getInputStream(),
+      if (conn.getResponseCode() < 200 || conn.getResponseCode() >= 300) {
+        BaseResponse response = ResponseUtil.parseJsonAndClose(conn.getErrorStream(),
+            BaseResponse.class);
+        ResponseUtil.throwExceptionForErrorResponse(conn, response);
+      }
+      TokenResponse res = ResponseUtil.parseJsonAndClose(conn.getInputStream(),
           TokenResponse.class);
       if (res.accessToken != null && res.expiresIn != null) {
         long expiration = System.currentTimeMillis() + res.expiresIn;
