@@ -15,13 +15,13 @@ Maven: add the following to the dependencies section of your pom.xml:
 <dependency>
   <groupId>com.clarifai</groupId>
   <artifactId>clarifai-api-java</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
 Gradle: add the following to the dependencies section of your build.gradle:
 ```
-compile "com.clarifai:clarifai-api-java:1.0.0"
+compile "com.clarifai:clarifai-api-java:1.0.1"
 ```
 
 
@@ -45,6 +45,10 @@ application and can be found on the
 [applications dashboard](https://developer.clarifai.com/applications/). Alternately, there is a
 zero-argument constructor that reads these from the `CLARIFAI_APP_ID` and `CLARIFAI_APP_SECRET`
 environment variables.
+
+The image must be at least 224 pixels on its shorter edge and at most 1024 pixels on its longer
+edge. These size constraints may be removed in the future, but for now, it's up to the caller to
+ensure that the image is not too big or too small.
 
 We can also pass the image as a byte array:
 ```java
