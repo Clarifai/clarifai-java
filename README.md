@@ -1,5 +1,6 @@
 Clarifai Java Client
 ====================
+[![Build Status](https://travis-ci.org/Clarifai/clarifai-api-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-api-java)
 
 A simple client for the Clarifai image recognition API.
 * Full API documentation can be found at: https://developer.clarifai.com.
