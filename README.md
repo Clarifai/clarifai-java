@@ -97,7 +97,7 @@ clarifai.sendFeedback(new FeedbackRequest()
 ```
 The `docId` is a unique, stable ID for an image, and is returned with every `RecognitionResult`.
 
-For more usage examples, see:
+For more usage examples, see the [sample code](https://github.com/Clarifai/clarifai-api-java/tree/master/samples) or 
 [ClarifaiClientServerTest.java](https://github.com/clarifai/clarifai-api-java/blob/master/src/test/java/com/clarifai/api/ClarifaiClientServerTest.java).
 
 
