@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A request for recognition to be performed on one or more images. See
@@ -33,11 +35,15 @@ public class RecognitionRequest extends ClarifaiRequest {
     }
   }
 
+  private static Set<String> defaultOperations() {
+    HashSet<String> operations = new HashSet<String>();
+    operations.add("tag");
+    return operations;
+  }
+
   private final List<Item> items = new ArrayList<Item>();
   private String model = "default";
-  private boolean includeTags = true;
-  private boolean includeEmbedding = false;
-  private List<String> customOperations = new ArrayList<String>();
+  private final Set<String> operations = defaultOperations();
   private final Multipart multipart = new Multipart();
 
   /**
@@ -84,29 +90,37 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   /** Returns true (default) if tags should be included in the result, or false if not. */
   public boolean getIncludeTags() {
-    return includeTags;
+    return operations.contains("tag");
   }
 
   /** Sets whether to include tags in the result. */
   public RecognitionRequest setIncludeTags(boolean includeTags) {
-    this.includeTags = includeTags;
+    if (includeTags) {
+      operations.add("tag");
+    } else {
+      operations.remove("tag");
+    }
     return this;
   }
 
   /** Returns true if embeddings should be included in the result, or false (default) if not. */
   public boolean getIncludeEmbedding() {
-    return includeEmbedding;
+    return operations.contains("embed");
   }
 
   /** Sets whether to include embeddings in the result. */
   public RecognitionRequest setIncludeEmbedding(boolean includeEmbedding) {
-    this.includeEmbedding = includeEmbedding;
+    if (includeEmbedding) {
+      operations.add("embed");
+    } else {
+      operations.remove("embed");
+    }
     return this;
   }
 
   /** Adds a custom operation to the list of operations the server should perform on the image. */
   public RecognitionRequest addCustomOperation(String customOperation) {
-    customOperations.add(customOperation);
+    operations.add(customOperation);
     return this;
   }
 
@@ -115,17 +129,8 @@ public class RecognitionRequest extends ClarifaiRequest {
   }
 
   @Override void writeContent(OutputStream out) throws IOException {
-    List<String> ops = new ArrayList<String>();
-    if (includeTags) {
-      ops.add("tag");
-    }
-    if (includeEmbedding) {
-      ops.add("embed");
-    }
-    ops.addAll(customOperations);
-
     StringBuilder opParam = new StringBuilder();
-    for (String op : ops) {
+    for (String op : operations) {
       if (opParam.length() > 0) {
         opParam.append(',');
       }
