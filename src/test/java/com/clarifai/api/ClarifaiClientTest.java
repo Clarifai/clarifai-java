@@ -86,7 +86,7 @@ public class ClarifaiClientTest {
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
     assertThat(result.getStatusMessage(), equalTo("OK"));
-    assertThat(result.getDocId(), equalTo("10497191811558171183119837415392826925"));
+    assertThat(result.getDocId(), equalTo("ddd627e16cf679c06be8b9e78b5cbcd1"));
     assertThat(result.getTags().size(), equalTo(20));
     assertThat(result.getTags().get(0).getName(), equalTo("facial expression"));
     assertThat(result.getTags().get(0).getProbability(), equalTo(0.10760640352964401));
@@ -108,7 +108,7 @@ public class ClarifaiClientTest {
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
     assertThat(result.getStatusMessage(), equalTo("OK"));
-    assertThat(result.getDocId(), equalTo("10497191811558171183119837415392826925"));
+    assertThat(result.getDocId(), equalTo("7e5af83c183507582dfd2ce92a6562d"));
     assertThat( result.getEmbedding().length, equalTo(64));
     assertThat(result.getEmbedding()[0], equalTo(0.0142445657402277));
     assertThat(result.getEmbedding()[63], equalTo(-0.017197977751493454));
@@ -289,7 +289,7 @@ public class ClarifaiClientTest {
     assertThat(result.getEmbedding(), nullValue());
     result = results.get(1);
     assertThat(result.getStatusMessage(), equalTo("OK"));
-    assertThat(result.getDocId(), equalTo("10497191811558171183119837415392826925"));
+    assertThat(result.getDocId(), equalTo("7e5af83c183507582dfd2ce92a6562d"));
     assertThat(result.getTags().size(), equalTo(20));
     server.takeRequest();
   }
