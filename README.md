@@ -1,6 +1,7 @@
 Clarifai Java Client
 ====================
 [![Build Status](https://travis-ci.org/Clarifai/clarifai-api-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-api-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java)
 
 A simple client for the Clarifai image recognition API.
 * Full API documentation can be found at: https://developer.clarifai.com.
@@ -16,18 +17,18 @@ Maven: add the following to the dependencies section of your pom.xml:
 <dependency>
   <groupId>com.clarifai</groupId>
   <artifactId>clarifai-api-java</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
 Gradle: add the following to the dependencies section of your build.gradle:
 ```
-compile "com.clarifai:clarifai-api-java:1.0.1"
+compile "com.clarifai:clarifai-api-java:1.1.0"
 ```
 
 
-Usage
------
+Getting Started
+---------------
 Suppose we want to recognize tags for an image on the filesystem. Here's how to do that:
 ```java
 ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
