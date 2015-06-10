@@ -31,7 +31,7 @@ public class RecognitionResult {
   static class MediaResultMessage {
     private String statusCode;
     private String statusMsg;
-    private String docid;
+    private String docidStr;
     private ResultMessage result;
   }
 
@@ -72,7 +72,7 @@ public class RecognitionResult {
       statusCode = StatusCode.SERVER_ERROR;
     }
     statusMessage = message.statusMsg;
-    docId = message.docid;
+    docId = message.docidStr;
     if (message.result != null) {
       embedding = message.result.embed;
       if (message.result.tag != null) {

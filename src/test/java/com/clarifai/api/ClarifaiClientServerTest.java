@@ -72,7 +72,7 @@ public class ClarifaiClientServerTest {
     assertThat(results.size(), equalTo(1));
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
-    assertThat(result.getDocId(), equalTo("15512461224882631443"));  // docids are stable
+    assertThat(result.getDocId(), equalTo("31fdb2316ff87fb5d747554ba5267313"));
     assertThat(findTag(result, "railroad"), notNullValue());
     assertThat(findTag(result, "railroad").getProbability(), greaterThan(0.0));
     assertThat(findTag(result, "railroad").getProbability(), lessThan(1.0));
@@ -90,7 +90,7 @@ public class ClarifaiClientServerTest {
 
     assertThat(results.size(), equalTo(3));
     assertThat(results.get(0).getStatusCode(), equalTo(StatusCode.OK));
-    assertThat(results.get(0).getDocId(), equalTo("167745967256095362639180919425167973540"));
+    assertThat(results.get(0).getDocId(), equalTo("7e32b2b93aa515c51c8e31f655f6dca4"));
     assertThat(results.get(0).getTags().size(), greaterThanOrEqualTo(5));
     assertThat(results.get(0).getEmbedding().length, greaterThanOrEqualTo(64));
     assertThat(findTag(results.get(0), "automobile"), notNullValue());
@@ -100,7 +100,7 @@ public class ClarifaiClientServerTest {
     assertThat(results.get(1).getEmbedding(), nullValue());
 
     assertThat(results.get(2).getStatusCode(), equalTo(StatusCode.OK));
-    assertThat(results.get(2).getDocId(), equalTo("101239540091357870341670041179063381355"));
+    assertThat(results.get(2).getDocId(), equalTo("4c2a06b3d99c34e13f85597487e8ed6b"));
     assertThat(results.get(2).getTags().size(), greaterThanOrEqualTo(5));
     assertThat(results.get(2).getEmbedding().length, greaterThanOrEqualTo(64));
     assertThat(findTag(results.get(2), "sky"), notNullValue());
