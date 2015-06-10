@@ -37,6 +37,7 @@ public class RecognitionRequest extends ClarifaiRequest {
   private String model = "default";
   private boolean includeTags = true;
   private boolean includeEmbedding = false;
+  private List<String> customOperations = new ArrayList<String>();
   private final Multipart multipart = new Multipart();
 
   /**
@@ -103,20 +104,36 @@ public class RecognitionRequest extends ClarifaiRequest {
     return this;
   }
 
+  /** Adds a custom operation to the list of operations the server should perform on the image. */
+  public RecognitionRequest addCustomOperation(String customOperation) {
+    customOperations.add(customOperation);
+    return this;
+  }
+
   @Override String getContentType() {
     return "multipart/form-data; boundary=" + multipart.getBoundary();
   }
 
   @Override void writeContent(OutputStream out) throws IOException {
-    StringBuilder op = new StringBuilder();
+    List<String> ops = new ArrayList<String>();
     if (includeTags) {
-      op.append("tag");
+      ops.add("tag");
     }
     if (includeEmbedding) {
-      op.append(op.length() > 0 ? "," : "").append("embed");
+      ops.add("embed");
     }
+    ops.addAll(customOperations);
+
+    StringBuilder opParam = new StringBuilder();
+    for (String op : ops) {
+      if (opParam.length() > 0) {
+        opParam.append(',');
+      }
+      opParam.append(op);
+    }
+
     multipart.start(out);
-    multipart.writeParameter("op", op.toString());
+    multipart.writeParameter("op", opParam.toString());
     multipart.writeParameter("model", model);
     for (Item item : items) {
       if (item.url != null) {

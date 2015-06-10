@@ -2,6 +2,7 @@ package com.clarifai.api;
 
 import static com.clarifai.api.TestUtils.loadResource;
 import static com.clarifai.api.TestUtils.writeTempFile;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
@@ -25,6 +26,7 @@ import com.clarifai.api.auth.CredentialCache;
 import com.clarifai.api.exception.ClarifaiBadRequestException;
 import com.clarifai.api.exception.ClarifaiException;
 import com.clarifai.api.exception.ClarifaiNotAuthorizedException;
+import com.google.gson.JsonArray;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -91,7 +93,8 @@ public class ClarifaiClientTest {
     assertThat(result.getTags().get(19).getName(), equalTo("eyewear"));
     assertThat(result.getTags().get(19).getProbability(), equalTo(0.007289715576916933));
     assertThat(result.getEmbedding(), nullValue());
-    server.takeRequest();
+    RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\ntag\r\n"));
   }
 
   @Test public void testRecognizeEmbedding() throws Exception {
@@ -110,7 +113,28 @@ public class ClarifaiClientTest {
     assertThat(result.getEmbedding()[0], equalTo(0.0142445657402277));
     assertThat(result.getEmbedding()[63], equalTo(-0.017197977751493454));
     assertThat(result.getTags(), nullValue());
-    server.takeRequest();
+    RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\nembed\r\n"));
+  }
+
+  @Test public void testCustomOperation() throws Exception {
+    server.enqueue(mockResponse(200, "customop_ok.json"));
+    List<RecognitionResult> results = clarifai.recognize(
+        new RecognitionRequest("http://www.clarifai.com/img/metro-north.jpg")
+            .setIncludeTags(false)
+            .addCustomOperation("mythicalcreature"));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    JsonArray customResponses = result.getJsonResponse().get("mythicalcreature").getAsJsonArray();
+    assertThat(customResponses.size(), equalTo(1));
+    JsonArray classes = customResponses.get(0).getAsJsonObject().get("classes").getAsJsonArray();
+    assertThat(classes.get(0).getAsString(), equalTo("unicorn"));
+    assertThat(classes.get(1).getAsString(), equalTo("centaur"));
+    JsonArray probs = customResponses.get(0).getAsJsonObject().get("probs").getAsJsonArray();
+    assertThat(probs.get(0).getAsDouble(), equalTo(0.998));
+    assertThat(probs.get(1).getAsDouble(), equalTo(0.378));
+    RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\nmythicalcreature\r\n"));
   }
 
   @Test public void testRecognizeRequestPayloads() throws Exception {

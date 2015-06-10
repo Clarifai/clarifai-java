@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 /**
@@ -17,7 +18,13 @@ public class RecognitionResult {
   static class Deserializer implements JsonDeserializer<RecognitionResult> {
     public RecognitionResult deserialize(JsonElement json, Type type,
         JsonDeserializationContext context) throws JsonParseException {
-      return new RecognitionResult(ResponseUtil.GSON.fromJson(json, MediaResultMessage.class));
+      JsonObject resultObject = null;
+      JsonElement resultElement = json.getAsJsonObject().get("result");
+      if (resultElement != null && resultElement.isJsonObject()) {
+        resultObject = resultElement.getAsJsonObject();
+      }
+      return new RecognitionResult(ResponseUtil.GSON.fromJson(json, MediaResultMessage.class),
+          resultObject);
     }
   }
 
@@ -54,8 +61,9 @@ public class RecognitionResult {
   private final String docId;
   private List<Tag> tags;
   private double[] embedding;
+  private final JsonObject jsonResponse;
 
-  private RecognitionResult(MediaResultMessage message) {
+  private RecognitionResult(MediaResultMessage message, JsonObject jsonResponse) {
     if ("OK".equals(message.statusCode)) {
       statusCode = StatusCode.OK;
     } else if ("CLIENT_ERROR".equals(message.statusCode)) {
@@ -82,6 +90,7 @@ public class RecognitionResult {
         statusMessage += " " + message.result.error;
       }
     }
+    this.jsonResponse = jsonResponse;
   }
 
   /** Returns the status of the request. */
@@ -107,5 +116,13 @@ public class RecognitionResult {
   /** Returns embedding vector or null if embeddings were not requested or the request failed. */
   public double[] getEmbedding() {
     return embedding;
+  }
+
+  /**
+   * Returns the full JSON response for this result. This may contain fields that are not part of
+   * the public API and are subject to change in the future.
+   */
+  public JsonObject getJsonResponse() {
+    return jsonResponse;
   }
 }
