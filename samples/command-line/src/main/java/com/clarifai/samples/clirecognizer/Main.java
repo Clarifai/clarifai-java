@@ -15,9 +15,9 @@ import com.clarifai.api.Tag;
  * A command-line tool that allows you to send images to the Clarifai API for recognition.
  */
 public class Main {
-  public static void main(String[] filenames) throws IOException {
-    if (filenames.length == 0) {
-      System.err.println("Please pass 1 or more filenames as arguments.");
+  public static void main(String[] args) throws IOException {
+    if (args.length == 0) {
+      System.err.println("Please pass 1 or more filenames or URLs as arguments.");
       return;
     }
 
@@ -27,22 +27,27 @@ public class Main {
     // Request API info. This will contain minimum and maximum image sizes.
     InfoResult info = client.getInfo();
 
-    // Load image data, resizing each image if it doesn't meet the size constraints.
-    byte[][] data = new byte[filenames.length][];
-    for (int i = 0; i < filenames.length; i++) {
-      data[i] = ImageLoader.imageDataFromFile(new File(filenames[i]),
-          info.getMinImageSize(), info.getMaxImageSize());
+    List<RecognitionResult> results;
+    if (args[0].toLowerCase().startsWith("http:") || args[0].toLowerCase().startsWith("https:")) {
+      // Pass the URLs to the recognition API.
+      results = client.recognize(new RecognitionRequest(args));
+    } else {
+      // Load image data, resizing each image if it doesn't meet the size constraints.
+      byte[][] data = new byte[args.length][];
+      for (int i = 0; i < args.length; i++) {
+        data[i] = ImageLoader.imageDataFromFile(new File(args[i]),
+            info.getMinImageSize(), info.getMaxImageSize());
+      }
+      // Pass the image data to the recognition API.
+      results = client.recognize(new RecognitionRequest(data));
     }
-
-    // Ask the API to recognize the images.
-    List<RecognitionResult> results = client.recognize(new RecognitionRequest(data));
 
     // Print out the results:
     for (int i = 0; i < results.size(); i++) {
       RecognitionResult result = results.get(i);
 
       // Each result contains a status code indicating whether the recognition succeeded or failed.
-      System.out.println("\nResult for " + filenames[i] + ": " + result.getStatusCode());
+      System.out.println("\nResult for " + args[i] + ": " + result.getStatusCode());
       if (result.getStatusCode() == StatusCode.OK) {
         for (Tag tag : result.getTags()) {
           // Each tag contains a name and probability assigned to it by the recognition engine.
