@@ -2,7 +2,7 @@ Command Line Sample
 ===================
 
 A simple example using the ClarifaiClient to perform image recognition on files from the
-local filesystem.
+local filesystem or publicly accessible URLs.
 
 Usage:
 ```
