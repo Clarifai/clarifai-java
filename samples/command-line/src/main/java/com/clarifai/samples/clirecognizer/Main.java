@@ -2,6 +2,8 @@ package com.clarifai.samples.clirecognizer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import com.clarifai.api.ClarifaiClient;
@@ -32,14 +34,12 @@ public class Main {
       // Pass the URLs to the recognition API.
       results = client.recognize(new RecognitionRequest(args));
     } else {
-      // Load image data, resizing each image if it doesn't meet the size constraints.
-      byte[][] data = new byte[args.length][];
+      // Pass the files to the recognition API.
+      File[] files = new File[args.length];
       for (int i = 0; i < args.length; i++) {
-        data[i] = ImageLoader.imageDataFromFile(new File(args[i]),
-            info.getMinImageSize(), info.getMaxImageSize());
+        files[i] = new File(args[i]);
       }
-      // Pass the image data to the recognition API.
-      results = client.recognize(new RecognitionRequest(data));
+      results = client.recognize(new RecognitionRequest(files));
     }
 
     // Print out the results:
