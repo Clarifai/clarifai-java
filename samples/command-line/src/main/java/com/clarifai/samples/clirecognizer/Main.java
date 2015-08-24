@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import com.clarifai.api.ClarifaiClient;
-import com.clarifai.api.InfoResult;
 import com.clarifai.api.RecognitionRequest;
 import com.clarifai.api.RecognitionResult;
 import com.clarifai.api.RecognitionResult.StatusCode;
@@ -26,9 +25,7 @@ public class Main {
     // Construct a client. This constructor reads the app ID and secret from environment variables.
     ClarifaiClient client = new ClarifaiClient();
 
-    // Request API info. This will contain minimum and maximum image sizes.
-    InfoResult info = client.getInfo();
-
+    // Send the file bytes or URLs up to the Clarifai API.
     List<RecognitionResult> results;
     if (args[0].toLowerCase().startsWith("http:") || args[0].toLowerCase().startsWith("https:")) {
       // Pass the URLs to the recognition API.
