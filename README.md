@@ -1,6 +1,6 @@
 Clarifai Java Client
 ====================
-[![Build Status](https://travis-ci.org/Clarifai/clarifai-api-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-api-java)
+[![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java)
 
 A simple client for the Clarifai image recognition API.
@@ -48,10 +48,6 @@ application and can be found on the
 zero-argument constructor that reads these from the `CLARIFAI_APP_ID` and `CLARIFAI_APP_SECRET`
 environment variables.
 
-The image must be at least 224 pixels on its shorter edge and at most 1024 pixels on its longer
-edge. These size constraints may be removed in the future, but for now, it's up to the caller to
-ensure that the image is not too big or too small.
-
 We can also pass the image as a byte array:
 ```java
 byte[] imageBytes = ...
@@ -98,8 +94,8 @@ clarifai.sendFeedback(new FeedbackRequest()
 ```
 The `docId` is a unique, stable ID for an image, and is returned with every `RecognitionResult`.
 
-For more usage examples, see the [sample code](https://github.com/Clarifai/clarifai-api-java/tree/master/samples) or 
-[ClarifaiClientServerTest.java](https://github.com/clarifai/clarifai-api-java/blob/master/src/test/java/com/clarifai/api/ClarifaiClientServerTest.java).
+For more usage examples, see the [sample code](https://github.com/Clarifai/clarifai-java/tree/master/samples) or
+[ClarifaiClientServerTest.java](https://github.com/clarifai/clarifai-java/blob/master/src/test/java/com/clarifai/api/ClarifaiClientServerTest.java).
 
 
 Requirements
