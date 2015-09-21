@@ -105,6 +105,9 @@ Requirements
 
 Android
 -------
+For a complete example using the Clarifai Java Client from Android, please see our 
+[Clarifai Android Starter](https://github.com/Clarifai/clarifai-android-starter) repo.
+
 The client supports Android 2.3.3 (Gingerbread) and later. You'll need to add the
 following permission to your `AndroidManifest.xml`:
 ```
