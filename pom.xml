@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <name>clarifai-api-java</name>
   <description>Clarifai API Java Client</description>
-  <url>https://github.com/clarifai/clarifai-api-java</url>
+  <url>https://github.com/clarifai/clarifai-java</url>
   <licenses>
     <license>
       <name>MIT</name>
@@ -20,9 +20,9 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:https://github.com/clarifai/clarifai-api-java.git</connection>
-    <developerConnection>scm:git:https://github.com/clarifai/clarifai-api-java.git</developerConnection>
-    <url>http://github.com/clarifai/clarifai-api-java.git</url>
+    <connection>scm:git:https://github.com/clarifai/clarifai-java.git</connection>
+    <developerConnection>scm:git:https://github.com/clarifai/clarifai-java.git</developerConnection>
+    <url>http://github.com/clarifai/clarifai-java.git</url>
   </scm>
   <dependencies>
     <dependency>
