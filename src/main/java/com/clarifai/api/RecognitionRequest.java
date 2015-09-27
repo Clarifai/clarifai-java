@@ -152,7 +152,7 @@ public class RecognitionRequest extends ClarifaiRequest {
     multipart.start(out);
     multipart.writeParameter("op", opParam.toString());
     multipart.writeParameter("model", model);
-    multipart.writeParameter("language", model);
+    multipart.writeParameter("language", language);
     
     for (Item item : items) {
       if (item.url != null) {
