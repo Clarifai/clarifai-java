@@ -43,6 +43,7 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   private final List<Item> items = new ArrayList<Item>();
   private String model = "default";
+  private String language = "en";
   private final Set<String> operations = defaultOperations();
   private final Multipart multipart = new Multipart();
 
@@ -86,6 +87,17 @@ public class RecognitionRequest extends ClarifaiRequest {
   public RecognitionRequest setModel(String model) {
     this.model = model;
     return this;
+  }
+  
+  /** Sets the language to use for recognition. */
+  public RecognitionRequest setLanguage(String language) {
+    this.language = language;
+    return this;
+  }
+  
+  /** Returns the code of the language to use for recognition. */
+  public String getLanguage() {
+    return language;
   }
 
   /** Returns true (default) if tags should be included in the result, or false if not. */
@@ -140,6 +152,8 @@ public class RecognitionRequest extends ClarifaiRequest {
     multipart.start(out);
     multipart.writeParameter("op", opParam.toString());
     multipart.writeParameter("model", model);
+    multipart.writeParameter("language", language);
+    
     for (Item item : items) {
       if (item.url != null) {
         multipart.writeParameter("url", item.url);
