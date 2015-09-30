@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -43,6 +44,7 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   private final List<Item> items = new ArrayList<Item>();
   private String model = "default";
+  private Locale locale = null;
   private final Set<String> operations = defaultOperations();
   private final Multipart multipart = new Multipart();
 
@@ -88,6 +90,23 @@ public class RecognitionRequest extends ClarifaiRequest {
     return this;
   }
 
+  /**
+   * Returns the {@link Locale} to use for tags returned from the server or null if the default
+   * (US English) should be used.
+   */
+  public Locale getLocale() {
+    return locale;
+  }
+
+  /**
+   * Sets the {@link Locale} to use for tags returned from the server. The default is null, which
+   * will result in tags being returned in US English.
+   */
+  public RecognitionRequest setLocale(Locale locale) {
+    this.locale = locale;
+    return this;
+  }
+
   /** Returns true (default) if tags should be included in the result, or false if not. */
   public boolean getIncludeTags() {
     return operations.contains("tag");
@@ -103,7 +122,11 @@ public class RecognitionRequest extends ClarifaiRequest {
     return this;
   }
 
-  /** Returns true if embeddings should be included in the result, or false (default) if not. */
+  /**
+   * Returns true if embeddings should be included in the result, or false (default) if not.
+   * Embeddings are not supported by default. Please contact us to enable embeddings for your
+   * account.
+   */
   public boolean getIncludeEmbedding() {
     return operations.contains("embed");
   }
@@ -140,6 +163,18 @@ public class RecognitionRequest extends ClarifaiRequest {
     multipart.start(out);
     multipart.writeParameter("op", opParam.toString());
     multipart.writeParameter("model", model);
+
+    if (locale != null) {
+      // Use just the language code, unless it's zh-TW, in which case we need the country too.
+      String language;
+      if (locale.equals(Locale.TRADITIONAL_CHINESE)) {
+        language = "zh-TW";
+      } else {
+        language = locale.getLanguage();
+      }
+      multipart.writeParameter("language", language);
+    }
+
     for (Item item : items) {
       if (item.url != null) {
         multipart.writeParameter("url", item.url);

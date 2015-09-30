@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -95,6 +96,36 @@ public class ClarifaiClientTest {
     assertThat(result.getEmbedding(), nullValue());
     RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
     assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\ntag\r\n"));
+  }
+
+  @Test public void testLocale() throws Exception {
+    server.enqueue(mockResponse(200, "tags_localized_ok.json"));
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(FAKE_DATA)
+        .setLocale(Locale.JAPAN));
+    assertThat(results.size(), equalTo(1));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(result.getStatusMessage(), equalTo("OK"));
+    assertThat(result.getDocId(), equalTo("0e2687e3a6c95084e6ce912aa45d3803"));
+    assertThat(result.getTags().size(), equalTo(20));
+    assertThat(result.getTags().get(0).getName(), equalTo("誰も"));
+    assertThat(result.getTags().get(0).getProbability(), equalTo(0.9976773858070374));
+    RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\ntag\r\n"));
+    assertThat(request.getUtf8Body(), containsString("name=\"language\"\r\n\r\nja\r\n"));
+  }
+
+  @Test public void testTraditionalChineseLocale() throws Exception {
+    server.enqueue(mockResponse(200, "tags_localized_ok.json"));
+
+    // Traditional Chinese is special for now in that we also send the country code.
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(FAKE_DATA)
+        .setLocale(new Locale("zh", "TW")));
+    assertThat(results.get(0).getStatusCode(), equalTo(StatusCode.OK));
+    RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\ntag\r\n"));
+    assertThat(request.getUtf8Body(), containsString("name=\"language\"\r\n\r\nzh-TW\r\n"));
   }
 
   @Test public void testRecognizeEmbedding() throws Exception {
