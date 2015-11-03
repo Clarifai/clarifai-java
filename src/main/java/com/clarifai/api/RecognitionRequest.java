@@ -92,7 +92,7 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   /**
    * Returns the {@link Locale} to use for tags returned from the server or null if the default
-   * (US English) should be used.
+   * should be used.
    */
   public Locale getLocale() {
     return locale;
@@ -100,7 +100,13 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   /**
    * Sets the {@link Locale} to use for tags returned from the server. The default is null, which
-   * will result in tags being returned in US English.
+   * will result in tags being returned in the default language for the application, which can be
+   * set at the <a href="https://developer.clarifai.com/applications/">developer console</a>.
+   * <p>
+   * Note that sending a Locale with a language that is not supported by the server will result in
+   * an error. It is the caller's responsibility to ensure that only supported Locales are set.
+   *
+   * @see https://developer.clarifai.com/docs/tag
    */
   public RecognitionRequest setLocale(Locale locale) {
     this.locale = locale;
