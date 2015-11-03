@@ -49,4 +49,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <additionalparam>-Xdoclint:html</additionalparam>
+  </properties>
 </project>
