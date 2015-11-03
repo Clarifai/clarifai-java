@@ -3,7 +3,7 @@ package com.clarifai.api;
 import java.util.List;
 
 /**
- * A VideoSegment provides recognition results for a short interval of a video.
+ * Provides recognition results for a short interval of a video.
  * <p>
  * When the input to a {@link RecognitionRequest} is video content, the corresponding
  * {@link RecognitionResult} will contain a list of VideoSegments, each of which may contain tags

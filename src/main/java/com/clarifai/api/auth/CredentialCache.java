@@ -1,6 +1,7 @@
 package com.clarifai.api.auth;
 
-/** Interface for a cache of @{link Credentials}. */
+
+/** Interface for a cache of {@link Credential}s. */
 public interface CredentialCache {
   /** Stores a {@link Credential} for a given appId. */
   public void putCredential(String appId, Credential credential);

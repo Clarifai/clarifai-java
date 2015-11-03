@@ -11,14 +11,15 @@ public class Tag {
   }
 
   /**
-   * Returns the name of the tag. The name is in English and is drawn from a large vocabulary.
-   * The name may consist of more than one word.
+   * Returns the name of the tag. The name will be in the language specified by the Locale passed
+   * to {@link RecognitionRequest#setLocale(java.util.Locale)}, or the application's default
+   * language if none was specified. Note that the name may consist of more than one word.
    */
   public String getName() {
     return name;
   }
 
-  /** Returns the probability that this tag is associated with the input image. */
+  /** Returns a probability that this tag is associated with the input image. */
   public double getProbability() {
     return probability;
   }

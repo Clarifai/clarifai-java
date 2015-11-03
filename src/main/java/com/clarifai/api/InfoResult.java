@@ -1,8 +1,8 @@
 package com.clarifai.api;
 
 /**
- * API details and usage limits. These limits must be obeyed by the user when making API calls or
- * the API call will fail.
+ * Provides API details and usage limits. These limits must be obeyed by the user when making API
+ * calls or the API call will fail.
  */
 public class InfoResult {
   private Boolean embedAllowed;

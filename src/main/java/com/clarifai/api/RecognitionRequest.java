@@ -13,8 +13,8 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * A request for recognition to be performed on one or more images. See
- * http://developer.clarifai.com for complete documentation on the Clarifai image recognition API.
+ * A request for recognition to be performed on one or more media files (images or videos).
+ * See {@link ClarifaiClient} for more information.
  */
 public class RecognitionRequest extends ClarifaiRequest {
   private static class Item {
@@ -49,7 +49,8 @@ public class RecognitionRequest extends ClarifaiRequest {
   private final Multipart multipart = new Multipart();
 
   /**
-   * Constructs a new request for recognition on one or more images
+   * Constructs a new request for recognition on one or more image or video files on the local
+   * filesystem.
    * @param files Files containing the image data to be recognized
    */
   public RecognitionRequest(File ... files) {
@@ -59,8 +60,8 @@ public class RecognitionRequest extends ClarifaiRequest {
   }
 
   /**
-   * Constructs a new request for recognition on one or more images. The RecognitionRequest will
-   * close the input streams when it is done sending them to the server.
+   * Constructs a new request for recognition on one or more images or videos represented as byte
+   * arrays of the image or video data.
    * @param imageByteArrays byte arrays containing image data to be recognized
    */
   public RecognitionRequest(byte[] ... imageByteArrays) {
@@ -70,7 +71,8 @@ public class RecognitionRequest extends ClarifaiRequest {
   }
 
   /**
-   * Constructs a new request for recognition on one or more images
+   * Constructs a new request for recognition on one or more images or videos represented as
+   * publicly-accessible URLs on the web.
    * @param urls publicly-accessible URLs for images to be recognized
    */
   public RecognitionRequest(String ... urls) {
@@ -106,7 +108,7 @@ public class RecognitionRequest extends ClarifaiRequest {
    * Note that sending a Locale with a language that is not supported by the server will result in
    * an error. It is the caller's responsibility to ensure that only supported Locales are set.
    *
-   * @see https://developer.clarifai.com/docs/tag
+   * @see <a href="https://developer.clarifai.com/docs/tag">Tagging Documentation</a>
    */
   public RecognitionRequest setLocale(Locale locale) {
     this.locale = locale;
@@ -130,8 +132,8 @@ public class RecognitionRequest extends ClarifaiRequest {
 
   /**
    * Returns true if embeddings should be included in the result, or false (default) if not.
-   * Embeddings are not supported by default. Please contact us to enable embeddings for your
-   * account.
+   * Embeddings are currently not supported by default. Please contact us at support@clarifai.com
+   * to enable embeddings for your application.
    */
   public boolean getIncludeEmbedding() {
     return operations.contains("embed");

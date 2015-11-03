@@ -2,7 +2,7 @@ package com.clarifai.api.exception;
 
 /**
  * Thrown when the client is making too many requests. The client should wait for the time returned
- * by @{link {@link #getWaitSeconds()} before continuing to send requests.
+ * by {@link #getWaitSeconds()} before continuing to send requests.
  */
 public class ClarifaiThrottledException extends ClarifaiException {
   private static final long serialVersionUID = 1L;

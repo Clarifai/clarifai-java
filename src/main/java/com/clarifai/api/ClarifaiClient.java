@@ -12,11 +12,20 @@ import com.clarifai.api.auth.InMemoryCredentialCache;
 import com.clarifai.api.exception.ClarifaiException;
 
 /**
- * A simple client for the Clarifai image recognition API.
+ * A simple client for the Clarifai image and video recognition API.
  * <ul>
- *   <li>An introduction can be found at: https://github.com/clarifai/clarifai-api-java.
- *   <li>Full API documentation can be found at: https://developer.clarifai.com.
+ *   <li>An introduction can be found at: <a href="https://github.com/clarifai/clarifai-java">
+ *       github.com/clarifai/clarifai-java</a>.
+ *   <li>Full API documentation can be found at: <a href="https://developer.clarifai.com">
+ *       developer.clarifai.com</a>.
  * </ul>
+ * <p>
+ * The Clarifai API takes images and videos as input, performs recognition on them, returning
+ * the results to the caller. The inputs are provided by constructing a {@link RecognitionRequest},
+ * which is composed of publicly-accessible URLs, local files, or byte arrays. The request can be
+ * passed to the {@link #recognize(RecognitionRequest)} method, which will return a list of
+ * {@link RecognitionResult}s, one for each image or video in the request. These results will each
+ * include {@link Tag}s and optionally an embedding vector.
  */
 public class ClarifaiClient {
   private static final String CLARIFAI_API_ROOT = "https://api.clarifai.com/v1";
@@ -68,8 +77,8 @@ public class ClarifaiClient {
 
   /**
    * Makes a recognition request for tags and/or embeddings.
-   * @param request the recognition request containing images to recognize and options
-   * @return a list of results, one for each image
+   * @param request the recognition request containing images or videos to recognize and options
+   * @return a list of results, one for each image or video
    * @throws ClarifaiException on errors; the class of the exception indicates the kind of error
    */
   public List<RecognitionResult> recognize(RecognitionRequest request) throws ClarifaiException {

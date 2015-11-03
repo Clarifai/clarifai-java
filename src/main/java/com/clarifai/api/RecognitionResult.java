@@ -14,8 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 /**
- * Recognition results for a single image. See https://developer.clarifai.com for complete
- * documentation on the Clarifai image recognition API.
+ * Recognition results for a single image or video. See {@link ClarifaiClient} for more information.
  */
 public class RecognitionResult {
 
@@ -215,9 +214,9 @@ public class RecognitionResult {
   }
 
   /**
-   * Returns a list of {@link VideoSegment}s, each of which describes a time interval of the video.
-   * These are ordered chronologically (in ascending order of timestamp). If the input was not a
-   * video or the request failed, this returns null.
+   * For video input, this returns a list of {@link VideoSegment}s, each of which describes a time
+   * interval of the video. These are ordered chronologically (in ascending order of timestamp).
+   * If the input was not a video or the request failed, this returns null.
    */
   public List<VideoSegment> getVideoSegments() {
     return videoSegments;

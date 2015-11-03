@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * A request for providing feedback on one or more images. See
- * http://developer.clarifai.com for complete documentation on the Clarifai image recognition API.
+ * A request for providing feedback on tagging results for one or more images. See the
+ * <a href="https://developer.clarifai.com/docs/feedback">feedback documentation</a> for more
+ * information on this request and its use.
  */
 public class FeedbackRequest extends ClarifaiRequest {
   private String[] docIds;
