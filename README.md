@@ -17,13 +17,13 @@ Maven: add the following to the dependencies section of your pom.xml:
 <dependency>
   <groupId>com.clarifai</groupId>
   <artifactId>clarifai-api-java</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
 Gradle: add the following to the dependencies section of your build.gradle:
 ```
-compile "com.clarifai:clarifai-api-java:1.1.0"
+compile "com.clarifai:clarifai-api-java:1.2.0"
 ```
 
 
@@ -100,7 +100,7 @@ For more usage examples, see the [sample code](https://github.com/Clarifai/clari
 
 Requirements
 ------------
-* JDK 1.6 or later
+* JDK 6 or later
 
 
 Android
