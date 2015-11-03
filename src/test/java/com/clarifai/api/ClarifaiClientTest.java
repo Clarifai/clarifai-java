@@ -72,10 +72,16 @@ public class ClarifaiClientTest {
 
     InfoResult info = clarifai.getInfo();
 
+    assertTrue(info.embedAllowed());
     assertThat(info.getMinImageSize(), equalTo(224));
     assertThat(info.getMaxImageSize(), equalTo(1024));
+    assertThat(info.getMaxImageBytes(), equalTo(10485760L));
     assertThat(info.getMaxBatchSize(), equalTo(128));
-    assertTrue(info.embedAllowed());
+    assertThat(info.getMinVideoSize(), equalTo(224));
+    assertThat(info.getMaxVideoSize(), equalTo(1024));
+    assertThat(info.getMaxVideoBytes(), equalTo(104857600L));
+    assertThat(info.getMaxVideoBatchSize(), equalTo(1));
+    assertThat(info.getMaxVideoDuration(), equalTo(1800));
     checkRequest(server.takeRequest(), "GET", "/v1/info");
   }
 
@@ -94,6 +100,7 @@ public class ClarifaiClientTest {
     assertThat(result.getTags().get(19).getName(), equalTo("eyewear"));
     assertThat(result.getTags().get(19).getProbability(), equalTo(0.007289715576916933));
     assertThat(result.getEmbedding(), nullValue());
+    assertThat(result.getVideoSegments(), nullValue());
     RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
     assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\ntag\r\n"));
   }
@@ -144,9 +151,107 @@ public class ClarifaiClientTest {
     assertThat(result.getEmbedding()[0], equalTo(0.0142445657402277));
     assertThat(result.getEmbedding()[63], equalTo(-0.017197977751493454));
     assertThat(result.getTags(), nullValue());
+    assertThat(result.getVideoSegments(), nullValue());
     RecordedRequest request = checkRequest(server.takeRequest(), "POST", "/v1/multiop");
     assertThat(request.getUtf8Body(), containsString("name=\"op\"\r\n\r\nembed\r\n"));
   }
+
+  @Test public void testRecognizeVideoTags() throws Exception {
+    server.enqueue(mockResponse(200, "tags_video_ok.json"));
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(FAKE_DATA));
+    checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(results.size(), equalTo(1));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(result.getStatusMessage(), equalTo("OK"));
+    assertThat(result.getDocId(), equalTo("c8e6b898fd0b4ce46151f06a070fefb0"));
+    assertThat(result.getVideoSegments().size(), equalTo(4));
+
+    // Check first segment:
+    VideoSegment segment = result.getVideoSegments().get(0);
+    assertThat(segment.getTimestampSeconds(), equalTo(0.0));
+    assertThat(segment.getTags().size(), equalTo(20));
+    assertThat(segment.getTags().get(0).getName(), equalTo("grass"));
+    assertThat(segment.getTags().get(0).getProbability(), equalTo(0.972413182258606));
+    assertThat(segment.getEmbedding(), nullValue());
+
+    // Check last segment:
+    segment = result.getVideoSegments().get(3);
+    assertThat(segment.getTimestampSeconds(), equalTo(3.0));
+    assertThat(segment.getTags().size(), equalTo(20));
+    assertThat(segment.getTags().get(19).getName(), equalTo("field"));
+    assertThat(segment.getTags().get(19).getProbability(), equalTo(0.7907412052154541));
+    assertThat(segment.getEmbedding(), nullValue());
+
+    assertThat(result.getTags(), equalTo(result.getVideoSegments().get(0).getTags()));
+    assertThat(result.getEmbedding(), nullValue());
+  }
+
+  @Test public void testRecognizeVideoEmbed() throws Exception {
+    server.enqueue(mockResponse(200, "embed_video_ok.json"));
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(FAKE_DATA));
+    checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(results.size(), equalTo(1));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(result.getStatusMessage(), equalTo("OK"));
+    assertThat(result.getDocId(), equalTo("c8e6b898fd0b4ce46151f06a070fefb0"));
+    assertThat(result.getVideoSegments().size(), equalTo(4));
+
+    // Check first segment:
+    VideoSegment segment = result.getVideoSegments().get(0);
+    assertThat(segment.getTimestampSeconds(), equalTo(0.0));
+    assertThat(segment.getEmbedding().length, equalTo(64));
+    assertThat(segment.getEmbedding()[0], equalTo(-0.0066182175651192665));
+    assertThat(segment.getTags(), nullValue());
+
+    // Check last segment:
+    segment = result.getVideoSegments().get(3);
+    assertThat(segment.getTimestampSeconds(), equalTo(3.0));
+    assertThat(segment.getEmbedding().length, equalTo(64));
+    assertThat(segment.getEmbedding()[63], equalTo(-0.017788972705602646));
+    assertThat(segment.getTags(), nullValue());
+
+    assertThat(result.getEmbedding(), equalTo(result.getVideoSegments().get(0).getEmbedding()));
+    assertThat(result.getTags(), nullValue());
+  }
+
+  @Test public void testRecognizeVideoTagAndEmbed() throws Exception {
+    server.enqueue(mockResponse(200, "tag_and_embed_video_ok.json"));
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(FAKE_DATA));
+    checkRequest(server.takeRequest(), "POST", "/v1/multiop");
+    assertThat(results.size(), equalTo(1));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(result.getStatusMessage(), equalTo("OK"));
+    assertThat(result.getDocId(), equalTo("c8e6b898fd0b4ce46151f06a070fefb0"));
+    assertThat(result.getVideoSegments().size(), equalTo(4));
+
+    // Check first segment:
+    VideoSegment segment = result.getVideoSegments().get(0);
+    assertThat(segment.getTimestampSeconds(), equalTo(0.0));
+    assertThat(segment.getTags().size(), equalTo(20));
+    assertThat(segment.getTags().get(0).getName(), equalTo("grass"));
+    assertThat(segment.getTags().get(0).getProbability(), equalTo(0.972413182258606));
+    assertThat(segment.getEmbedding().length, equalTo(64));
+    assertThat(segment.getEmbedding()[0], equalTo(-0.0066182175651192665));
+
+    // Check last segment:
+    segment = result.getVideoSegments().get(3);
+    assertThat(segment.getTimestampSeconds(), equalTo(3.0));
+    assertThat(segment.getTags().size(), equalTo(20));
+    assertThat(segment.getTags().get(19).getName(), equalTo("field"));
+    assertThat(segment.getTags().get(19).getProbability(), equalTo(0.7907412052154541));
+    assertThat(segment.getEmbedding().length, equalTo(64));
+    assertThat(segment.getEmbedding()[63], equalTo(-0.017788972705602646));
+
+    assertThat(result.getTags(), equalTo(result.getVideoSegments().get(0).getTags()));
+    assertThat(result.getEmbedding(), equalTo(result.getVideoSegments().get(0).getEmbedding()));
+  }
+
 
   @Test public void testCustomOperation() throws Exception {
     server.enqueue(mockResponse(200, "customop_ok.json"));
