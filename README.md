@@ -3,7 +3,7 @@ Clarifai Java Client
 [![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java)
 
-A simple client for the Clarifai image recognition API.
+A simple client for the Clarifai image and video recognition API.
 * Full API documentation can be found at: https://developer.clarifai.com.
 * Sign up for a free account at: https://developer.clarifai.com/accounts/signup.
 * Try the demo at: http://www.clarifai.com.
@@ -29,7 +29,7 @@ compile "com.clarifai:clarifai-api-java:1.2.0"
 
 Getting Started
 ---------------
-Suppose we want to recognize tags for an image on the filesystem. Here's how to do that:
+To get a list of tags (objects, concepts, emotions, etc.) for an image or video on the filesystem:
 ```java
 ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
 List<RecognitionResult> results =
@@ -40,7 +40,12 @@ for (Tag tag : results.get(0).getTags()) {
 }
 ```
 Each `Tag` in the `RecognitionResult` contains the name of the tag and the probability that the tag
-applies to the image. Tags are drawn from a large vocabulary of English words and phrases.
+applies to the image or video.  By default, they are in English, but you can change the language by
+calling `RecognitionRequest.setLocale()`.
+
+Sending video to the API will cause a list of `VideoSegment` instances to be attached to the 
+`RecognitionResult`. Each of these has a timestamp and a list of tags that apply to a short segment
+of the video.
 
 The `APP_ID` and `APP_SECRET` parameters passed to the `ClarifaiClient` constructor identify the
 application and can be found on the
@@ -48,10 +53,10 @@ application and can be found on the
 zero-argument constructor that reads these from the `CLARIFAI_APP_ID` and `CLARIFAI_APP_SECRET`
 environment variables.
 
-We can also pass the image as a byte array:
+The input can also be passed as a byte array:
 ```java
-byte[] imageBytes = ...
-results = clarifai.recognize(new RecognitionRequest(imageBytes));
+byte[] videoBytes = ...
+results = clarifai.recognize(new RecognitionRequest(videoBytes));
 ```
 
 Or as a publicly-accessible URL:
@@ -60,8 +65,7 @@ results = clarifai.recognize(
     new RecognitionRequest("http://www.clarifai.com/img/metro-north.jpg"));
 ```
 
-You may be wondering why the `recognize` method returns a `List`. It's because recognition can
-run over batches of input. For example:
+Recognition can also be run over batches of input. For example:
 ```java
 File[] imageFiles = {
   new File("kittens.jpg"),
@@ -79,11 +83,11 @@ How many images can we send in a batch? Let's find out:
 InfoResult info = clarifai.getInfo();
 System.out.println(info.getMaxBatchSize());  // Prints "128"
 ```
-The limit is currently 128 images, but may change in the future. The `InfoResult` also contains
-other useful information about the API like minimum and maximum image sizes.
+The limit is currently 128 images, but may change in the future. For video, the limit is currently 1.
+The `InfoResult` also contains other useful information about the API like minimum and maximum image sizes.
 
-You may notice that occasionally, some of the tags returned by the API are wrong. In other cases,
-we may be missing tags. If you or your users detect this, we encourage you to report the error back
+Occasionally, some of the tags returned by the API may be wrong. In other cases, we may be
+missing tags. If you or your users detect this, we encourage you to report the error back
 to us. This will help us improve in the areas that you care about. The following request tells us
 that the tags "kitten" and "cat" should be added to the image, and "dog" should be removed:
 ```java
