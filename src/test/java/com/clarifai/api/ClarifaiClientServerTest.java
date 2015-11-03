@@ -73,9 +73,9 @@ public class ClarifaiClientServerTest {
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
     assertThat(result.getDocId(), equalTo("31fdb2316ff87fb5d747554ba5267313"));
-    assertThat(findTag(result, "railroad"), notNullValue());
-    assertThat(findTag(result, "railroad").getProbability(), greaterThan(0.0));
-    assertThat(findTag(result, "railroad").getProbability(), lessThan(1.0));
+    assertThat(findTag(result.getTags(), "railroad"), notNullValue());
+    assertThat(findTag(result.getTags(), "railroad").getProbability(), greaterThan(0.0));
+    assertThat(findTag(result.getTags(), "railroad").getProbability(), lessThan(1.0));
     assertThat(result.getEmbedding(), nullValue());
   }
 
@@ -86,14 +86,14 @@ public class ClarifaiClientServerTest {
         loadResource("automobile.jpg"),
         "not an image".getBytes(),
         loadResource("sky.jpg"))
-    .setIncludeEmbedding(true));
+        .setIncludeEmbedding(true));
 
     assertThat(results.size(), equalTo(3));
     assertThat(results.get(0).getStatusCode(), equalTo(StatusCode.OK));
     assertThat(results.get(0).getDocId(), equalTo("7e32b2b93aa515c51c8e31f655f6dca4"));
     assertThat(results.get(0).getTags().size(), greaterThanOrEqualTo(5));
     assertThat(results.get(0).getEmbedding().length, greaterThanOrEqualTo(64));
-    assertThat(findTag(results.get(0), "automobile"), notNullValue());
+    assertThat(findTag(results.get(0).getTags(), "automobile"), notNullValue());
 
     assertThat(results.get(1).getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
     assertThat(results.get(1).getTags(), nullValue());
@@ -103,7 +103,30 @@ public class ClarifaiClientServerTest {
     assertThat(results.get(2).getDocId(), equalTo("4c2a06b3d99c34e13f85597487e8ed6b"));
     assertThat(results.get(2).getTags().size(), greaterThanOrEqualTo(5));
     assertThat(results.get(2).getEmbedding().length, greaterThanOrEqualTo(64));
-    assertThat(findTag(results.get(2), "sky"), notNullValue());
+    assertThat(findTag(results.get(2).getTags(), "sky"), notNullValue());
+  }
+
+  @Test public void testRecognizeVideo() throws IOException {
+    if (shouldSkipTest()) return;
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(
+        loadResource("automobile_sky.mp4"))
+        .setIncludeEmbedding(true));
+
+    assertThat(results.size(), equalTo(1));
+    assertThat(results.get(0).getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(results.get(0).getDocId(), equalTo("834f820ebf36df0fac7d13454a236471"));
+    assertThat(results.get(0).getVideoSegments().size(), equalTo(3));
+
+    VideoSegment segment = results.get(0).getVideoSegments().get(0);
+    assertThat(segment.getTags().size(), greaterThanOrEqualTo(5));
+    assertThat(segment.getEmbedding().length, greaterThanOrEqualTo(64));
+    assertThat(findTag(segment.getTags(), "automobile"), notNullValue());
+
+    segment = results.get(0).getVideoSegments().get(2);
+    assertThat(segment.getTags().size(), greaterThanOrEqualTo(5));
+    assertThat(segment.getEmbedding().length, greaterThanOrEqualTo(64));
+    assertThat(findTag(segment.getTags(), "sky"), notNullValue());
   }
 
   @Test public void testAllErrorCase() throws IOException {
@@ -145,8 +168,8 @@ public class ClarifaiClientServerTest {
     return false;
   }
 
-  private Tag findTag(RecognitionResult result, String tagClass) {
-    for (Tag tag : result.getTags()) {
+  private Tag findTag(List<Tag> tags, String tagClass) {
+    for (Tag tag : tags) {
       if (tag.getName().equals(tagClass)) {
         return tag;
       }
