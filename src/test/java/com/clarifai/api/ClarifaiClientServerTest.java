@@ -73,9 +73,9 @@ public class ClarifaiClientServerTest {
     RecognitionResult result = results.get(0);
     assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
     assertThat(result.getDocId(), equalTo("31fdb2316ff87fb5d747554ba5267313"));
-    assertThat(findTag(result.getTags(), "railroad"), notNullValue());
-    assertThat(findTag(result.getTags(), "railroad").getProbability(), greaterThan(0.0));
-    assertThat(findTag(result.getTags(), "railroad").getProbability(), lessThan(1.0));
+    assertThat(findTag(result.getTags(), "train"), notNullValue());
+    assertThat(findTag(result.getTags(), "train").getProbability(), greaterThan(0.0));
+    assertThat(findTag(result.getTags(), "train").getProbability(), lessThan(1.0));
     assertThat(result.getEmbedding(), nullValue());
   }
 
@@ -93,7 +93,7 @@ public class ClarifaiClientServerTest {
     assertThat(results.get(0).getDocId(), equalTo("7e32b2b93aa515c51c8e31f655f6dca4"));
     assertThat(results.get(0).getTags().size(), greaterThanOrEqualTo(5));
     assertThat(results.get(0).getEmbedding().length, greaterThanOrEqualTo(64));
-    assertThat(findTag(results.get(0).getTags(), "automobile"), notNullValue());
+    assertThat(findTag(results.get(0).getTags(), "vehicle"), notNullValue());
 
     assertThat(results.get(1).getStatusCode(), equalTo(StatusCode.CLIENT_ERROR));
     assertThat(results.get(1).getTags(), nullValue());
@@ -121,7 +121,7 @@ public class ClarifaiClientServerTest {
     VideoSegment segment = results.get(0).getVideoSegments().get(0);
     assertThat(segment.getTags().size(), greaterThanOrEqualTo(5));
     assertThat(segment.getEmbedding().length, greaterThanOrEqualTo(64));
-    assertThat(findTag(segment.getTags(), "automobile"), notNullValue());
+    assertThat(findTag(segment.getTags(), "vehicle"), notNullValue());
 
     segment = results.get(0).getVideoSegments().get(2);
     assertThat(segment.getTags().size(), greaterThanOrEqualTo(5));
