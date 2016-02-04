@@ -4,9 +4,12 @@ Clarifai Java Client
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java)
 
 A simple client for the Clarifai image and video recognition API.
-* Full API documentation can be found at: https://developer.clarifai.com.
+
+Read on to learn how to get started. You may also want to:
+* Try the Clarifai demo at: http://clarifai.com/#demo
 * Sign up for a free account at: https://developer.clarifai.com/accounts/signup.
-* Try the demo at: http://www.clarifai.com.
+* Check out the Javadocs at [javadoc.io](http://www.javadoc.io/doc/com.clarifai/clarifai-api-java)
+* Read full Clarifai API documentation at: https://developer.clarifai.com.
 
 
 Installation
