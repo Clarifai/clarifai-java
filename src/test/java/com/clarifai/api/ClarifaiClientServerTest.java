@@ -79,6 +79,22 @@ public class ClarifaiClientServerTest {
     assertThat(result.getEmbedding(), nullValue());
   }
 
+  @Test public void testRecognizeWithSelectClasses() {
+    if (shouldSkipTest()) return;
+
+    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(
+	        "http://www.clarifai.com/img/metro-north.jpg").addTagForSelectClasses("cookie"));
+
+    assertThat(results.size(), equalTo(1));
+    RecognitionResult result = results.get(0);
+    assertThat(result.getStatusCode(), equalTo(StatusCode.OK));
+    assertThat(result.getDocId(), equalTo("31fdb2316ff87fb5d747554ba5267313"));
+    assertThat(findTag(result.getTags(), "cookie"), notNullValue());
+    assertThat(findTag(result.getTags(), "cookie").getProbability(), greaterThan(0.0));
+    assertThat(findTag(result.getTags(), "cookie").getProbability(), lessThan(1.0));
+    assertThat(result.getEmbedding(), nullValue());
+  }
+
   @Test public void testRecognizeMultiple() throws IOException {
     if (shouldSkipTest()) return;
 
