@@ -43,6 +43,7 @@ public class RecognitionRequest extends ClarifaiRequest {
   }
 
   private final List<Item> items = new ArrayList<Item>();
+  private final List<String> selectClasses = new ArrayList<String>();
   private String model = "default";
   private Locale locale = null;
   private final Set<String> operations = defaultOperations();
@@ -155,6 +156,12 @@ public class RecognitionRequest extends ClarifaiRequest {
     return this;
   }
 
+  /** Add a tag for which you'd like to get the probability of for the image. */
+  public RecognitionRequest addTagForSelectClasses(String tag) {
+    selectClasses.add(tag);
+    return this;
+  }
+
   @Override String getContentType() {
     return "multipart/form-data; boundary=" + multipart.getBoundary();
   }
@@ -195,6 +202,15 @@ public class RecognitionRequest extends ClarifaiRequest {
         }
       }
     }
+
+    if (selectClasses.size() > 0) {
+      StringBuilder joined = new StringBuilder(selectClasses.get(0));
+      for (int i = 1; i < selectClasses.size(); i++) {
+        joined.append(',').append(selectClasses.get(i));
+      }
+      multipart.writeParameter("select_classes", joined.toString());
+    }
+
     multipart.finish();
   }
 }
