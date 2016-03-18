@@ -95,7 +95,7 @@ public class ClarifaiClient {
    * @return a list of results, one for each image or video
    * @throws ClarifaiException on errors; the class of the exception indicates the kind of error
    */
-  public List<RecognitionResult> recognizeTag(RecognitionRequest request) throws ClarifaiException {
+  public List<RecognitionResult> recognizeTags(RecognitionRequest request) throws ClarifaiException {
     return Arrays.asList(new ClarifaiRequester<RecognitionResult[]>(
         connectionFactory, credentialManager, POST, "/tag", RecognitionResult[].class,
         maxAttempts)
