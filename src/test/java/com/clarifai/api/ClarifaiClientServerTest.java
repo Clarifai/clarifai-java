@@ -82,7 +82,7 @@ public class ClarifaiClientServerTest {
   @Test public void testRecognizeWithSelectClasses() {
     if (shouldSkipTest()) return;
 
-    List<RecognitionResult> results = clarifai.recognize(new RecognitionRequest(
+    List<RecognitionResult> results = clarifai.recognizeTag(new RecognitionRequest(
 	        "http://www.clarifai.com/img/metro-north.jpg").addTagForSelectClasses("cookie"));
 
     assertThat(results.size(), equalTo(1));

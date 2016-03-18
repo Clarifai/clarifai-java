@@ -156,7 +156,9 @@ public class RecognitionRequest extends ClarifaiRequest {
     return this;
   }
 
-  /** Add a tag for which you'd like to get the probability of for the image. */
+  /** Add a tag for which you'd like to get the probability of for the image.
+   *  @see <a href="https://developer.clarifai.com/guide/tag#select-classes">Select Classes Documentation</a>
+   */
   public RecognitionRequest addTagForSelectClasses(String tag) {
     selectClasses.add(tag);
     return this;

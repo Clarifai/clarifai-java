@@ -89,6 +89,20 @@ public class ClarifaiClient {
   }
 
   /**
+   * Makes a recognition request for tags only.
+   * This supports the select_classes feature to request the probabilities for specific tag for the given image(s) with {@link RecognitionRequest#addTagForSelectClasses(String)}
+   * @param request the recognition request containing images or videos to recognize and options
+   * @return a list of results, one for each image or video
+   * @throws ClarifaiException on errors; the class of the exception indicates the kind of error
+   */
+  public List<RecognitionResult> recognizeTag(RecognitionRequest request) throws ClarifaiException {
+    return Arrays.asList(new ClarifaiRequester<RecognitionResult[]>(
+        connectionFactory, credentialManager, POST, "/tag", RecognitionResult[].class,
+        maxAttempts)
+        .execute(request));
+  }
+
+  /**
    * Makes a feedback request.
    * @param request the feedback request
    * @throws ClarifaiException on errors; the class of the exception indicates the kind of error
