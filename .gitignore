@@ -1,3 +1,4 @@
+
 # Created by https://www.gitignore.io/api/windows,osx,linux,android,intellij,maven,gradle,java
 
 ### Windows ###
@@ -22,7 +23,7 @@ $RECYCLE.BIN/
 
 
 ### OSX ###
-.DS_Store
+*.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -40,6 +41,7 @@ Icon
 .TemporaryItems
 .Trashes
 .VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -61,13 +63,16 @@ Temporary Items
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
 
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
 
 ### Android ###
 # Built application files
 *.apk
 *.ap_
 
-# Files for the Dalvik VM
+# Files for the ART/Dalvik VM
 *.dex
 
 # Java class files
@@ -99,6 +104,8 @@ captures/
 
 # Intellij
 *.iml
+.idea/workspace.xml
+.idea/libraries
 
 # Keystore files
 *.jks
@@ -154,7 +161,12 @@ crashlytics-build.properties
 fabric.properties
 
 ### Intellij Patch ###
-*.iml
+# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+
+# *.iml
+modules.xml
+# .idea/misc.xml 
+# *.ipr
 
 
 ### Maven ###
@@ -167,20 +179,6 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-
-
-### Gradle ###
-.gradle
-build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Cache of project
-.gradletasknamecache
-
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
 
 
 ### Java ###
@@ -197,8 +195,19 @@ gradle-app.setting
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+
+### Gradle ###
+.gradle
+/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
-gradle.properties
-sensitive.properties
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
