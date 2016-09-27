@@ -1,0 +1,27 @@
+package clarifai2.dto.model;
+
+import clarifai2.dto.model.output_info.ColorOutputInfo;
+import clarifai2.dto.prediction.Color;
+import com.google.auto.value.AutoValue;
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings("NullableProblems")
+@AutoValue
+public abstract class ColorModel extends Model<Color> {
+
+  @NotNull @Override public final ModelType modelType() { return ModelType.COLOR; }
+
+  @SuppressWarnings("ConstantConditions")
+  @NotNull
+  @Override
+  public final ColorOutputInfo outputInfo() {
+    return (ColorOutputInfo) _outputInfo();
+  }
+
+  @AutoValue.Builder
+  public interface Builder extends Model.Builder<Builder> {
+    @NotNull @Override ColorModel build();
+  }
+
+  ColorModel() {} // AutoValue instances only
+}

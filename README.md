@@ -1,128 +1,113 @@
 Clarifai Java Client
-====================
-[![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.clarifai/clarifai-api-java)
+==================
+[![Release](https://img.shields.io/maven-central/v/com.clarifai.clarifai-api2/core.svg?style=flat-square)](http://mvnrepository.com/artifact/com.clarifai.clarifai-api2/core)
 
-A simple client for the Clarifai image and video recognition API.
+A simple client for the Clarifai v2 API.
 
-Read on to learn how to get started. You may also want to:
-* Try the Clarifai demo at: http://clarifai.com/#demo
-* Sign up for a free account at: https://developer.clarifai.com/accounts/signup.
-* Check out the Javadocs at [javadoc.io](http://www.javadoc.io/doc/com.clarifai/clarifai-api-java)
-* Read full Clarifai API documentation at: https://developer.clarifai.com.
+* Try the Clarifai demo at: https://clarifai.com/demo
+* Sign up for a free account at: https://developer.clarifai.com/signup/
+* Read the developer guide at: https://developer.clarifai.com/guide-v2/
+* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/[version]/javadoc/
 
+**NOTE**: If you are planning to contribute to this API client, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 Installation
 ------------
+### Gradle:
 
-Maven: add the following to the dependencies section of your pom.xml:
+Add the following to the dependencies section of your `build.gradle`:
+
+```groovy
+compile 'com.clarifai.clarifai-api2:core:[version]'
 ```
+
+### Maven:
+
+Add the following to your dependencies:
+
+```xml
 <dependency>
-  <groupId>com.clarifai</groupId>
-  <artifactId>clarifai-api-java</artifactId>
-  <version>1.2.0</version>
+  <groupId>com.clarifai.clarifai-api2</groupId>
+  <artifactId>core</artifactId>
+  <version>[version]</version>
 </dependency>
 ```
 
-Gradle: add the following to the dependencies section of your build.gradle:
-```
-compile "com.clarifai:clarifai-api-java:1.2.0"
-```
-
-
 Getting Started
 ---------------
-To get a list of tags (objects, concepts, emotions, etc.) for an image or video on the filesystem:
+To create a `ClarifaiClient` instance, do the following:
+
 ```java
-ClarifaiClient clarifai = new ClarifaiClient(APP_ID, APP_SECRET);
-List<RecognitionResult> results =
-    clarifai.recognize(new RecognitionRequest(new File("kittens.jpg")));
-
-for (Tag tag : results.get(0).getTags()) {
-  System.out.println(tag.getName() + ": " + tag.getProbability());
-}
-```
-Each `Tag` in the `RecognitionResult` contains the name of the tag and the probability that the tag
-applies to the image or video.  By default, they are in English, but you can change the language by
-calling `RecognitionRequest.setLocale()`.
-
-Sending video to the API will cause a list of `VideoSegment` instances to be attached to the 
-`RecognitionResult`. Each of these has a timestamp and a list of tags that apply to a short segment
-of the video.
-
-The `APP_ID` and `APP_SECRET` parameters passed to the `ClarifaiClient` constructor identify the
-application and can be found on the
-[applications dashboard](https://developer.clarifai.com/applications/). Alternately, there is a
-zero-argument constructor that reads these from the `CLARIFAI_APP_ID` and `CLARIFAI_APP_SECRET`
-environment variables.
-
-The input can also be passed as a byte array:
-```java
-byte[] videoBytes = ...
-results = clarifai.recognize(new RecognitionRequest(videoBytes));
+final ClarifaiClient client = new ClarifaiBuilder("appID", "appSecret").buildSync();
 ```
 
-Or as a publicly-accessible URL:
-```java
-results = clarifai.recognize(
-    new RecognitionRequest("http://www.clarifai.com/img/metro-north.jpg"));
-```
+The `ClarifaiBuilder` optionally allows you to pass in a custom `OkHttpClient` (allowing for user-defined parameters
+such as connection timeouts, etc).
 
-Recognition can also be run over batches of input. For example:
-```java
-File[] imageFiles = {
-  new File("kittens.jpg"),
-  new File("puppies.png"),
-  new File("cubs.gif")
-};
-results = clarifai.recognize(new RecognitionRequest(imageFiles));
-```
-This returns a `List` containing a `RecognitionResult` instance for each file.
-Alternately, we could have passed byte arrays or URLs. Running recognition in batches is faster and
-more efficient than sending each image individually.
+Making API requests
+---------------------------------------
+Network operations using the API client only occur by calling `.executeSync()` or `.executeAsync(...)` on a
+`ClarifaiRequest<T>` object.
 
-How many images can we send in a batch? Let's find out:
-```java
-InfoResult info = clarifai.getInfo();
-System.out.println(info.getMaxBatchSize());  // Prints "128"
-```
-The limit is currently 128 images, but may change in the future. For video, the limit is currently 1.
-The `InfoResult` also contains other useful information about the API like minimum and maximum image sizes.
+All methods on the `ClarifaiClient` will either return a `ClarifaiRequest<T>` or `ClarifaiPaginatedRequest<T>`, or a
+custom object that allows you to specify parameters that go into ultimately building a `ClarifaiRequest<T>` or
+`ClarifaiPaginatedRequest<T>`.
 
-Occasionally, some of the tags returned by the API may be wrong. In other cases, we may be
-missing tags. If you or your users detect this, we encourage you to report the error back
-to us. This will help us improve in the areas that you care about. The following request tells us
-that the tags "kitten" and "cat" should be added to the image, and "dog" should be removed:
-```java
-clarifai.sendFeedback(new FeedbackRequest()
-    .setDocIds(recognitionResult.getDocId())
-    .setAddTags("kitten", "cat")
-    .setRemoveTags("dog"));
-```
-The `docId` is a unique, stable ID for an image, and is returned with every `RecognitionResult`.
+Using `.executeSync()` will block the current thread and return a `ClarifaiResponse<T>`, where `T` is the
+returned data type. `ClarifaiResponse<T>` has methods to check the success or failure status of the method, and methods
+that mimic Java 8 `Optional<T>` to safely retrieve the returned data.
 
-For more usage examples, see the [sample code](https://github.com/Clarifai/clarifai-java/tree/master/samples) or
-[ClarifaiClientServerTest.java](https://github.com/clarifai/clarifai-java/blob/master/src/test/java/com/clarifai/api/ClarifaiClientServerTest.java).
+Using `.executeAsync()` returns `void`, but allows the user to pass in callback(s) to handle successful responses,
+failed responses, and/or network errors.
+
+`ClarifaiPaginatedRequest<T>` objects should be thought of as factories that create `ClarifaiRequest<T>`s. When building
+a `ClarifaiPaginatedRequest<T>`, you have the option of specifying a `perPage` (the number of elements in each page
+of the response).
+
+Once a `ClarifaiPaginatedRequest<T>` is built, you can call `ClarifaiPaginatedRequest#getPage(int)` to get back a
+`ClarifaiRequest<T>` for the specified page. Pages are 1-indexed. Currently, the API does not indicate how many elements
+there are in a paginated request in total, but this is planned for the future.
+
+Using API responses
+------------------
+All responses from the API are immutable data types (constructed using AutoValue). Some of these types, such as
+`ClarifaiModel`, are also used as parameters to make requests (for example, you can either get a model as a response
+from the API, or pass a model to the API to create it in your account). Builders are exposed to the user for all
+data types that they can use as request params.
+
+Some convenience methods are provided as well on data types; eg: `myModel.predict()` on `ClarifaiModel`.
+
+This allows you to make requests in a fluent, object-oriented way. For example:
+
+```java
+client.getModelByID("myID").executeAsync(
+    model -> model.predict()
+        .withInputs(input)
+        .executeAsync(
+            outputs -> System.out.println("First output of this prediction is " + outputs.get(0))
+        ),
+    code -> System.err.println("Error code: " + code + ". Error msg: " + message),
+    e -> { throw new ClarifaiException(e); }
+);
+```
 
 
 Requirements
 ------------
-* JDK 6 or later
+JDK 7 or later.
 
 
 Android
--------
-For a complete example using the Clarifai Java Client from Android, please see our 
-[Clarifai Android Starter](https://github.com/Clarifai/clarifai-android-starter) repo.
+---------
+The client will work on Android Gingerbread and higher (minSdkVersion 9).
 
-The client supports Android 2.3.3 (Gingerbread) and later. You'll need to add the
-following permission to your `AndroidManifest.xml`:
-```
+You need to add the INTERNET permission to your `AndroidManifest.xml`, as follows:
+
+```xml
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-If you're using ProGuard, make sure the Clarifai API internals are not stripped out by adding the
-following to your proguard.cfg:
-```
--keep class com.clarifai.api.** { *; }
-```
+The Android Linter may also give an "InvalidPackage" error. This error may be safely ignored, and is caused by OkHttp
+using Java 8 methods when they are available (which will not occur on Android). To suppress these linter errors, do
+*NOT* disable your linter. Simply follow the instructions
+[here](https://guides.codepath.com/android/Consuming-APIs-with-Retrofit#issues).

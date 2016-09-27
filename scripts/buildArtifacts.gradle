@@ -1,0 +1,21 @@
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+task javadoc(type: Javadoc, overwrite: true) {
+  source = sourceSets.main.allSource
+  classpath += configurations.compile + configurations.compileOnly
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  //noinspection GroovyAccessibility
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives jar
+  archives sourcesJar
+  archives javadocJar
+}

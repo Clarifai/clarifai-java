@@ -1,0 +1,27 @@
+plugins {
+  id "java"
+  id "idea"
+}
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = JavaVersion.VERSION_1_8
+//noinspection GroovyUnusedAssignment
+targetCompatibility = JavaVersion.VERSION_1_8
+
+apply from: rootProject.file("scripts/buildArtifacts.gradle")
+
+//noinspection GroovyMissingReturnStatement
+test {
+  testLogging {
+    exceptionFormat = 'full'
+  }
+}
+
+dependencies {
+  testCompile(
+      project(":core"),
+      deps.junit,
+      deps.nullityAnnotations,
+      deps.okhttpLogging,
+  )
+}
