@@ -196,7 +196,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void predictViaURL() {
-    client.predict("@@generalModelId")
+    client.getDefaultModels().generalModel().predict()
         .withInputs(
             ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
         )
@@ -204,7 +204,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void predictViaImageBytes() {
-    client.predict("@@generalModelId")
+    client.getDefaultModels().generalModel().predict()
         .withInputs(
             ClarifaiInput.forImage(ClarifaiImage.of(new File("/home/user/image.jpeg")))
         )
