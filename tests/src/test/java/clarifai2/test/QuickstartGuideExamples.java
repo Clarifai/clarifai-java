@@ -28,7 +28,7 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
         client.getDefaultModels().generalModel() // You can also do client.getModelByID("id") to get custom models
             .predict()
             .withInputs(
-                ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+                ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
             )
             .executeSync();
   }
@@ -36,7 +36,7 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
   @Test public void quickStartSearch() {
     final ClarifaiResponse<List<SearchHit>> trainImages = client.searchInputs(
         // Finds images that match this picture of a train OR images that match the "train" concept tag
-        SearchClause.matchImageVisually(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+        SearchClause.matchImageVisually(ClarifaiImage.of("@@sampleTrain"))
     )
         .getPage(1)
         .executeSync();
