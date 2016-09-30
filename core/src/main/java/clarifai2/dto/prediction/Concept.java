@@ -1,6 +1,6 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.JsonDeserializationContext;
@@ -84,7 +84,7 @@ public abstract class Concept extends Prediction {
           root.get("name").getAsString(),
           context.<Date>deserialize(root.get("created_at"), Date.class),
           context.<Date>deserialize(root.get("updated_at"), Date.class),
-          ClarifaiUtil.<String>nullSafeTraverse(root, "app_id"),
+          InternalUtil.<String>nullSafeTraverse(root, "app_id"),
           root.has("value") && !root.get("value").isJsonNull() ? root.get("value").getAsFloat() : 1.0F
       );
     }

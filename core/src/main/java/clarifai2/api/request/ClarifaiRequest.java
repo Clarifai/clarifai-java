@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-import static clarifai2.internal.ClarifaiUtil.MEDIA_TYPE_JSON;
+import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 /**
  * An interface returned by the {@link ClarifaiClient} used to execute an API request.

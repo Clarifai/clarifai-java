@@ -4,7 +4,7 @@ import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.input.SearchHit;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
@@ -34,7 +34,7 @@ public final class SearchInputsRequest
   @NotNull @Override protected JSONUnmarshaler<List<SearchHit>> unmarshaler() {
     return new JSONUnmarshaler<List<SearchHit>>() {
       @Nullable @Override public List<SearchHit> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(gson, json.getAsJsonObject().get("hits"), new TypeToken<List<SearchHit>>() {});
+        return InternalUtil.fromJson(gson, json.getAsJsonObject().get("hits"), new TypeToken<List<SearchHit>>() {});
       }
     };
   }

@@ -1,6 +1,7 @@
 package clarifai2.dto.input.image;
 
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.exception.ClarifaiException;
+import clarifai2.internal.InternalUtil;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 @SuppressWarnings("NullableProblems")
@@ -21,11 +23,17 @@ public abstract class ClarifaiImage {
   }
 
   @NotNull public static ClarifaiFileImage of(@NotNull File imageFile) {
-    return of(ClarifaiUtil.read(imageFile));
+    return of(InternalUtil.read(imageFile));
   }
 
   @NotNull public static ClarifaiURLImage of(@NotNull String imageURL) {
-    return of(ClarifaiUtil.parseURL(imageURL));
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return of(result);
   }
 
   @NotNull public static ClarifaiURLImage of(@NotNull URL imageURL) {

@@ -3,7 +3,7 @@ package clarifai2.api.request.input;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -24,7 +24,7 @@ public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput
   @NotNull @Override protected JSONUnmarshaler<ClarifaiInput> unmarshaler() {
     return new JSONUnmarshaler<ClarifaiInput>() {
       @Nullable @Override public ClarifaiInput fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(gson, json.getAsJsonObject().get("input"), TypeToken.get(ClarifaiInput.class));
+        return InternalUtil.fromJson(gson, json.getAsJsonObject().get("input"), TypeToken.get(ClarifaiInput.class));
       }
     };
   }

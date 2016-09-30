@@ -2,7 +2,7 @@ package clarifai2.dto.input;
 
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.JsonDeserializationContext;
@@ -89,7 +89,7 @@ public abstract class ClarifaiInput {
       }
 
       return new AutoValue_ClarifaiInput(
-          ClarifaiUtil.<String>nullSafeTraverse(root, "id"),
+          InternalUtil.<String>nullSafeTraverse(root, "id"),
           context.<Date>deserialize(root.get("created_at"), Date.class),
           context.<ClarifaiImage>deserialize(root.get("data").getAsJsonObject().get("image"), ClarifaiImage.class),
           concepts

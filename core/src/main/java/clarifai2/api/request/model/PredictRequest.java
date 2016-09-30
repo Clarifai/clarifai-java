@@ -7,7 +7,7 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
@@ -56,7 +56,7 @@ public final class PredictRequest<PREDICTION extends Prediction>
     return new JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>>() {
       @Nullable @Override
       public List<ClarifaiOutput<PREDICTION>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(
+        return InternalUtil.fromJson(
             gson,
             json.getAsJsonObject().get("outputs"),
             new TypeToken<List<ClarifaiOutput<PREDICTION>>>() {}
