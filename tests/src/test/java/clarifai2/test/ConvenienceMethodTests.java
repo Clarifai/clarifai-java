@@ -16,12 +16,6 @@ public class ConvenienceMethodTests extends BaseClarifaiAPITest {
     for (int i = 0; i < 1; i++) {
       assertSuccess(client.deleteAllModels());
 
-      assertSuccess(client.createModel("mod1")
-          .withOutputInfo(ConceptOutputInfo.forConcepts(
-              Concept.forID("train")
-          ))
-      );
-
       assertSuccess(client.addInputs()
           .plus(
               ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_FILE))
@@ -29,6 +23,12 @@ public class ConvenienceMethodTests extends BaseClarifaiAPITest {
                       Concept.forID("train")
                   )
           )
+      );
+
+      assertSuccess(client.createModel("mod1")
+          .withOutputInfo(ConceptOutputInfo.forConcepts(
+              Concept.forID("train")
+          ))
       );
 
       final ClarifaiRequest<Model<?>> request = ClarifaiUtil.trainAndAwaitCompletion(client, "mod1");
