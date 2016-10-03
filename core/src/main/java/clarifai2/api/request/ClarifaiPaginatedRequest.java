@@ -11,7 +11,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 
-import static clarifai2.internal.ClarifaiUtil.MEDIA_TYPE_JSON;
+import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 /**
  * An interface returned by the {@link ClarifaiClient} used to create {@link ClarifaiRequest} objects for each

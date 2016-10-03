@@ -3,7 +3,7 @@ package clarifai2.api.request.model;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.model.ModelVersion;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -28,7 +28,7 @@ public final class GetModelVersionsRequest
     return new JSONUnmarshaler<List<ModelVersion>>() {
       @Nullable @Override
       public List<ModelVersion> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(
+        return InternalUtil.fromJson(
             gson,
             json.getAsJsonObject().get("model_versions"),
             new TypeToken<List<ModelVersion>>() {}

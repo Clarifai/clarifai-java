@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import static clarifai2.internal.ClarifaiUtil.MEDIA_TYPE_JSON;
+import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 public abstract class BaseClarifaiClient implements ClarifaiClient {
 

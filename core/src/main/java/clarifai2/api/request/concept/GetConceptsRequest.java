@@ -3,7 +3,7 @@ package clarifai2.api.request.concept;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -25,7 +25,7 @@ public final class GetConceptsRequest
     return new JSONUnmarshaler<List<Concept>>() {
       @Nullable @Override
       public List<Concept> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(
+        return InternalUtil.fromJson(
             gson,
             json.getAsJsonObject().get("concepts"),
             new TypeToken<List<Concept>>() {}

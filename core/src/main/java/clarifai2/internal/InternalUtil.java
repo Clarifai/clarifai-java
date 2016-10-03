@@ -15,46 +15,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-public final class ClarifaiUtil {
+public final class InternalUtil {
 
   public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf8");
 
-  private ClarifaiUtil() {
+  private InternalUtil() {
     throw new UnsupportedOperationException("No instances");
-  }
-
-  public interface Transform<T, R> {
-    @Nullable R transform(@Nullable T in);
-  }
-
-  @NotNull public static URL parseURL(@NotNull String url) {
-    try {
-      return new URL(url);
-    } catch (MalformedURLException e) {
-      throw new ClarifaiException("Could not parse URL " + url, e);
-    }
-  }
-
-  @NotNull
-  public static <T, R> List<R> map(@NotNull Iterable<T> source, @NotNull Transform<T, R> transform) {
-    final List<R> out;
-    {
-      if (source instanceof Collection) {
-        out = new ArrayList<>(((Collection<?>) source).size());
-      } else {
-        out = new ArrayList<>();
-      }
-    }
-    for (final T element : source) {
-      out.add(transform.transform(element));
-    }
-    return out;
   }
 
   @NotNull
@@ -64,11 +31,6 @@ public final class ClarifaiUtil {
       throw new ClarifaiException("fromJson returned null. Json: " + element);
     }
     return result;
-  }
-
-  @NotNull
-  public static <T> JsonElement toJson(@NotNull Gson gson, @NotNull T obj, @NotNull TypeToken<T> token) {
-    return gson.toJsonTree(obj, token.getType());
   }
 
   @Nullable

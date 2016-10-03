@@ -1,6 +1,6 @@
 package clarifai2.dto;
 
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import com.google.auto.value.AutoValue;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -56,7 +56,7 @@ public abstract class ClarifaiStatus {
       return new AutoValue_ClarifaiStatus(
           root.get("code").getAsInt(),
           root.get("description").getAsString(),
-          ClarifaiUtil.<String>nullSafeTraverse(root, "details")
+          InternalUtil.<String>nullSafeTraverse(root, "details")
       );
     }
   }
