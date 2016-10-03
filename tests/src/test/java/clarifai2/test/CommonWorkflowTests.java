@@ -177,7 +177,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void t15_trainModel() {
-    Assert.assertTrue(ClarifaiUtil.trainAndAwaitCompletion(client, getModelID()));
+    assertSuccess(ClarifaiUtil.trainAndAwaitCompletion(client, getModelID()));
   }
 
 

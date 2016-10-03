@@ -24,6 +24,14 @@ public final class InternalUtil {
     throw new UnsupportedOperationException("No instances");
   }
 
+  public static void sleep(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   @NotNull
   public static <T> T fromJson(@NotNull Gson gson, @NotNull JsonElement element, @NotNull TypeToken<T> token) {
     final T result = gson.fromJson(element, token.getType());
@@ -107,5 +115,17 @@ public final class InternalUtil {
       }
     }
     return ous.toByteArray();
+  }
+
+  @NotNull
+  public static String message(String header, String... tabbedInLines) {
+    final StringBuilder builder = new StringBuilder(header).append('\n');
+    for (String tabbedInLine : tabbedInLines) {
+      builder.append('\t')
+          .append(tabbedInLine)
+          .append('\n');
+    }
+    builder.setLength(builder.length() - 1);
+    return builder.toString();
   }
 }

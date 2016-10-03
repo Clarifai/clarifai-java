@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-final class ClarifaiRequestImpl<RESULT> implements ClarifaiRequest<RESULT> {
+final class ClarifaiRequestImpl<RESULT> extends ClarifaiRequest.Adapter<RESULT> {
 
   @NotNull private final Gson gson;
   @NotNull private final OkHttpClient client;
@@ -55,51 +55,6 @@ final class ClarifaiRequestImpl<RESULT> implements ClarifaiRequest<RESULT> {
     });
   }
 
-  @Override public void executeAsync(@Nullable final OnSuccess<RESULT> onSuccess) throws ClarifaiException {
-    executeAsync(onSuccess, null);
-  }
-
-  @Override
-  public void executeAsync(
-      @Nullable final OnSuccess<RESULT> onSuccess,
-      @Nullable final OnFailure onFailure
-  ) {
-    executeAsync(onSuccess, onFailure, null);
-  }
-
-  @Override
-  public void executeAsync(
-      @Nullable final OnSuccess<RESULT> onSuccess,
-      @Nullable final OnFailure onFailure,
-      @Nullable final OnNetworkError onNetworkError
-  ) {
-    executeAsync(new Callback<RESULT>() {
-      @Override public void onClarifaiResponseSuccess(@NotNull final RESULT result) {
-        if (onSuccess != null) {
-          onSuccess.onClarifaiResponseSuccess(result);
-        }
-      }
-
-      @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
-        if (onFailure == null) {
-          throw new ClarifaiException(
-              "Unsuccessful response from Clarifai API was not handled. Error code: " + errorCode
-          );
-        } else {
-          onFailure.onClarifaiResponseUnsuccessful(errorCode);
-        }
-      }
-
-      @Override public void onClarifaiResponseNetworkError(@NotNull final IOException e) {
-        if (onNetworkError == null) {
-          throw new ClarifaiException("Network error while contacting Clarifai API was not handled.", e);
-        } else {
-          onNetworkError.onClarifaiResponseNetworkError(e);
-        }
-      }
-    });
-  }
-
   @NotNull private ClarifaiResponse<RESULT> getClarifaiResponse(@NotNull final Response response) {
     final String rawJSON;
     try {
@@ -110,7 +65,16 @@ final class ClarifaiRequestImpl<RESULT> implements ClarifaiRequest<RESULT> {
     final JsonObject root;
     final ClarifaiStatus status;
     try {
-      root = gson.fromJson(rawJSON, JsonElement.class).getAsJsonObject();
+      final JsonElement json = gson.fromJson(rawJSON, JsonElement.class);
+      if (json == null) {
+        return ClarifaiResponse.create(
+            ClarifaiStatus.unknown(),
+            response.code(),
+            null,
+            null
+        );
+      }
+      root = json.getAsJsonObject();
       status = gson.fromJson(root.getAsJsonObject("status"), ClarifaiStatus.class);
     } catch (JsonSyntaxException e) {
       return ClarifaiResponse.create(
