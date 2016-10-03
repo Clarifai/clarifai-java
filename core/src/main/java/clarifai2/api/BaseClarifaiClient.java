@@ -3,6 +3,7 @@ package clarifai2.api;
 import clarifai2.BuildConfig;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.AutoValueTypeAdapterFactory;
+import clarifai2.internal.InternalUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -104,7 +105,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
                     response.get("expires_in").getAsInt()
                 );
               }
-              throw new ClarifaiException(message("API call to refresh token unsuccessful",
+              throw new ClarifaiException(InternalUtil.message("API call to refresh token unsuccessful",
                   "Provided AppID: " + appID,
                   "Provided AppSecret: " + appSecret,
                   "Provided BaseURL: " + baseURL,
@@ -120,18 +121,6 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     }
   }
 
-
-  @NotNull
-  private static String message(String header, String... tabbedInLines) {
-    final StringBuilder builder = new StringBuilder(header).append('\n');
-    for (String tabbedInLine : tabbedInLines) {
-      builder.append('\t')
-          .append(tabbedInLine)
-          .append('\n');
-    }
-    builder.setLength(builder.length() - 1);
-    return builder.toString();
-  }
 
   @NotNull
   private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {

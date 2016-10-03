@@ -1,8 +1,8 @@
 package clarifai2.api.request;
 
 import clarifai2.api.BaseClarifaiClient;
-import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
@@ -121,8 +121,50 @@ public interface ClarifaiRequest<RESULT> {
     void onClarifaiResponseNetworkError(@NotNull IOException e);
   }
 
+  public abstract class Adapter<T> implements ClarifaiRequest<T> {
 
-  abstract class Builder<T> implements ClarifaiRequest<T> {
+    @Override public final void executeAsync(@Nullable OnSuccess<T> onSuccess) throws ClarifaiException {
+      executeAsync(onSuccess, null);
+    }
+
+    @Override
+    public final void executeAsync(@Nullable OnSuccess<T> onSuccess,
+        @Nullable OnFailure onFailure) {
+      executeAsync(onSuccess, onFailure, null);
+    }
+
+    @Override
+    public final void executeAsync(@Nullable final OnSuccess<T> onSuccess,
+        @Nullable final OnFailure onFailure,
+        @Nullable final OnNetworkError onNetworkError) {
+      executeAsync(new Callback<T>() {
+        @Override public void onClarifaiResponseSuccess(@NotNull T t) {
+          if (onSuccess != null) {
+            onSuccess.onClarifaiResponseSuccess(t);
+          }
+        }
+
+        @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
+          if (onFailure == null) {
+            throw new ClarifaiException(
+                "Unsuccessful response from Clarifai API was not handled. Error code: " + errorCode
+            );
+          }
+          onFailure.onClarifaiResponseUnsuccessful(errorCode);
+        }
+
+        @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
+          if (onNetworkError == null) {
+            throw new ClarifaiException("Network error while contacting Clarifai API was not handled.", e);
+          } else {
+            onNetworkError.onClarifaiResponseNetworkError(e);
+          }
+        }
+      });
+    }
+  }
+
+  abstract class Builder<T> extends ClarifaiRequest.Adapter<T> {
 
     @NotNull protected final Gson gson;
     @NotNull protected final OkHttpClient client;
@@ -148,27 +190,6 @@ public interface ClarifaiRequest<RESULT> {
 
     @Override public final void executeAsync(@Nullable Callback<T> callback) {
       build().executeAsync(callback);
-    }
-
-    @Override public void executeAsync(@Nullable final OnSuccess<T> onSuccess) throws ClarifaiException {
-      build().executeAsync(onSuccess);
-    }
-
-    @Override
-    public void executeAsync(
-        @Nullable final OnSuccess<T> onSuccess,
-        @Nullable final OnFailure onFailure
-    ) {
-      build().executeAsync(onSuccess, onFailure);
-    }
-
-    @Override
-    public void executeAsync(
-        @Nullable final OnSuccess<T> onSuccess,
-        @Nullable final OnFailure onFailure,
-        @Nullable final OnNetworkError onNetworkError
-    ) {
-      build().executeAsync(onSuccess, onFailure, onNetworkError);
     }
 
     @NotNull protected final RequestBody toRequestBody(@NotNull JsonElement json) {

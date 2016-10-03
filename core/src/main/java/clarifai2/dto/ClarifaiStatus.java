@@ -25,6 +25,14 @@ public abstract class ClarifaiStatus {
     );
   }
 
+  @NotNull public static ClarifaiStatus unknown() {
+    return new AutoValue_ClarifaiStatus(
+        0,
+        "Unknown response",
+        null
+    );
+  }
+
   /**
    * @return whether this {@link ClarifaiStatus} represents a request that was unsuccessful due to a network error
    */
