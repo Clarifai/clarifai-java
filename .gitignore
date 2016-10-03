@@ -1,5 +1,7 @@
-
+###############################################################################
+# Auto-generated entries
 # Created by https://www.gitignore.io/api/windows,osx,linux,android,intellij,maven,gradle,java
+###############################################################################
 
 ### Windows ###
 # Windows image file caches
@@ -211,3 +213,8 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+
+###############################################################################
+# User-defined entries
+###############################################################################
+sensitive.properties
