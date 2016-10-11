@@ -128,7 +128,7 @@ dependencies {
   )
 
   compileOnly(
-      deps.autoValue,
+      deps.autoValueAnnotations,
       deps.nullityAnnotations,
   )
 

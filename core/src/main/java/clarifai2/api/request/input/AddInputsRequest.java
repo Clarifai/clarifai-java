@@ -3,10 +3,11 @@ package clarifai2.api.request.input;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +24,8 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
 
   @NotNull private final List<ClarifaiInput> inputs = new ArrayList<>();
 
+  private boolean allowDuplicateURLs = false;
+
   public AddInputsRequest(@NotNull final BaseClarifaiClient helper) {
     super(helper);
   }
@@ -37,11 +40,21 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
     return this;
   }
 
+  /**
+   * @param allowDuplicateURLs whether the API should allow uploading inputs with URLs that are already part of other
+   *                           inputs in this app.
+   * @return this request builder
+   */
+  @NotNull public AddInputsRequest allowDuplicateURLs(boolean allowDuplicateURLs) {
+    this.allowDuplicateURLs = allowDuplicateURLs;
+    return this;
+  }
+
   @NotNull @Override protected JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
     return new JSONUnmarshaler<List<ClarifaiInput>>() {
       @Nullable @Override
       public List<ClarifaiInput> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(
+        return InternalUtil.fromJson(
             gson,
             json.getAsJsonObject().getAsJsonArray("inputs"),
             new TypeToken<List<ClarifaiInput>>() {}
@@ -51,8 +64,20 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
   }
 
   @NotNull @Override protected Request buildRequest() {
+    final JsonArray inputs = gson.toJsonTree(
+        this.inputs,
+        new TypeToken<List<ClarifaiInput>>() {}.getType()
+    ).getAsJsonArray();
+    if (allowDuplicateURLs) {
+      for (final JsonElement input : inputs) {
+        final JsonObject image = input.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("image");
+        if (image.has("url")) {
+          image.addProperty("allow_duplicate_url", allowDuplicateURLs);
+        }
+      }
+    }
     final JsonObject requestBody = new JSONObjectBuilder()
-        .add("inputs", ClarifaiUtil.toJson(gson, inputs, new TypeToken<List<ClarifaiInput>>() {}))
+        .add("inputs", inputs)
         .build();
     return new Request.Builder()
         .url(buildURL("/v2/inputs"))

@@ -5,12 +5,10 @@ import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiInputUpdateAction;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.ClarifaiUtil;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import okhttp3.Request;
@@ -52,17 +50,12 @@ public final class DeleteConceptsFromInputRequest extends ClarifaiRequest.Builde
   }
 
   @NotNull @Override protected Request buildRequest() {
-    final List<JsonElement> concepts = ClarifaiUtil.map(
-        this.concepts,
-        new ClarifaiUtil.Transform<Concept, JsonElement>() {
-          @Nullable @Override public JsonElement transform(@Nullable Concept in) {
-            return gson.toJsonTree(in);
-          }
-        }
-    );
-    final JsonArray conceptsJSON = new JSONArrayBuilder(concepts).build();
+    final List<JsonElement> conceptJSONs = new ArrayList<>(this.concepts.size());
+    for (final Concept concept : concepts) {
+      conceptJSONs.add(gson.toJsonTree(concept));
+    }
     final JsonObject body = new JSONObjectBuilder()
-        .add("concepts", conceptsJSON)
+        .add("concepts", new JSONArrayBuilder(conceptJSONs).build())
         .add("action", gson.toJsonTree(ClarifaiInputUpdateAction.DELETE_CONCEPTS))
         .build();
     return new Request.Builder()

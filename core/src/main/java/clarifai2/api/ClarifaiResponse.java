@@ -166,7 +166,7 @@ public abstract class ClarifaiResponse<T> {
   public final T get() {
     final T value = getOrNull();
     if (value == null) {
-      throw new NoSuchElementException("No value present. Details about this error: " + getStatus());
+      throw new NoSuchElementException("This API call was not successful. Details about this error: " + getStatus());
     }
     return value;
   }

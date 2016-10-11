@@ -24,12 +24,14 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void addAnInputUsingAPubliclyAccessibleURL() {
     client.addInputs()
         .plus(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
   @Test public void addAnInputUsingBytes() {
     client.addInputs()
         .plus(ClarifaiInput.forImage(ClarifaiImage.of(new File("image.png"))))
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
@@ -41,6 +43,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
                 Concept.forID("boscoe")
             )
         )
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
@@ -92,6 +95,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
             ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")),
             ClarifaiInput.forImage(ClarifaiImage.of("@@sampleWedding"))
         )
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
@@ -196,7 +200,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void predictViaURL() {
-    client.predict("@@generalModelId")
+    client.getDefaultModels().generalModel().predict()
         .withInputs(
             ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
         )
@@ -204,7 +208,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void predictViaImageBytes() {
-    client.predict("@@generalModelId")
+    client.getDefaultModels().generalModel().predict()
         .withInputs(
             ClarifaiInput.forImage(ClarifaiImage.of(new File("/home/user/image.jpeg")))
         )
@@ -225,6 +229,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
             ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
                 .withConcepts(Concept.forID("boscoe"))
         )
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
@@ -348,6 +353,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
                     )
             )
         )
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 
@@ -365,6 +371,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
                 Concept.forID("id2")
             )
         )
+        .allowDuplicateURLs(true)
         .executeSync();
   }
 

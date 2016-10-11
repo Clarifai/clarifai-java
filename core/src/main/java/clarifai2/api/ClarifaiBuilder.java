@@ -24,7 +24,7 @@ public final class ClarifaiBuilder {
   OkHttpClient client;
 
   @NotNull
-  HttpUrl baseURL = HttpUrl.parse("https://api2-prod.clarifai.com/");
+  HttpUrl baseURL = HttpUrl.parse("https://api.clarifai.com/");
 
   public ClarifaiBuilder(@NotNull String appID, @NotNull String appSecret) {
     this.appID = appID;

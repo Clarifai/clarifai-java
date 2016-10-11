@@ -8,7 +8,7 @@ import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -182,7 +182,7 @@ public abstract class Model<PREDICTION extends Prediction> {
           .name(root.get("name").getAsString())
           .createdAt(context.<Date>deserialize(root.get("created_at"), Date.class))
           .updatedAt(context.<Date>deserialize(root.get("updated_at"), Date.class))
-          .appID(ClarifaiUtil.<String>nullSafeTraverse(root, "app_id"))
+          .appID(InternalUtil.<String>nullSafeTraverse(root, "app_id"))
           .modelVersion(context.<ModelVersion>deserialize(root.get("model_version"), ModelVersion.class))
           ._outputInfo(context.<OutputInfo>deserialize(root.get("output_info"), OutputInfo.class))
           .client(context.<ClarifaiClient>deserialize(new JsonObject(), ClarifaiClient.class))

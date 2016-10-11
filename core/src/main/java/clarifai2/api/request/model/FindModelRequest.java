@@ -4,7 +4,7 @@ import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
-import clarifai2.internal.ClarifaiUtil;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
@@ -41,7 +41,7 @@ public final class FindModelRequest
     return new JSONUnmarshaler<List<Model<?>>>() {
       @Nullable @Override
       public List<Model<?>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return ClarifaiUtil.fromJson(
+        return InternalUtil.fromJson(
             gson,
             json.getAsJsonObject().get("models"),
             new TypeToken<List<Model<?>>>() {}
