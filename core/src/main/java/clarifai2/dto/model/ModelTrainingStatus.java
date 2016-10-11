@@ -7,6 +7,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.JsonAdapter;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 @JsonAdapter(ModelTrainingStatus.Adapter.class)
 public enum ModelTrainingStatus {
@@ -40,17 +42,33 @@ public enum ModelTrainingStatus {
   }
 
   static class Adapter implements JsonDeserializer<ModelTrainingStatus> {
+
+    final Map<Integer, ModelTrainingStatus> codeToStatus;
+
+    Adapter() {
+      final ModelTrainingStatus[] values = ModelTrainingStatus.values();
+      this.codeToStatus = new HashMap<>(values.length);
+      for (ModelTrainingStatus modelTrainingStatus : values) {
+        if (codeToStatus.containsKey(modelTrainingStatus.statusCode)) {
+          throw new IllegalStateException(
+              codeToStatus.get(modelTrainingStatus.statusCode) + " and " + modelTrainingStatus
+                  + " have the same statusCode of " + modelTrainingStatus.statusCode
+          );
+        }
+        codeToStatus.put(modelTrainingStatus.statusCode, modelTrainingStatus);
+      }
+    }
+
     @Override
     public ModelTrainingStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
       final int statusCode = json.getAsJsonObject().get("code").getAsInt();
-      for (final ModelTrainingStatus modelTrainingStatus : ModelTrainingStatus.values()) {
-        if (modelTrainingStatus.statusCode == statusCode) {
-          return modelTrainingStatus;
-        }
+      final ModelTrainingStatus model = codeToStatus.get(statusCode);
+      if (model == null) {
+        throw new IllegalArgumentException(
+            "This version of the API client does not recognize the model training status: " + json
+        );
       }
-      throw new IllegalArgumentException(
-          "This version of the API client does not recognize the model training status: " + json
-      );
+      return model;
     }
   }
 }
