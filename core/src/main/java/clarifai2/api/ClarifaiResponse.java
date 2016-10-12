@@ -118,44 +118,6 @@ public abstract class ClarifaiResponse<T> {
     this.httpCode = httpCode;
   }
 
-//  @Nullable
-//  private final T deserializedResponse;
-//
-//  @Nullable
-//  private final String rawBody;
-//
-//  private final int httpCode;
-//
-//  @Nullable
-//  private final ClarifaiStatus status;
-//
-//  @NotNull
-//  public static <T> ClarifaiResponse<T> create(
-//      @Nullable T deserialized,
-//      @Nullable String rawBody,
-//      int httpCode,
-//      @NotNull ClarifaiStatus status
-//  ) {
-//    return new ClarifaiResponse<>(deserialized, rawBody, httpCode, status);
-//  }
-//
-//  @NotNull
-//  public static <T> ClarifaiResponse<T> networkException(@NotNull IOException e) {
-//    return new ClarifaiResponse<>(null, null, 0, null);
-//  }
-//
-//  private ClarifaiResponse(
-//      @Nullable T deserializedResponse,
-//      @Nullable String rawBody,
-//      int httpCode,
-//      @Nullable ClarifaiStatus status
-//  ) {
-//    this.deserializedResponse = deserializedResponse;
-//    this.rawBody = rawBody;
-//    this.httpCode = httpCode;
-//    this.status = status;
-//  }
-
   /**
    * @return The value returned by this HTTP request, or throws a {@link NoSuchElementException}
    * if there is no value. You likely want to guard any invocations create this method with a check against

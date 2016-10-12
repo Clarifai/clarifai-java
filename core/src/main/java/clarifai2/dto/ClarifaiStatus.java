@@ -10,6 +10,7 @@ import com.google.gson.annotations.JsonAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 @SuppressWarnings("NullableProblems")
@@ -17,16 +18,18 @@ import java.lang.reflect.Type;
 @JsonAdapter(ClarifaiStatus.Adapter.class)
 public abstract class ClarifaiStatus {
 
-  @NotNull public static ClarifaiStatus networkError() {
+  @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
     return new AutoValue_ClarifaiStatus(
+        true,
         0,
         "Network error occurred",
-        null
+        networkException.getMessage()
     );
   }
 
   @NotNull public static ClarifaiStatus unknown() {
     return new AutoValue_ClarifaiStatus(
+        false,
         0,
         "Unknown response",
         null
@@ -36,9 +39,7 @@ public abstract class ClarifaiStatus {
   /**
    * @return whether this {@link ClarifaiStatus} represents a request that was unsuccessful due to a network error
    */
-  @NotNull public final boolean networkErrorOccurred() {
-    return this.equals(networkError());
-  }
+  @NotNull public abstract boolean networkErrorOccurred();
 
   /**
    * @return the Clarifai status code for this response. This is different from the HTTP status code!
@@ -62,6 +63,7 @@ public abstract class ClarifaiStatus {
     public ClarifaiStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
       final JsonObject root = json.getAsJsonObject();
       return new AutoValue_ClarifaiStatus(
+          false,
           root.get("code").getAsInt(),
           root.get("description").getAsString(),
           InternalUtil.<String>nullSafeTraverse(root, "details")

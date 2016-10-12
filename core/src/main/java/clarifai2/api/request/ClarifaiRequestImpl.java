@@ -42,7 +42,7 @@ final class ClarifaiRequestImpl<RESULT> extends ClarifaiRequest.Adapter<RESULT> 
     try {
       return getClarifaiResponse(client.newCall(request).execute());
     } catch (IOException e) {
-      return ClarifaiResponse.create(ClarifaiStatus.networkError(), 0, null, null);
+      return ClarifaiResponse.create(ClarifaiStatus.networkError(e), 0, null, null);
     }
   }
 
@@ -78,7 +78,7 @@ final class ClarifaiRequestImpl<RESULT> extends ClarifaiRequest.Adapter<RESULT> 
       status = gson.fromJson(root.getAsJsonObject("status"), ClarifaiStatus.class);
     } catch (JsonSyntaxException e) {
       return ClarifaiResponse.create(
-          ClarifaiStatus.networkError(),
+          ClarifaiStatus.networkError(new IOException("Server provided malformed JSON response")),
           0,
           null,
           null
