@@ -14,6 +14,7 @@ apply from: rootProject.file("scripts/buildArtifacts.gradle")
 test {
   testLogging {
     exceptionFormat = 'full'
+    showStandardStreams = true
   }
 }
 
@@ -23,5 +24,6 @@ dependencies {
       deps.junit,
       deps.nullityAnnotations,
       deps.okhttpLogging,
+      deps.slf4j,
   )
 }

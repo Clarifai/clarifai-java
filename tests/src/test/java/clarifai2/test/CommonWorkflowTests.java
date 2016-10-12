@@ -13,6 +13,7 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.internal.InternalUtil;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -218,7 +219,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     if (response.isSuccessful()) {
       Assert.fail("You shouldn't be able to add concepts to the built-in general model");
     }
-    System.out.println(response.getStatus());
+    logger.info(response.getStatus().toString());
   }
 
   @Test public void testAsyncUnsuccessfulWorks() {
@@ -269,7 +270,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     }
     final ClarifaiStatus details = badResponse.getStatus();
     Assert.assertTrue(details.networkErrorOccurred());
-    System.out.println(details.errorDetails());
+    logger.info(details.errorDetails());
   }
 
   @Test public void testBuildClientAsync() throws InterruptedException, ExecutionException {
@@ -277,10 +278,10 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .baseURL(baseURL)
         .build();
     while (!futureClient.isDone()) {
-      Thread.sleep(100);
+      InternalUtil.sleep(100);
     }
     final ClarifaiClient client = futureClient.get();
-    System.out.println(client.getToken());
+    logger.info(client.getToken().toString());
   }
 
   /////////////////
