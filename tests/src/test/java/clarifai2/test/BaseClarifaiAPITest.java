@@ -9,8 +9,14 @@ import clarifai2.internal.InternalUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +24,18 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class BaseClarifaiAPITest {
 
+  @NotNull @Rule public TestName testName = new TestName();
+
+  @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
+
   @NotNull static final String METRO_NORTH_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
   @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
   @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
 
-  @NotNull protected final String appID = EnvVar.CLARIFAI_APP_ID.value();
-  @NotNull protected final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
-  @NotNull protected final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
+  @NotNull final String appID = EnvVar.CLARIFAI_APP_ID.value();
+  @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
+  @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
+
 
   @NotNull final ClarifaiClient client = new ClarifaiBuilder(appID, appSecret)
       .baseURL(baseURL)
@@ -32,10 +43,26 @@ public abstract class BaseClarifaiAPITest {
           .connectTimeout(60, TimeUnit.SECONDS)
           .readTimeout(60, TimeUnit.SECONDS)
           .writeTimeout(60, TimeUnit.SECONDS)
-          .addInterceptor(new HttpLoggingInterceptor(System.out::println).setLevel(HttpLoggingInterceptor.Level.BODY))
+          .addInterceptor(new HttpLoggingInterceptor(logger::debug).setLevel(HttpLoggingInterceptor.Level.BODY))
           .build()
       )
       .buildSync();
+
+  @Before public void logTestNameBeginning() {
+    logTestNameBlock("BEGIN TEST");
+  }
+
+  @After public void logTestNameEnd() {
+    logTestNameBlock("END TEST");
+  }
+
+  private void logTestNameBlock(@NotNull String prefix) {
+    logger.info("\n" +
+        "#########################################################" + "\n" +
+        "### " + prefix + ": " + testName.getMethodName() + "\n" +
+        "#########################################################" + "\n"
+    );
+  }
 
   @Test(expected = ClarifaiException.class)
   public void testIncorrectAppID() {
@@ -47,13 +74,13 @@ public abstract class BaseClarifaiAPITest {
     new ClarifaiBuilder(appID, "fjweiojf2983fj203jf23ofj23ofj").buildSync();
   }
 
-  static <T> T assertSuccess(@NotNull ClarifaiPaginatedRequest<T> request) {
+  <T> T assertSuccess(@NotNull ClarifaiPaginatedRequest<T> request) {
     return assertSuccess(request.getPage(1));
   }
 
-  static <T> T assertSuccess(@NotNull ClarifaiRequest<T> request) {
+  <T> T assertSuccess(@NotNull ClarifaiRequest<T> request) {
     final T result = request.executeSync().get();
-    System.out.println(result);
+    logger.info(result.toString());
     return result;
   }
 
@@ -70,13 +97,13 @@ public abstract class BaseClarifaiAPITest {
         Assert.fail(InternalUtil.message("Clarifai response unsuccessful",
             "Request: " + request,
             "Error: " + errorCode
-            ));
+        ));
       }
 
       @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
         Assert.fail(InternalUtil.message("Clarifai network error",
             "Exception: " + e
-            ));
+        ));
       }
     });
   }
