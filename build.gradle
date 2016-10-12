@@ -9,6 +9,7 @@ subprojects {
       okhttp: "3.4.1",
       kotlin: "1.0.3",
       autoValue: "1.3",
+      slf4j: "1.7.21",
 
 //      junit: "5.0.0-M2",
 //      junitPlatform: "1.0.0-M2",
@@ -38,6 +39,11 @@ subprojects {
       junit: [
           "junit:junit:4.12",
 //          "org.junit.jupiter:junit-jupiter-api:$versions.junit",
+      ],
+      slf4j: [
+          "org.slf4j:slf4j-api:$versions.slf4j",
+          "org.slf4j:slf4j-simple:$versions.slf4j",
+
       ],
 //      junitRuntime: [
 //          "org.junit.jupiter:junit-jupiter-engine:$versions.junit",
