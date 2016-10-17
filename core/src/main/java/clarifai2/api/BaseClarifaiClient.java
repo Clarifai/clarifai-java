@@ -3,7 +3,6 @@ package clarifai2.api;
 import clarifai2.BuildConfig;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.AutoValueTypeAdapterFactory;
-import clarifai2.internal.InternalUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -64,29 +63,43 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     this.client = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
       @Override
       public okhttp3.Response intercept(Chain chain) throws IOException {
-        final Request request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer " + getCredential().getAccessToken())
-            .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION)
-            .build();
-        return chain.proceed(request);
-       }
+        final Request.Builder requestBuilder = chain.request().newBuilder()
+            .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
+        final ClarifaiToken credential = refreshIfNeeded();
+        if (credential != null) {
+          requestBuilder.addHeader("Authorization", "Bearer " + credential.getAccessToken());
+        }
+        return chain.proceed(requestBuilder.build());
+      }
     }).build();
 
     this.tokenRefreshClient = unmodifiedClient.newBuilder().build();
 
-    getCredential();
+    refreshIfNeeded();
   }
 
-  @NotNull
-  synchronized ClarifaiToken getCredential() {
-    if (currentClarifaiToken == null ||
-        System.currentTimeMillis() >= currentClarifaiToken.getExpiresAt() - 60000) {
+  @Override public boolean hasValidToken() {
+    return currentClarifaiToken != null && System.currentTimeMillis() <= currentClarifaiToken.getExpiresAt();
+  }
+
+  @NotNull @Override public ClarifaiToken getToken() throws IllegalStateException {
+    if (!hasValidToken()) {
+      throw new IllegalStateException("No valid token in this " + ClarifaiClient.class.getSimpleName() + ". "
+          + "Use hasValidToken() to check if a token exists before invoking this method to avoid this exception.");
+    }
+    //noinspection ConstantConditions
+    return currentClarifaiToken;
+  }
+
+  @Nullable
+  private synchronized ClarifaiToken refreshIfNeeded() {
+    if (!hasValidToken()) {
       currentClarifaiToken = refresh();
     }
     return currentClarifaiToken;
   }
 
-  @NotNull
+  @Nullable
   private ClarifaiToken refresh() {
     try {
       return tokenRefreshClient.dispatcher().executorService().invokeAny(Collections.singletonList(
@@ -104,20 +117,19 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
                 return new ClarifaiToken(response.get("access_token").getAsString(),
                     response.get("expires_in").getAsInt()
                 );
+              } else if (tokenResponse.code() == 401) {
+                throw new ClarifaiException("Clarifai app ID and/or app secret are incorrect");
               }
-              throw new ClarifaiException(InternalUtil.message("API call to refresh token unsuccessful",
-                  "Provided AppID: " + appID,
-                  "Provided AppSecret: " + appSecret,
-                  "Provided BaseURL: " + baseURL,
-                  "Status code: " + tokenResponse.code(),
-                  "Message: " + tokenResponse.message(),
-                  "Details: " + tokenResponse.body().string()
-              ));
+              return null;
             }
           }
       ));
     } catch (InterruptedException | ExecutionException e) {
-      throw new ClarifaiException(e);
+      final Throwable cause = e.getCause();
+      if (cause instanceof ClarifaiException) {
+        throw ((ClarifaiException) cause);
+      }
+      return null;
     }
   }
 

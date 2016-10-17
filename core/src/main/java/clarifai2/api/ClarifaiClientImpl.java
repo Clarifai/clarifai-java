@@ -51,10 +51,6 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     super(builder);
   }
 
-  @NotNull @Override public ClarifaiToken getToken() {
-    return getCredential();
-  }
-
   @NotNull @Override public AddInputsRequest addInputs() {
     return new AddInputsRequest(this);
   }

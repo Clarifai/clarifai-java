@@ -33,10 +33,16 @@ import java.util.List;
 public interface ClarifaiClient {
 
   /**
-   * @return the current token that we're using. If we don't have a token yet, or if your current token is expired, this
-   * method will block, make an API call to refresh the token that the client is using, and return that new token.
+   * @return {@code true} if the user has a token and it isn't expired; else, {@code false}
    */
-  @NotNull ClarifaiToken getToken();
+  boolean hasValidToken();
+
+  /**
+   * @return the current token that we're using
+   * @throws IllegalStateException if the current token is either invalid or expired. Check {@link #hasValidToken()}
+   *                               before calling this method to ensure that this exception is not thrown
+   */
+  @NotNull ClarifaiToken getToken() throws IllegalStateException;
 
   /**
    * Adds inputs to your Clarifai app.
@@ -44,14 +50,6 @@ public interface ClarifaiClient {
    * @return a builder to construct a request that will, when executed, return the inputs that were just added
    */
   @NotNull AddInputsRequest addInputs();
-
-//  /**
-//   * Bulk-add inputs from a CSV file to your Clarifai app.
-//   *
-//   * @param csvFile a CSV file that contains the inputs that will be added to your Clarifai app.
-//   * @return a request that will, when executed, return the inputs that were just added
-//   */
-//  @NotNull ClarifaiRequest<List<ClarifaiInput>> addInputsFromCSV(@NotNull File csvFile);
 
   /**
    * Adds the given concepts to the input with the given ID.
