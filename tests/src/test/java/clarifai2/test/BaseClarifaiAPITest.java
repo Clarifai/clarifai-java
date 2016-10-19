@@ -2,6 +2,7 @@ package clarifai2.test;
 
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
@@ -106,5 +107,12 @@ public abstract class BaseClarifaiAPITest {
         ));
       }
     });
+  }
+
+  static void assertFailure(@NotNull ClarifaiRequest<?> request) {
+    final ClarifaiResponse<?> response = request.executeSync();
+    if (response.isSuccessful()) {
+      Assert.fail("Response was not supposed to be successful! Response was " + response.get());
+    }
   }
 }

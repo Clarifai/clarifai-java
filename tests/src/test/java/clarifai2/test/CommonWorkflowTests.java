@@ -3,7 +3,6 @@ package clarifai2.test;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
-import clarifai2.api.ClarifaiUtil;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.input.ClarifaiInput;
@@ -11,6 +10,8 @@ import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
+import clarifai2.dto.model.ModelTrainingStatus;
+import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.InternalUtil;
@@ -178,7 +179,20 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void t15_trainModel() {
-    assertSuccess(ClarifaiUtil.trainAndAwaitCompletion(client, getModelID()));
+    assertSuccess(client.trainModel(getModelID()));
+    while (true) {
+      final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
+      if (version != null) {
+        final ModelTrainingStatus status = version.status();
+        if (status == ModelTrainingStatus.TRAINED) {
+          break;
+        }
+        if (status.isTerminalEvent()) {
+          Assert.fail("Hit unsuccessful terminal event " + status + " while waiting for model to be trained");
+        }
+      }
+      InternalUtil.sleep(2000);
+    }
   }
 
 

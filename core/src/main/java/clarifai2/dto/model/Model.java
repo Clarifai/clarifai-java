@@ -17,6 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.kevinmost.auto.value.custom_hashcode_equals.adapter.IgnoreForHashCodeEquals;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,7 +104,7 @@ public abstract class Model<PREDICTION extends Prediction> {
   @Nullable public abstract OutputInfo outputInfo();
   @Nullable abstract OutputInfo _outputInfo();
 
-  @NotNull abstract ClarifaiClient client();
+  @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
 
   @NotNull public final GetModelInputsRequest getInputs() {
     return client().getModelInputs(id());
