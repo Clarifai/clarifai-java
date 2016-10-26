@@ -277,6 +277,25 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     toBeClosed.getModels().getPage(1).executeSync();
   }
 
+  @Test
+  public void testModifyModel() {
+    final String modelName = "modifyingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelName).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        )
+    ));
+    assertSuccess(client.modifyModel(modelName).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("bar")
+        )
+    ));
+    final List<Concept> concepts =
+        assertSuccess(client.getModelByID(modelName)).asConceptModel().outputInfo().concepts();
+    Assert.assertEquals(1, concepts.size());
+    Assert.assertEquals("bar", concepts.get(0).name());
+  }
+
   /////////////////
 
   // Workaround since we can't delete models right now, so we'll make a new model every time that is different every time we run the app

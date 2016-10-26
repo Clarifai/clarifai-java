@@ -17,6 +17,7 @@ import clarifai2.api.request.model.DeleteModelRequest;
 import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
+import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
@@ -234,6 +235,8 @@ public interface ClarifaiClient {
    * @return a request builder that allows you to unlink {@link Concept}s from a model
    */
   @NotNull PatchModelRequest deleteConceptsFromModel(@NotNull String modelID);
+
+  @NotNull ModifyModelRequest modifyModel(@NotNull String modelID);
 
   /**
    * @param modelID the ID of the model to train

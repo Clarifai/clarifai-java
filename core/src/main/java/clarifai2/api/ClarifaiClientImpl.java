@@ -28,6 +28,7 @@ import clarifai2.api.request.model.GetModelRequest;
 import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
+import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
@@ -179,6 +180,10 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public PatchModelRequest deleteConceptsFromModel(@NotNull final String modelID) {
     return new PatchModelRequest(this, modelID, ClarifaiInputUpdateAction.DELETE_CONCEPTS);
+  }
+
+  @NotNull @Override public ModifyModelRequest modifyModel(@NotNull String modelID) {
+    return new ModifyModelRequest(this, modelID);
   }
 
   @NotNull @Override public TrainModelRequest trainModel(@NotNull final String modelID) {

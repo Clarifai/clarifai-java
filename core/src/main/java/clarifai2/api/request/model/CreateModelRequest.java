@@ -17,7 +17,7 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
+public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final BaseClarifaiClient helper;
 
@@ -45,26 +45,33 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
         final JsonObject body = new JSONObjectBuilder()
-            .add("model", client.gson.toJsonTree(
-                Model._create(
-                    ModelType.CONCEPT,
-                    helper,
-                    id,
-                    name != null ? name : id,
-                    outputInfo
-                ),
-                new TypeToken<Model<Concept>>() {}.getType()
-            )).build();
+            .add("model", buildJSONOfModel()).build();
         return postRequest("/v2/models", body);
       }
 
       @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
         return new JSONUnmarshaler<ConceptModel>() {
           @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<Concept>>() {}.getType());
+            return gson.fromJson(
+                json.getAsJsonObject().get("model"),
+                new TypeToken<Model<Concept>>() {}.getType()
+            );
           }
         };
       }
     };
+  }
+
+  @NotNull protected final JsonElement buildJSONOfModel() {
+    return client.gson.toJsonTree(
+        Model._create(
+            ModelType.CONCEPT,
+            helper,
+            id,
+            name != null ? name : id,
+            outputInfo
+        ),
+        new TypeToken<Model<Concept>>() {}.getType()
+    );
   }
 }
