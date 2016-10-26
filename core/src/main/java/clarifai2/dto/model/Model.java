@@ -98,7 +98,6 @@ public abstract class Model<PREDICTION extends Prediction> {
   @NotNull public abstract String id();
   @Nullable public abstract String name();
   @Nullable public abstract Date createdAt();
-  @Nullable public abstract Date updatedAt();
   @Nullable public abstract String appID();
   @Nullable public abstract ModelVersion modelVersion();
   @NotNull public abstract ModelType modelType();
@@ -142,7 +141,6 @@ public abstract class Model<PREDICTION extends Prediction> {
     @NotNull B id(@NotNull String id);
     @NotNull B name(@NotNull String name);
     @NotNull B createdAt(@Nullable Date createdAt);
-    @NotNull B updatedAt(@Nullable Date updatedAt);
     @NotNull B appID(@Nullable String appID);
     @NotNull B modelVersion(@Nullable ModelVersion modelVersion);
     @NotNull B _outputInfo(@Nullable OutputInfo _outputInfo);
@@ -181,7 +179,6 @@ public abstract class Model<PREDICTION extends Prediction> {
           .id(root.get("id").getAsString())
           .name(root.get("name").getAsString())
           .createdAt(context.<Date>deserialize(root.get("created_at"), Date.class))
-          .updatedAt(context.<Date>deserialize(root.get("updated_at"), Date.class))
           .appID(InternalUtil.<String>nullSafeTraverse(root, "app_id"))
           .modelVersion(context.<ModelVersion>deserialize(root.get("model_version"), ModelVersion.class))
           ._outputInfo(context.<OutputInfo>deserialize(root.get("output_info"), OutputInfo.class))
@@ -196,7 +193,6 @@ public abstract class Model<PREDICTION extends Prediction> {
           .add("name", src.name())
           .add("app_id", src.appID())
           .add("created_at", context.serialize(src.createdAt()))
-          .add("updated_at", context.serialize(src.updatedAt()))
           .add("model_version", context.serialize(src.modelVersion()))
           .add("output_info", context.serialize(src._outputInfo()))
           .build();
