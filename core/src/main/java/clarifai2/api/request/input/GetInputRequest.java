@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput> {
 
@@ -21,18 +20,19 @@ public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput
     this.inputID = inputID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<ClarifaiInput> unmarshaler() {
-    return new JSONUnmarshaler<ClarifaiInput>() {
-      @Nullable @Override public ClarifaiInput fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(gson, json.getAsJsonObject().get("input"), TypeToken.get(ClarifaiInput.class));
+  @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
+    return new DeserializedRequest<ClarifaiInput>() {
+      @NotNull @Override public Request httpRequest() {
+        return getRequest("/v2/inputs/" + inputID);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<ClarifaiInput> unmarshaler() {
+        return new JSONUnmarshaler<ClarifaiInput>() {
+          @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return InternalUtil.fromJson(gson, json.getAsJsonObject().get("input"), TypeToken.get(ClarifaiInput.class));
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    return new Request.Builder()
-        .url(buildURL("/v2/inputs/" + inputID))
-        .get()
-        .build();
   }
 }

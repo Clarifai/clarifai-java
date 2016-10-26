@@ -10,8 +10,6 @@ import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
-import clarifai2.dto.model.ModelTrainingStatus;
-import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.InternalUtil;
@@ -24,7 +22,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -122,10 +119,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.getInputByID("foo1"));
   }
 
-  @Test public void t05_deleteInputs() {
-    assertSuccess(client.deleteInputs()
-        .delete("foo1")
-    );
+  @Test public void t05_deleteInput() {
+    assertSuccess(client.deleteInput("foo1"));
   }
 
   @Test public void t06_getInputsStatus() {
@@ -180,19 +175,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Test public void t15_trainModel() {
     assertSuccess(client.trainModel(getModelID()));
-    while (true) {
-      final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
-      if (version != null) {
-        final ModelTrainingStatus status = version.status();
-        if (status == ModelTrainingStatus.TRAINED) {
-          break;
-        }
-        if (status.isTerminalEvent()) {
-          Assert.fail("Hit unsuccessful terminal event " + status + " while waiting for model to be trained");
-        }
-      }
-      InternalUtil.sleep(2000);
-    }
   }
 
 
@@ -236,23 +218,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     logger.info(response.getStatus().toString());
   }
 
-  @Test public void testAsyncUnsuccessfulWorks() {
-    final CountDownLatch lock = new CountDownLatch(1);
-
-    client.getModelByID("myID").executeAsync(
-        (model) -> Assert.fail("The model 'myID' shouldn't exist"),
-        (code) -> {
-          // We should get here, because there's no "myID" model
-          lock.countDown();
-        }
-    );
-    try {
-      if (!lock.await(60, TimeUnit.SECONDS)) {
-        Assert.fail("testAsync timed out");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  @Test public void testDeleteBatch() {
+    assertSuccess(client.addInputs().plus(
+        ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("kotlin"),
+        ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_FILE)).withID("train")
+    ));
+    assertSuccess(client.deleteInputsBatch().plus("kotlin", "train"));
   }
 
   @Test public void testSyncNetworkExceptions() throws ExecutionException, InterruptedException {

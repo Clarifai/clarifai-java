@@ -41,29 +41,30 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<ConceptModel> unmarshaler() {
-    return new JSONUnmarshaler<ConceptModel>() {
-      @Nullable @Override public ConceptModel fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<Concept>>() {}.getType());
+  @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
+    return new DeserializedRequest<ConceptModel>() {
+      @NotNull @Override public Request httpRequest() {
+        final JsonObject body = new JSONObjectBuilder()
+            .add("model", client.gson.toJsonTree(
+                Model._create(
+                    ModelType.CONCEPT,
+                    helper,
+                    id,
+                    name != null ? name : id,
+                    outputInfo
+                ),
+                new TypeToken<Model<Concept>>() {}.getType()
+            )).build();
+        return postRequest("/v2/models", body);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
+        return new JSONUnmarshaler<ConceptModel>() {
+          @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<Concept>>() {}.getType());
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("model", gson.toJsonTree(
-            Model._create(
-                ModelType.CONCEPT,
-                helper,
-                id,
-                name != null ? name : id,
-                outputInfo
-            ),
-            new TypeToken<Model<Concept>>() {}.getType()
-        )).build();
-    return new Request.Builder()
-        .url(buildURL("/v2/models"))
-        .post(toRequestBody(body))
-        .build();
   }
 }

@@ -6,14 +6,20 @@ import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.DeleteConceptsFromInputRequest;
 import clarifai2.api.request.input.AddConceptsToInputRequest;
 import clarifai2.api.request.input.AddInputsRequest;
-import clarifai2.api.request.input.DeleteInputsRequest;
+import clarifai2.api.request.input.DeleteAllInputsRequest;
+import clarifai2.api.request.input.DeleteInputRequest;
+import clarifai2.api.request.input.DeleteInputsBatchRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
+import clarifai2.api.request.model.DeleteAllModelsRequest;
+import clarifai2.api.request.model.DeleteModelRequest;
+import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
+import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
@@ -83,18 +89,30 @@ public interface ClarifaiClient {
   @NotNull ClarifaiRequest<ClarifaiInput> getInputByID(@NotNull String inputID);
 
   /**
-   * Deletes the given inputs from your app.
+   * Deletes the input with the given ID
    *
-   * @return a builder to construct a request that will, when executed, return no inputs (but delete the given inputs)
+   * @param inputID the ID of the input to delete
+   * @return a request that will, when executed, delete the given input
    */
-  @NotNull DeleteInputsRequest deleteInputs();
+  @NotNull DeleteInputRequest deleteInput(@NotNull String inputID);
 
   /**
-   * Deletes all inputs associated with this account
-   *
-   * @return a request that will, when executed, return no inputs (but delete all of your inputs)
+   * @return a request builder to specify inputs to delete
+   * <p>
+   * Note that this is an asynchronous operation on the server. Until the follow-up request is invoked and
+   * returns successfully, there is no guarantee that the inputs that you have specified have been deleted from the
+   * server
    */
-  @NotNull ClarifaiRequest<List<ClarifaiInput>> deleteAllInputs();
+  @NotNull DeleteInputsBatchRequest deleteInputsBatch();
+
+  /**
+   * @return a request that, when executed, will delete all inputs in your account
+   * <p>
+   * Note that this is an asynchronous operation on the server. Until the follow-up request is invoked and
+   * returns successfully, there is no guarantee that the inputs that you have specified have been deleted from the
+   * server
+   */
+  @NotNull DeleteAllInputsRequest deleteAllInputs();
 
   /**
    * @return the current status of your Clarifai inputs (how many have been processed, how many are yet to be
@@ -171,11 +189,13 @@ public interface ClarifaiClient {
 
   @NotNull ClarifaiRequest<Model<?>> getModelByID(@NotNull String modelID);
 
-  @NotNull ClarifaiRequest<List<Model<?>>> deleteModel(@NotNull String modelID);
+  @NotNull DeleteModelRequest deleteModel(@NotNull String modelID);
+
+  @NotNull DeleteModelsBatchRequest deleteModelsBatch();
+
+  @NotNull DeleteAllModelsRequest deleteAllModels();
 
   @NotNull ClarifaiRequest<List<ModelVersion>> deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
-
-  @NotNull ClarifaiRequest<List<Model<?>>> deleteAllModels();
 
   @NotNull ClarifaiRequest<ModelVersion> getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
 
@@ -218,7 +238,7 @@ public interface ClarifaiClient {
    * @param modelID the ID of the model to train
    * @return a request that, when executed, trains a new version of the {@link Model} with the given ID
    */
-  @NotNull ClarifaiRequest<Model<?>> trainModel(@NotNull String modelID);
+  @NotNull TrainModelRequest trainModel(@NotNull String modelID);
 
   /**
    * Predict using the model with the given ID.

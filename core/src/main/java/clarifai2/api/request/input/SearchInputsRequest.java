@@ -14,15 +14,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public final class SearchInputsRequest
-    extends ClarifaiPaginatedRequest.Builder<List<SearchHit>, SearchInputsRequest> {
+public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<List<SearchHit>, SearchInputsRequest> {
 
   private final List<SearchClause> andClauses = new ArrayList<>();
 
@@ -33,7 +31,7 @@ public final class SearchInputsRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<SearchHit>> unmarshaler() {
     return new JSONUnmarshaler<List<SearchHit>>() {
-      @Nullable @Override public List<SearchHit> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
+      @NotNull @Override public List<SearchHit> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(gson, json.getAsJsonObject().get("hits"), new TypeToken<List<SearchHit>>() {});
       }
     };

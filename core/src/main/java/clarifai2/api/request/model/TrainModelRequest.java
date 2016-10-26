@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class TrainModelRequest extends ClarifaiRequest.Builder<Model<?>> {
 
@@ -21,18 +20,19 @@ public final class TrainModelRequest extends ClarifaiRequest.Builder<Model<?>> {
     this.modelID = modelID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<Model<?>> unmarshaler() {
-    return new JSONUnmarshaler<Model<?>>() {
-      @Nullable @Override public Model<?> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<?>>() {}.getType());
+  @NotNull @Override protected DeserializedRequest<Model<?>> request() {
+    return new DeserializedRequest<Model<?>>() {
+      @NotNull @Override public Request httpRequest() {
+        return postRequest("/v2/models/" + modelID + "/versions", new JsonObject());
+      }
+
+      @NotNull @Override public JSONUnmarshaler<Model<?>> unmarshaler() {
+        return new JSONUnmarshaler<Model<?>>() {
+          @NotNull @Override public Model<?> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<?>>() {}.getType());
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    return new Request.Builder()
-        .url(buildURL("/v2/models/" + modelID + "/versions"))
-        .post(toRequestBody(new JsonObject()))
-        .build();
   }
 }

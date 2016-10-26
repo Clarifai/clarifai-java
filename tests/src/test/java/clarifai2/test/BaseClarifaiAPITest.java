@@ -6,7 +6,6 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseClarifaiAPITest {
@@ -44,7 +42,7 @@ public abstract class BaseClarifaiAPITest {
           .connectTimeout(60, TimeUnit.SECONDS)
           .readTimeout(60, TimeUnit.SECONDS)
           .writeTimeout(60, TimeUnit.SECONDS)
-          .addInterceptor(new HttpLoggingInterceptor(logger::debug).setLevel(HttpLoggingInterceptor.Level.BODY))
+          .addInterceptor(new HttpLoggingInterceptor(logger::warn).setLevel(HttpLoggingInterceptor.Level.BODY))
           .build()
       )
       .buildSync();
@@ -83,30 +81,6 @@ public abstract class BaseClarifaiAPITest {
     final T result = request.executeSync().get();
     logger.info(result.toString());
     return result;
-  }
-
-  static void assertSuccessAsync(@NotNull ClarifaiPaginatedRequest<?> request) {
-    assertSuccessAsync(request.getPage(1));
-  }
-
-  static <T> void assertSuccessAsync(@NotNull ClarifaiRequest<T> request) {
-    request.executeAsync(new ClarifaiRequest.Callback<T>() {
-      @Override public void onClarifaiResponseSuccess(@NotNull T o) {
-      }
-
-      @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
-        Assert.fail(InternalUtil.message("Clarifai response unsuccessful",
-            "Request: " + request,
-            "Error: " + errorCode
-        ));
-      }
-
-      @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
-        Assert.fail(InternalUtil.message("Clarifai network error",
-            "Exception: " + e
-        ));
-      }
-    });
   }
 
   static void assertFailure(@NotNull ClarifaiRequest<?> request) {

@@ -20,8 +20,8 @@ public final class ClarifaiBuilder {
   @NotNull
   final String appSecret;
 
-  @Nullable
-  OkHttpClient client;
+  @NotNull
+  OkHttpClient client = new OkHttpClient();
 
   @NotNull
   HttpUrl baseURL = HttpUrl.parse("https://api.clarifai.com/");
@@ -33,6 +33,9 @@ public final class ClarifaiBuilder {
 
   @NotNull
   public ClarifaiBuilder client(@Nullable OkHttpClient client) {
+    if (client == null) {
+      client = new OkHttpClient();
+    }
     this.client = client;
     return this;
   }

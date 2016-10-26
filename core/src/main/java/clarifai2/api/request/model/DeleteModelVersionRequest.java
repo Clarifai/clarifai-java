@@ -6,9 +6,9 @@ import clarifai2.dto.model.ModelVersion;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,18 +28,19 @@ public final class DeleteModelVersionRequest extends ClarifaiRequest.Builder<Lis
     this.versionID = versionID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<ModelVersion>> unmarshaler() {
-    return new JSONUnmarshaler<List<ModelVersion>>() {
-      @Nullable @Override public List<ModelVersion> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-        return Collections.emptyList();
+  @NotNull @Override protected DeserializedRequest<List<ModelVersion>> request() {
+    return new DeserializedRequest<List<ModelVersion>>() {
+      @NotNull @Override public Request httpRequest() {
+        return deleteRequest(String.format("/v2/models/%s/versions/%s", modelID, versionID), new JsonObject());
+      }
+
+      @NotNull @Override public JSONUnmarshaler<List<ModelVersion>> unmarshaler() {
+        return new JSONUnmarshaler<List<ModelVersion>>() {
+          @NotNull @Override public List<ModelVersion> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return Collections.emptyList();
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    return new Request.Builder()
-        .url(buildURL(String.format("/v2/models/%s/versions/%s", modelID, versionID)))
-        .delete()
-        .build();
   }
 }

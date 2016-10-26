@@ -33,7 +33,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   public final Gson gson;
 
   @NotNull
-  public final OkHttpClient client;
+  public final OkHttpClient httpClient;
 
   @NotNull
   public final HttpUrl baseURL;
@@ -45,7 +45,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   private final String appSecret;
 
   @NotNull
-  private final OkHttpClient tokenRefreshClient;
+  private final OkHttpClient tokenRefreshHTTPClient;
 
   @Nullable
   private ClarifaiToken currentClarifaiToken = null;
@@ -58,9 +58,9 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
     this.baseURL = builder.baseURL;
 
-    final OkHttpClient unmodifiedClient = builder.client == null ? new OkHttpClient() : builder.client;
+    final OkHttpClient unmodifiedClient = builder.client;
 
-    this.client = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
+    this.httpClient = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
       @Override
       public okhttp3.Response intercept(Chain chain) throws IOException {
         final Request.Builder requestBuilder = chain.request().newBuilder()
@@ -73,7 +73,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
       }
     }).build();
 
-    this.tokenRefreshClient = unmodifiedClient.newBuilder().build();
+    this.tokenRefreshHTTPClient = unmodifiedClient.newBuilder().build();
 
     refreshIfNeeded();
   }
@@ -102,10 +102,10 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   @Nullable
   private ClarifaiToken refresh() {
     try {
-      return tokenRefreshClient.dispatcher().executorService().invokeAny(Collections.singletonList(
+      return tokenRefreshHTTPClient.dispatcher().executorService().invokeAny(Collections.singletonList(
           new Callable<ClarifaiToken>() {
             @Override public ClarifaiToken call() throws Exception {
-              final Response tokenResponse = tokenRefreshClient.newCall(new Request.Builder()
+              final Response tokenResponse = tokenRefreshHTTPClient.newCall(new Request.Builder()
                   .url(baseURL.newBuilder().addPathSegments("v2/token").build())
                   .header("Authorization", Credentials.basic(appID, appSecret))
                   .header("X-Clarifai-Client", "java:" + BuildConfig.VERSION)

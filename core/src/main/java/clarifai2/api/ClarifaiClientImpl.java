@@ -10,7 +10,8 @@ import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.input.AddConceptsToInputRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
-import clarifai2.api.request.input.DeleteInputsRequest;
+import clarifai2.api.request.input.DeleteInputsBatchRequest;
+import clarifai2.api.request.input.DeleteInputRequest;
 import clarifai2.api.request.input.GetInputRequest;
 import clarifai2.api.request.input.GetInputsRequest;
 import clarifai2.api.request.input.GetInputsStatusRequest;
@@ -20,6 +21,7 @@ import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
 import clarifai2.api.request.model.DeleteModelVersionRequest;
+import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
 import clarifai2.api.request.model.GetModelRequest;
@@ -77,12 +79,17 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new GetInputRequest(this, inputID).build();
   }
 
-  @NotNull @Override public DeleteInputsRequest deleteInputs() {
-    return new DeleteInputsRequest(this);
+  @NotNull @Override public DeleteInputRequest deleteInput(@NotNull String inputID) {
+    return new DeleteInputRequest(this, inputID);
   }
 
-  @NotNull @Override public ClarifaiRequest<List<ClarifaiInput>> deleteAllInputs() {
-    return new DeleteAllInputsRequest(this).build();
+  @NotNull @Override public DeleteInputsBatchRequest deleteInputsBatch() {
+    return new DeleteInputsBatchRequest(this);
+  }
+
+  @NotNull @Override
+  public DeleteAllInputsRequest deleteAllInputs() {
+    return new DeleteAllInputsRequest(this);
   }
 
   @NotNull @Override public ClarifaiRequest<ClarifaiInputsStatus> getInputsStatus() {
@@ -135,8 +142,12 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new GetModelRequest(this, modelID).build();
   }
 
-  @NotNull @Override public ClarifaiRequest<List<Model<?>>> deleteModel(@NotNull final String modelID) {
-    return new DeleteModelRequest(this, modelID).build();
+  @NotNull @Override public DeleteModelRequest deleteModel(@NotNull final String modelID) {
+    return new DeleteModelRequest(this, modelID);
+  }
+
+  @NotNull @Override public DeleteModelsBatchRequest deleteModelsBatch() {
+    return new DeleteModelsBatchRequest(this);
   }
 
   @NotNull @Override
@@ -144,8 +155,8 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new DeleteModelVersionRequest(this, modelID, versionID).build();
   }
 
-  @NotNull @Override public ClarifaiRequest<List<Model<?>>> deleteAllModels() {
-    return new DeleteAllModelsRequest(this).build();
+  @NotNull @Override public DeleteAllModelsRequest deleteAllModels() {
+    return new DeleteAllModelsRequest(this);
   }
 
   @NotNull @Override
@@ -174,8 +185,8 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new PatchModelRequest(this, modelID, ClarifaiInputUpdateAction.DELETE_CONCEPTS);
   }
 
-  @NotNull @Override public ClarifaiRequest<Model<?>> trainModel(@NotNull final String modelID) {
-    return new TrainModelRequest(this, modelID).build();
+  @NotNull @Override public TrainModelRequest trainModel(@NotNull final String modelID) {
+    return new TrainModelRequest(this, modelID);
   }
 
   @NotNull @Override public PredictRequest<Prediction> predict(@NotNull String modelID) {

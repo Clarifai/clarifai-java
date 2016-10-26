@@ -5,6 +5,7 @@ import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
 import clarifai2.api.request.model.PredictRequest;
+import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
@@ -131,10 +132,8 @@ public abstract class Model<PREDICTION extends Prediction> {
     return client().deleteModelVersion(id(), versionID);
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  @NotNull
-  public final ClarifaiRequest<Model<PREDICTION>> train() {
-    return ((ClarifaiRequest) client().trainModel(id()));
+  @NotNull public final TrainModelRequest train() {
+    return client().trainModel(id());
   }
 
   Model() {} // AutoValue instances only

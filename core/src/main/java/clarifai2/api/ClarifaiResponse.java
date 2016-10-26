@@ -11,30 +11,12 @@ import java.util.NoSuchElementException;
 
 public abstract class ClarifaiResponse<T> {
 
-  @NotNull public static <T> ClarifaiResponse<T> create(
-      @NotNull ClarifaiStatus status,
-      int httpCode,
-      @Nullable String rawBody,
-      @Nullable T deserialized
-  ) {
-    if (deserialized == null) {
-      if (rawBody == null) {
-        return new NetworkError<>(status, httpCode);
-      }
-      return new Failure<>(status, httpCode, rawBody);
-    }
-    if (rawBody == null) {
-      throw new RuntimeException("Cannot create a Successful ClarifaiResponse without a non-null rawBody");
-    }
-    return new Successful<>(status, httpCode, rawBody, deserialized);
-  }
-
   public static final class Successful<T> extends ClarifaiResponse<T> {
 
     @NotNull private final String rawBody;
     @NotNull private final T deserialized;
 
-    private Successful(
+    public Successful(
         @NotNull ClarifaiStatus status,
         int httpCode,
         @NotNull String rawBody,
@@ -45,7 +27,7 @@ public abstract class ClarifaiResponse<T> {
       this.rawBody = rawBody;
     }
 
-    @NotNull public String rawBody() {
+    @NotNull @Override public String rawBody() {
       return rawBody;
     }
 
@@ -67,12 +49,12 @@ public abstract class ClarifaiResponse<T> {
 
     @NotNull private String rawBody;
 
-    private Failure(@NotNull ClarifaiStatus status, int httpCode, @NotNull String rawBody) {
+    public Failure(@NotNull ClarifaiStatus status, int httpCode, @NotNull String rawBody) {
       super(status, httpCode);
       this.rawBody = rawBody;
     }
 
-    @NotNull public String rawBody() {
+    @NotNull @Override public String rawBody() {
       return rawBody;
     }
 
@@ -92,12 +74,16 @@ public abstract class ClarifaiResponse<T> {
 
   public static final class NetworkError<T> extends ClarifaiResponse<T> {
 
-    private NetworkError(@NotNull ClarifaiStatus status, int httpCode) {
-      super(status, httpCode);
+    public NetworkError(@NotNull ClarifaiStatus status) {
+      super(status, 0);
     }
 
     @NotNull @Override public <R> ClarifaiResponse<R> map(@NotNull Func1<T, R> mapper) {
-      return new NetworkError<>(status, httpCode);
+      return new NetworkError<>(status);
+    }
+
+    @NotNull @Override public String rawBody() throws UnsupportedOperationException {
+      throw new UnsupportedOperationException("Cannot get rawBody() on a ClarifaiResponse that ended in network error");
     }
 
     @Nullable @Override public T getOrNull() {
@@ -113,7 +99,7 @@ public abstract class ClarifaiResponse<T> {
   @NotNull final ClarifaiStatus status;
   final int httpCode;
 
-  private ClarifaiResponse(@NotNull ClarifaiStatus status, int httpCode) {
+  protected ClarifaiResponse(@NotNull ClarifaiStatus status, int httpCode) {
     this.status = status;
     this.httpCode = httpCode;
   }
@@ -199,4 +185,6 @@ public abstract class ClarifaiResponse<T> {
   public final int responseCode() {
     return httpCode;
   }
+
+  @NotNull public abstract String rawBody() throws UnsupportedOperationException;
 }

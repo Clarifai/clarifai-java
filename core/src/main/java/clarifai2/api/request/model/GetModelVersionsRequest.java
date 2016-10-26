@@ -10,7 +10,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public final class GetModelVersionsRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<ModelVersion>> unmarshaler() {
     return new JSONUnmarshaler<List<ModelVersion>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<ModelVersion> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,

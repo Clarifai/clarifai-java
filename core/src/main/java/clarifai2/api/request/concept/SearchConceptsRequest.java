@@ -12,7 +12,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public final class SearchConceptsRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<Concept>> unmarshaler() {
     return new JSONUnmarshaler<List<Concept>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<Concept> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,

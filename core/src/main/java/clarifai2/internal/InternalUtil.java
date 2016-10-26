@@ -1,5 +1,6 @@
 package clarifai2.internal;
 
+import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public final class InternalUtil {
 
@@ -22,6 +24,40 @@ public final class InternalUtil {
 
   private InternalUtil() {
     throw new UnsupportedOperationException("No instances");
+  }
+
+  @NotNull public static JsonObject jsonDeepCopy(@NotNull JsonObject source) {
+    final JsonObject copy = new JsonObject();
+    for (final Map.Entry<String, JsonElement> entry : source.entrySet()) {
+      copy.add(entry.getKey(), entry.getValue());
+    }
+    return copy;
+  }
+
+  @NotNull public static <T> ClarifaiRequest.Callback<T> callback(
+      @Nullable final ClarifaiRequest.OnSuccess<T> onSuccess,
+      @Nullable final ClarifaiRequest.OnFailure onFailure,
+      @Nullable final ClarifaiRequest.OnNetworkError onNetworkError
+  ) {
+    return new ClarifaiRequest.Callback<T>() {
+      @Override public void onClarifaiResponseSuccess(@NotNull T t) {
+        if (onSuccess != null) {
+          onSuccess.onClarifaiResponseSuccess(t);
+        }
+      }
+
+      @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
+        if (onFailure != null) {
+          onFailure.onClarifaiResponseUnsuccessful(errorCode);
+        }
+      }
+
+      @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
+        if (onNetworkError != null) {
+          onNetworkError.onClarifaiResponseNetworkError(e);
+        }
+      }
+    };
   }
 
   public static void sleep(long millis) {
@@ -76,7 +112,7 @@ public final class InternalUtil {
       final Number num = root.getAsNumber();
       try {
         return num.longValue();
-      } catch(NumberFormatException e) {
+      } catch (NumberFormatException e) {
         return num.doubleValue();
       }
     }
@@ -128,4 +164,5 @@ public final class InternalUtil {
     builder.setLength(builder.length() - 1);
     return builder.toString();
   }
+
 }
