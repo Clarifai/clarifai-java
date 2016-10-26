@@ -12,6 +12,7 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -267,6 +268,13 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     }
     final ClarifaiClient client = futureClient.get();
     logger.info(client.getToken().toString());
+  }
+
+  @Test(expected = ClarifaiException.class)
+  public void testClosingClientWorks() {
+    final ClarifaiClient toBeClosed = new ClarifaiBuilder(appID, appSecret).buildSync();
+    toBeClosed.close();
+    toBeClosed.getModels().getPage(1).executeSync();
   }
 
   /////////////////

@@ -9,6 +9,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import okhttp3.Cache;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -49,6 +50,8 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
   @Nullable
   private ClarifaiToken currentClarifaiToken = null;
+
+  private boolean closed = false;
 
   BaseClarifaiClient(@NotNull ClarifaiBuilder builder) {
     this.appID = notNullOrThrow(builder.appID, "appID == null");
@@ -93,6 +96,9 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
   @Nullable
   private synchronized ClarifaiToken refreshIfNeeded() {
+    if (closed) {
+      throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
+    }
     if (!hasValidToken()) {
       currentClarifaiToken = refresh();
     }
@@ -156,5 +162,21 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
         .create();
   }
 
+  @Override public void close() {
+    closed = true;
+    closeOkHttpClient(tokenRefreshHTTPClient);
+    closeOkHttpClient(httpClient);
+  }
+
+  private static void closeOkHttpClient(@NotNull OkHttpClient client) {
+    client.dispatcher().executorService().shutdown();
+    client.connectionPool().evictAll();
+    final Cache cache = client.cache();
+    if (cache != null) {
+      try {
+        cache.close();
+      } catch (IOException ignored) {}
+    }
+  }
 }
 

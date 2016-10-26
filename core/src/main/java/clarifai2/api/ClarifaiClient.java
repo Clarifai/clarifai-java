@@ -27,6 +27,7 @@ import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -247,6 +248,17 @@ public interface ClarifaiClient {
    * @return a request builder that, when executed, will predict upon your model
    */
   @NotNull PredictRequest<Prediction> predict(@NotNull String modelID);
+
+  /**
+   * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.
+   *
+   * Note that most users will not need to use this method. According to the OkHttp documentation, clients will
+   * automatically relinquish resources that are unused over time. This method is only required if aggressive
+   * relinquishment of resources is needed.
+   *
+   * Using this {@link ClarifaiClient} instance after this method has been called is an error.
+   */
+  void close();
 }
 
 

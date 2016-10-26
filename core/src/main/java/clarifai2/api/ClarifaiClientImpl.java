@@ -57,10 +57,6 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new AddInputsRequest(this);
   }
 
-//  @NotNull @Override public ClarifaiRequest<List<ClarifaiInput>> addInputsFromCSV(@NotNull final File csvFile) {
-//    return new ClarifaiAddInputsFromCSVRequest(this, csvFile).build();
-//  }
-
   @NotNull @Override
   public AddConceptsToInputRequest addConceptsToInput(@NotNull final String inputID) {
     return new AddConceptsToInputRequest(this, inputID);
