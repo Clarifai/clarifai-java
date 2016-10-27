@@ -183,12 +183,15 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
       if (version == null) {
         Assert.fail("Model version can't be null");
       }
-      if (version.status().isError()) {
-        Assert.fail("Version had error while training: " + version.status());
+      final ModelTrainingStatus status = version.status();
+      if (!status.isTerminalEvent()) {
+        InternalUtil.sleep(200);
+        continue;
       }
-      if (version.status() == ModelTrainingStatus.TRAINED) {
+      if (status == ModelTrainingStatus.TRAINED) {
         return;
       }
+      Assert.fail("Version had error while training: " + version.status());
     }
   }
 
