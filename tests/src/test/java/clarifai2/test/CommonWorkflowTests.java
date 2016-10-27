@@ -10,6 +10,8 @@ import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
+import clarifai2.dto.model.ModelTrainingStatus;
+import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
@@ -176,6 +178,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Test public void t15_trainModel() {
     assertSuccess(client.trainModel(getModelID()));
+    while(true) {
+      final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
+      if (version == null) {
+        Assert.fail("Model version can't be null");
+      }
+      if (version.status().isError()) {
+        Assert.fail("Version had error while training: " + version.status());
+      }
+      if (version.status() == ModelTrainingStatus.TRAINED) {
+        return;
+      }
+    }
   }
 
 
