@@ -1,25 +1,28 @@
-package clarifai2.api.request.model;
+package clarifai2.api.request.input;
 
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
-public final class DeleteAllModelsRequest extends ClarifaiRequest.Builder<JsonNull> {
+public final class DeleteInputRequest extends ClarifaiRequest.Builder<JsonNull> {
 
-  public DeleteAllModelsRequest(@NotNull final BaseClarifaiClient helper) {
-    super(helper);
+  private final String inputID;
+
+  public DeleteInputRequest(@NotNull BaseClarifaiClient client, @NotNull String inputID) {
+    super(client);
+    this.inputID = inputID;
   }
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {
     return new DeserializedRequest<JsonNull>() {
       @NotNull @Override public Request httpRequest() {
-        return deleteRequest("/v2/models", new JSONObjectBuilder().add("delete_all", true).build());
+        return deleteRequest("/v2/inputs/" + inputID, new JsonObject());
       }
 
       @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {

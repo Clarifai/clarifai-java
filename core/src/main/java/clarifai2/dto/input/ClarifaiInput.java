@@ -32,7 +32,7 @@ public abstract class ClarifaiInput {
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
-    return new AutoValue_ClarifaiInput(null, null, image, Collections.<Concept>emptyList());
+    return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList());
   }
 
   @Nullable public abstract String id();
@@ -42,6 +42,16 @@ public abstract class ClarifaiInput {
    * @return the image represented by this concept
    */
   @NotNull public abstract ClarifaiImage image();
+
+  /**
+   * @return the metadata on this image
+   */
+  @NotNull public final JsonObject metadata() {
+    // return a defensive copy so that the immutable object can't be modified
+    return InternalUtil.jsonDeepCopy(_metadata());
+  }
+
+  @NotNull abstract JsonObject _metadata();
 
   /**
    * @return the concepts present on this input
@@ -54,6 +64,14 @@ public abstract class ClarifaiInput {
    */
   @NotNull public final ClarifaiInput withID(@NotNull String id) {
     return withId(id);
+  }
+
+  /**
+   * @param metadata the metadata to attach to this input
+   * @return a copy of this {@link ClarifaiInput} with its metadata set to the specified value
+   */
+  @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
+    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts());
   }
 
   // Hide the ugly casing that auto-value-with requires
@@ -77,10 +95,11 @@ public abstract class ClarifaiInput {
     @Override
     public ClarifaiInput deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
       final JsonObject root = json.getAsJsonObject();
+      final JsonObject data = root.getAsJsonObject("data");
 
       final List<Concept> concepts;
       {
-        final JsonElement conceptsJSON = root.get("data").getAsJsonObject().get("concepts");
+        final JsonElement conceptsJSON = data.get("concepts");
         if (conceptsJSON != null) {
           concepts = context.deserialize(conceptsJSON, new TypeToken<List<Concept>>() {}.getType());
         } else {
@@ -88,10 +107,13 @@ public abstract class ClarifaiInput {
         }
       }
 
+      final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
+
       return new AutoValue_ClarifaiInput(
           InternalUtil.<String>nullSafeTraverse(root, "id"),
           context.<Date>deserialize(root.get("created_at"), Date.class),
-          context.<ClarifaiImage>deserialize(root.get("data").getAsJsonObject().get("image"), ClarifaiImage.class),
+          context.<ClarifaiImage>deserialize(data.get("image"), ClarifaiImage.class),
+          metadata,
           concepts
       );
     }
@@ -103,6 +125,7 @@ public abstract class ClarifaiInput {
           .add("data", new JSONObjectBuilder()
               .add("concepts", context.serialize(src.concepts(), new TypeToken<List<Concept>>() {}.getType()))
               .add("image", context.serialize(src.image()))
+              .add("metadata", src.metadata())
           )
           .build();
     }

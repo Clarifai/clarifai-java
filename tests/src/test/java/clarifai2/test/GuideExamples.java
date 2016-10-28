@@ -80,9 +80,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void deleteInputByID() {
-    client.deleteInputs()
-        .delete("id")
-        .executeSync();
+    client.deleteInput("{{id}}").executeSync();
   }
 
   @Test public void deleteAllInputs() {

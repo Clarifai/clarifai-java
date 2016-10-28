@@ -21,9 +21,14 @@ test {
 dependencies {
   testCompile(
       project(":core"),
-      deps.junit,
+
+      "junit:junit:4.12",
+
       deps.nullityAnnotations,
-      deps.okhttpLogging,
-      deps.slf4j,
+
+      "org.slf4j:slf4j-api:$versions.slf4j",
+      "org.slf4j:slf4j-simple:$versions.slf4j",
+
+      "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
   )
 }

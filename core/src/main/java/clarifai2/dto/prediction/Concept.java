@@ -22,11 +22,11 @@ import java.util.Date;
 public abstract class Concept extends Prediction {
 
   @NotNull public static Concept forID(@NotNull String id) {
-    return new AutoValue_Concept(id, null, null, null, null, 1.0F);
+    return new AutoValue_Concept(id, null, null, null, 1.0F);
   }
 
   @NotNull public static Concept forName(@NotNull String name) {
-    return new AutoValue_Concept(null, name, null, null, null, 1.0F);
+    return new AutoValue_Concept(null, name, null, null, 1.0F);
   }
 
   /**
@@ -40,8 +40,6 @@ public abstract class Concept extends Prediction {
   @Nullable public abstract String name();
 
   @Nullable public abstract Date createdAt();
-
-  @Nullable public abstract Date updatedAt();
 
   /**
    * @return the ID of the app to which this concept belongs
@@ -71,7 +69,6 @@ public abstract class Concept extends Prediction {
           .add("id", src.id())
           .add("name", src.name())
           .add("created_at", context.serialize(src.createdAt()))
-          .add("updated_at", context.serialize(src.updatedAt()))
           .add("app_id", src.appID())
           .add("value", src.value())
           .build();
@@ -83,7 +80,6 @@ public abstract class Concept extends Prediction {
           root.get("id").getAsString(),
           root.get("name").getAsString(),
           context.<Date>deserialize(root.get("created_at"), Date.class),
-          context.<Date>deserialize(root.get("updated_at"), Date.class),
           InternalUtil.<String>nullSafeTraverse(root, "app_id"),
           root.has("value") && !root.get("value").isJsonNull() ? root.get("value").getAsFloat() : 1.0F
       );

@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,38 +49,41 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
-    return new JSONUnmarshaler<List<ClarifaiInput>>() {
-      @Nullable @Override
-      public List<ClarifaiInput> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().getAsJsonArray("inputs"),
-            new TypeToken<List<ClarifaiInput>>() {}
-        );
+  @NotNull @Override protected DeserializedRequest<List<ClarifaiInput>> request() {
+    return new DeserializedRequest<List<ClarifaiInput>>() {
+
+      @NotNull @Override public Request httpRequest() {
+        final JsonArray inputs = client.gson.toJsonTree(
+            AddInputsRequest.this.inputs,
+            new TypeToken<List<ClarifaiInput>>() {}.getType()
+        ).getAsJsonArray();
+
+        if (allowDuplicateURLs) {
+          for (final JsonElement input : inputs) {
+            final JsonObject image = input.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("image");
+            if (image.has("url")) {
+              image.addProperty("allow_duplicate_url", allowDuplicateURLs);
+            }
+          }
+        }
+
+        final JsonObject body = new JSONObjectBuilder()
+            .add("inputs", inputs)
+            .build();
+        return postRequest("/v2/inputs", body);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
+        return new JSONUnmarshaler<List<ClarifaiInput>>() {
+          @NotNull @Override public List<ClarifaiInput> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return InternalUtil.fromJson(
+                gson,
+                json.getAsJsonObject().getAsJsonArray("inputs"),
+                new TypeToken<List<ClarifaiInput>>() {}
+            );
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    final JsonArray inputs = gson.toJsonTree(
-        this.inputs,
-        new TypeToken<List<ClarifaiInput>>() {}.getType()
-    ).getAsJsonArray();
-    if (allowDuplicateURLs) {
-      for (final JsonElement input : inputs) {
-        final JsonObject image = input.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("image");
-        if (image.has("url")) {
-          image.addProperty("allow_duplicate_url", allowDuplicateURLs);
-        }
-      }
-    }
-    final JsonObject requestBody = new JSONObjectBuilder()
-        .add("inputs", inputs)
-        .build();
-    return new Request.Builder()
-        .url(buildURL("/v2/inputs"))
-        .post(toRequestBody(requestBody))
-        .build();
   }
 }

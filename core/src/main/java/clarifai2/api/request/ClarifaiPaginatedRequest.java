@@ -11,6 +11,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 /**
@@ -60,7 +62,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
     }
 
     @NotNull public final ClarifaiPaginatedRequest<T> build() {
-      return new ClarifaiPaginatedRequestImpl<>(gson, client.client, new PaginatedRequestVendor() {
+      return new ClarifaiPaginatedRequestImpl<>(client, new PaginatedRequestVendor() {
         @Override public Request vendRequest(final int page) {
           return buildRequest(page);
         }
@@ -95,6 +97,65 @@ public interface ClarifaiPaginatedRequest<RESULT> {
         urlBuilder.setQueryParameter("per_page", String.valueOf(perPage));
       }
       return urlBuilder.build();
+    }
+  }
+
+
+  final class ClarifaiPaginatedRequestImpl<RESULT> implements ClarifaiPaginatedRequest<RESULT> {
+
+    @NotNull private final BaseClarifaiClient client;
+    @NotNull private final PaginatedRequestVendor requestVendor;
+    @NotNull private final JSONUnmarshaler<RESULT> unmarshaler;
+
+    ClarifaiPaginatedRequestImpl(
+        @NotNull BaseClarifaiClient client,
+        @NotNull PaginatedRequestVendor requestVendor,
+        @NotNull JSONUnmarshaler<RESULT> unmarshaler
+    ) {
+      this.client = client;
+      this.requestVendor = requestVendor;
+      this.unmarshaler = unmarshaler;
+    }
+
+    @NotNull
+    @Override
+    public ClarifaiRequest<RESULT> getPage(final int page) {
+      if (page < 1) {
+        throw new IllegalArgumentException(
+            "getPage(int) called with invalid page. Pages must be 1 or greater. getPage(int) called with pg#: " + page
+        );
+      }
+      return new ClarifaiRequest.Impl<>(client, new ClarifaiRequest.DeserializedRequest<RESULT>() {
+        @NotNull @Override public Request httpRequest() {
+          return requestVendor.vendRequest(page);
+        }
+
+        @NotNull @Override public JSONUnmarshaler<RESULT> unmarshaler() {
+          return unmarshaler;
+        }
+      });
+    }
+
+    private class PageIterable implements Iterable<ClarifaiRequest<RESULT>> {
+      @Override public Iterator<ClarifaiRequest<RESULT>> iterator() {
+        return new Iterator<ClarifaiRequest<RESULT>>() {
+          private int currentIndex = 0;
+
+          @Override public boolean hasNext() {
+            // The API still doesn't tell us whether a paginated endpoint has more results...
+            return true;
+          }
+
+          @Override public ClarifaiRequest<RESULT> next() {
+            currentIndex++;
+            return getPage(currentIndex);
+          }
+
+          @Override public void remove() {
+            throw new UnsupportedOperationException();
+          }
+        };
+      }
     }
   }
 }

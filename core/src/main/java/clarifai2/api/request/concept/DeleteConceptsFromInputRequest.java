@@ -13,7 +13,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,26 +40,28 @@ public final class DeleteConceptsFromInputRequest extends ClarifaiRequest.Builde
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<ClarifaiInput> unmarshaler() {
-    return new JSONUnmarshaler<ClarifaiInput>() {
-      @Nullable @Override public ClarifaiInput fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return gson.fromJson(json.getAsJsonObject().get("input"), ClarifaiInput.class);
+
+  @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
+    return new DeserializedRequest<ClarifaiInput>() {
+      @NotNull @Override public Request httpRequest() {
+        final List<JsonElement> conceptJSONs = new ArrayList<>(concepts.size());
+        for (final Concept concept : concepts) {
+          conceptJSONs.add(client.gson.toJsonTree(concept));
+        }
+        final JsonObject body = new JSONObjectBuilder()
+            .add("concepts", new JSONArrayBuilder(conceptJSONs).build())
+            .add("action", client.gson.toJsonTree(ClarifaiInputUpdateAction.DELETE_CONCEPTS))
+            .build();
+        return patchRequest("/v2/inputs/" + inputID + "/data/concepts", body);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<ClarifaiInput> unmarshaler() {
+        return new JSONUnmarshaler<ClarifaiInput>() {
+          @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return gson.fromJson(json.getAsJsonObject().get("input"), ClarifaiInput.class);
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    final List<JsonElement> conceptJSONs = new ArrayList<>(this.concepts.size());
-    for (final Concept concept : concepts) {
-      conceptJSONs.add(gson.toJsonTree(concept));
-    }
-    final JsonObject body = new JSONObjectBuilder()
-        .add("concepts", new JSONArrayBuilder(conceptJSONs).build())
-        .add("action", gson.toJsonTree(ClarifaiInputUpdateAction.DELETE_CONCEPTS))
-        .build();
-    return new Request.Builder()
-        .url(buildURL("/v2/inputs/" + inputID + "/data/concepts"))
-        .patch(toRequestBody(body))
-        .build();
   }
 }

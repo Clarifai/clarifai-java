@@ -6,14 +6,21 @@ import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.DeleteConceptsFromInputRequest;
 import clarifai2.api.request.input.AddConceptsToInputRequest;
 import clarifai2.api.request.input.AddInputsRequest;
-import clarifai2.api.request.input.DeleteInputsRequest;
+import clarifai2.api.request.input.DeleteAllInputsRequest;
+import clarifai2.api.request.input.DeleteInputRequest;
+import clarifai2.api.request.input.DeleteInputsBatchRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
+import clarifai2.api.request.model.DeleteAllModelsRequest;
+import clarifai2.api.request.model.DeleteModelRequest;
+import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
+import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
+import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
@@ -21,6 +28,7 @@ import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -33,10 +41,16 @@ import java.util.List;
 public interface ClarifaiClient {
 
   /**
-   * @return the current token that we're using. If we don't have a token yet, or if your current token is expired, this
-   * method will block, make an API call to refresh the token that the client is using, and return that new token.
+   * @return {@code true} if the user has a token and it isn't expired; else, {@code false}
    */
-  @NotNull ClarifaiToken getToken();
+  boolean hasValidToken();
+
+  /**
+   * @return the current token that we're using
+   * @throws IllegalStateException if the current token is either invalid or expired. Check {@link #hasValidToken()}
+   *                               before calling this method to ensure that this exception is not thrown
+   */
+  @NotNull ClarifaiToken getToken() throws IllegalStateException;
 
   /**
    * Adds inputs to your Clarifai app.
@@ -44,14 +58,6 @@ public interface ClarifaiClient {
    * @return a builder to construct a request that will, when executed, return the inputs that were just added
    */
   @NotNull AddInputsRequest addInputs();
-
-//  /**
-//   * Bulk-add inputs from a CSV file to your Clarifai app.
-//   *
-//   * @param csvFile a CSV file that contains the inputs that will be added to your Clarifai app.
-//   * @return a request that will, when executed, return the inputs that were just added
-//   */
-//  @NotNull ClarifaiRequest<List<ClarifaiInput>> addInputsFromCSV(@NotNull File csvFile);
 
   /**
    * Adds the given concepts to the input with the given ID.
@@ -85,18 +91,30 @@ public interface ClarifaiClient {
   @NotNull ClarifaiRequest<ClarifaiInput> getInputByID(@NotNull String inputID);
 
   /**
-   * Deletes the given inputs from your app.
+   * Deletes the input with the given ID
    *
-   * @return a builder to construct a request that will, when executed, return no inputs (but delete the given inputs)
+   * @param inputID the ID of the input to delete
+   * @return a request that will, when executed, delete the given input
    */
-  @NotNull DeleteInputsRequest deleteInputs();
+  @NotNull DeleteInputRequest deleteInput(@NotNull String inputID);
 
   /**
-   * Deletes all inputs associated with this account
-   *
-   * @return a request that will, when executed, return no inputs (but delete all of your inputs)
+   * @return a request builder to specify inputs to delete
+   * <p>
+   * Note that this is an asynchronous operation on the server. Until the follow-up request is invoked and
+   * returns successfully, there is no guarantee that the inputs that you have specified have been deleted from the
+   * server
    */
-  @NotNull ClarifaiRequest<List<ClarifaiInput>> deleteAllInputs();
+  @NotNull DeleteInputsBatchRequest deleteInputsBatch();
+
+  /**
+   * @return a request that, when executed, will delete all inputs in your account
+   * <p>
+   * Note that this is an asynchronous operation on the server. Until the follow-up request is invoked and
+   * returns successfully, there is no guarantee that the inputs that you have specified have been deleted from the
+   * server
+   */
+  @NotNull DeleteAllInputsRequest deleteAllInputs();
 
   /**
    * @return the current status of your Clarifai inputs (how many have been processed, how many are yet to be
@@ -173,11 +191,13 @@ public interface ClarifaiClient {
 
   @NotNull ClarifaiRequest<Model<?>> getModelByID(@NotNull String modelID);
 
-  @NotNull ClarifaiRequest<List<Model<?>>> deleteModel(@NotNull String modelID);
+  @NotNull DeleteModelRequest deleteModel(@NotNull String modelID);
+
+  @NotNull DeleteModelsBatchRequest deleteModelsBatch();
+
+  @NotNull DeleteAllModelsRequest deleteAllModels();
 
   @NotNull ClarifaiRequest<List<ModelVersion>> deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
-
-  @NotNull ClarifaiRequest<List<Model<?>>> deleteAllModels();
 
   @NotNull ClarifaiRequest<ModelVersion> getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
 
@@ -216,11 +236,13 @@ public interface ClarifaiClient {
    */
   @NotNull PatchModelRequest deleteConceptsFromModel(@NotNull String modelID);
 
+  @NotNull ModifyModelRequest modifyModel(@NotNull String modelID);
+
   /**
    * @param modelID the ID of the model to train
    * @return a request that, when executed, trains a new version of the {@link Model} with the given ID
    */
-  @NotNull ClarifaiRequest<Model<?>> trainModel(@NotNull String modelID);
+  @NotNull TrainModelRequest trainModel(@NotNull String modelID);
 
   /**
    * Predict using the model with the given ID.
@@ -229,6 +251,17 @@ public interface ClarifaiClient {
    * @return a request builder that, when executed, will predict upon your model
    */
   @NotNull PredictRequest<Prediction> predict(@NotNull String modelID);
+
+  /**
+   * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.
+   *
+   * Note that most users will not need to use this method. According to the OkHttp documentation, clients will
+   * automatically relinquish resources that are unused over time. This method is only required if aggressive
+   * relinquishment of resources is needed.
+   *
+   * Using this {@link ClarifaiClient} instance after this method has been called is an error.
+   */
+  void close();
 }
 
 

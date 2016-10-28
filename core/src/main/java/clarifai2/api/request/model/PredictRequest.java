@@ -52,34 +52,35 @@ public final class PredictRequest<PREDICTION extends Prediction>
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>> unmarshaler() {
-    return new JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>>() {
-      @Nullable @Override
-      public List<ClarifaiOutput<PREDICTION>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().get("outputs"),
-            new TypeToken<List<ClarifaiOutput<PREDICTION>>>() {}
-        );
+  @NotNull @Override protected DeserializedRequest<List<ClarifaiOutput<PREDICTION>>> request() {
+    return new DeserializedRequest<List<ClarifaiOutput<PREDICTION>>>() {
+      @NotNull @Override public Request httpRequest() {
+        final JsonObject body = new JSONObjectBuilder()
+            .add("inputs", new JSONArrayBuilder()
+                .addAll(inputData, new Func1<ClarifaiInput, JsonElement>() {
+                  @NotNull @Override public JsonElement call(@NotNull ClarifaiInput model) {
+                    return client.gson.toJsonTree(model);
+                  }
+                }))
+            .build();
+        if (version == null) {
+          return postRequest("/v2/models/" + modelID + "/outputs", body);
+        }
+        return postRequest("/v2/models/" + modelID + "/versions/" + version.id() + "/outputs", body);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>> unmarshaler() {
+        return new JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>>() {
+          @NotNull @Override
+          public List<ClarifaiOutput<PREDICTION>> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return InternalUtil.fromJson(
+                gson,
+                json.getAsJsonObject().get("outputs"),
+                new TypeToken<List<ClarifaiOutput<PREDICTION>>>() {}
+            );
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("inputs", new JSONArrayBuilder()
-            .addAll(inputData, new Func1<ClarifaiInput, JsonElement>() {
-              @NotNull @Override public JsonElement call(@NotNull ClarifaiInput model) {
-                return gson.toJsonTree(model);
-              }
-            }))
-        .build();
-    return new Request.Builder()
-        .url(buildURL(version != null
-            ? String.format("/v2/models/%s/versions/%s/outputs", modelID, version.id())
-            : String.format("/v2/models/%s/outputs", modelID)
-        ))
-        .post(toRequestBody(body))
-        .build();
   }
 }

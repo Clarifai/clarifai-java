@@ -38,7 +38,7 @@ public final class GetModelInputsRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
     return new JSONUnmarshaler<List<ClarifaiInput>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<ClarifaiInput> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,

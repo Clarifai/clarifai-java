@@ -16,7 +16,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,27 +48,28 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<ConceptModel> unmarshaler() {
-    return new JSONUnmarshaler<ConceptModel>() {
-      @Nullable @Override public ConceptModel fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<Concept>>() {}.getType());
+  @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
+    return new DeserializedRequest<ConceptModel>() {
+      @NotNull @Override public Request httpRequest() {
+        final JsonObject body = new JSONObjectBuilder()
+            .add("action", client.gson.toJsonTree(action))
+            .add("concepts", new JSONArrayBuilder()
+                .addAll(concepts, new Func1<Concept, JsonElement>() {
+                  @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                    return client.gson.toJsonTree(concept);
+                  }
+                }))
+            .build();
+        return patchRequest("/v2/models/" + modelID + "/output_info/data/concepts", body);
+      }
+
+      @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
+        return new JSONUnmarshaler<ConceptModel>() {
+          @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<Concept>>() {}.getType());
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("action", gson.toJsonTree(action))
-        .add("concepts", new JSONArrayBuilder()
-            .addAll(concepts, new Func1<Concept, JsonElement>() {
-              @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                return PatchModelRequest.this.gson.toJsonTree(concept);
-              }
-            }))
-        .build();
-    return new Request.Builder()
-        .url(buildURL("/v2/models/" + modelID + "/output_info/data/concepts"))
-        .patch(toRequestBody(body))
-        .build();
   }
 }
