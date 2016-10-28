@@ -6,6 +6,7 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
@@ -16,6 +17,7 @@ import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
+import clarifai2.internal.JSONObjectBuilder;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -30,6 +32,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
+import static clarifai2.api.request.input.SearchClause.matchMetadata;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -105,6 +108,16 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Test public void t01c_addInputWithMetadata() {
+    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
+        .withID("inputWithMetadata")
+        .withMetadata(new JSONObjectBuilder()
+            .add("foo", "bar")
+            .build()
+        )
+    ));
+  }
+
   @Test public void t02_addConceptsToInput() {
     assertSuccess(client.addConceptsToInput("foo1")
         .plus(
@@ -178,7 +191,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Test public void t15_trainModel() {
     assertSuccess(client.trainModel(getModelID()));
-    while(true) {
+    while (true) {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
       if (version == null) {
         Assert.fail("Model version can't be null");
@@ -224,6 +237,19 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
             .and(SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
             .build()
     );
+  }
+
+  @Test public void t17c_searchInputsWithModel_metadata() {
+    final List<SearchHit> hits = assertSuccess(
+        client.searchInputs(matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
+    );
+    final ClarifaiInput hit = hits.stream()
+        .filter(someHit -> "inputWithMetadata".equals(someHit.input().id()))
+        .findFirst()
+        .orElseThrow(() -> new AssertionError(""))
+        .input();
+    Assert.assertEquals("inputWithMetadata", hit.id());
+    Assert.assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
   }
 
   @Test public void errorsExposedToUser() {
