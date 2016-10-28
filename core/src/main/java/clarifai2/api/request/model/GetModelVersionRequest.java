@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class GetModelVersionRequest extends ClarifaiRequest.Builder<ModelVersion> {
 
@@ -25,18 +24,19 @@ public final class GetModelVersionRequest extends ClarifaiRequest.Builder<ModelV
     this.versionID = versionID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<ModelVersion> unmarshaler() {
-    return new JSONUnmarshaler<ModelVersion>() {
-      @Nullable @Override public ModelVersion fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-        return gson.fromJson(json, ModelVersion.class);
+  @NotNull @Override protected DeserializedRequest<ModelVersion> request() {
+    return new DeserializedRequest<ModelVersion>() {
+      @NotNull @Override public Request httpRequest() {
+        return getRequest(String.format("/v2/models/%s/versions/%s", modelID, versionID));
+      }
+
+      @NotNull @Override public JSONUnmarshaler<ModelVersion> unmarshaler() {
+        return new JSONUnmarshaler<ModelVersion>() {
+          @NotNull @Override public ModelVersion fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return gson.fromJson(json, ModelVersion.class);
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    return new Request.Builder()
-        .url(buildURL(String.format("/v2/models/%s/versions/%s", modelID, versionID)))
-        .get()
-        .build();
   }
 }

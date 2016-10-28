@@ -1,11 +1,13 @@
 package clarifai2.api.request.input;
 
+import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.ClarifaiURLImage;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
@@ -16,8 +18,30 @@ import java.lang.reflect.Type;
 public abstract class SearchClause {
 
   /**
-   * A search clause that will match inputs that had images with the given URL
+   * A search clause that will match inputs that had metadata that matches the metadata on the given
+   * {@link ClarifaiInput}
    *
+   * @param input the input whose metadata to search by
+   * @return a {@link SearchClause} to be given to a search endpoint
+   * @see #matchMetadata(JsonObject)
+   */
+  @NotNull public static SearchClause matchMetadata(@NotNull ClarifaiInput input) {
+    return matchMetadata(input.metadata());
+  }
+
+  /**
+   * A search clause that will match inputs that had metadata that matches the given metadata
+   *
+   * @param metadata the metadata to search by
+   * @return a {@link SearchClause} to be given to a search endpoint
+   */
+  @NotNull public static SearchClause matchMetadata(@NotNull JsonObject metadata) {
+    return new Metadata(metadata);
+  }
+
+  /**
+   * A search clause that will match inputs that had images with the given URL
+   * <p>
    * This is NOT a visual similarity search. This is a simple string-search for the given image's URL. For visual
    * similarity, please use {@link #matchImageVisually(ClarifaiImage)}.
    *
@@ -30,7 +54,7 @@ public abstract class SearchClause {
 
   /**
    * A search clause that will match inputs that are visually similar to the image with the given URL.
-   *
+   * <p>
    * This method is different from {@link #matchImageURL(ClarifaiURLImage)}, which also takes an image,
    * but matches inputs that share that image's URL.
    *
@@ -43,7 +67,7 @@ public abstract class SearchClause {
 
   /**
    * A search clause that will match inputs that the user explicitly tagged with the given concept
-   *
+   * <p>
    * Both this method and the related {@link #matchConcept(Concept)} will match inputs that
    * the user explicitly tagged with these concepts when uploading the input, but
    * {@link #matchConcept(Concept)} will also match inputs that the API predicted to
@@ -59,7 +83,7 @@ public abstract class SearchClause {
   /**
    * A search clause that will match inputs both by concepts that the user tagged them with explicitly, and by concepts
    * that the API predicted upon the inputs.
-   *
+   * <p>
    * This is similar to {@link #matchUserTaggedConcept(Concept)} in that both will match
    * images that the user explicitly tagged with these concepts when uploading the input, but this method will also
    * match inputs that the API predicted to contain these concepts.
@@ -72,6 +96,28 @@ public abstract class SearchClause {
   }
 
   private SearchClause() {}
+
+  @JsonAdapter(Metadata.Adapter.class)
+  static class Metadata extends SearchClause {
+    @NotNull private final JsonObject metadata;
+
+    private Metadata(@NotNull JsonObject metadata) {
+      this.metadata = metadata;
+    }
+
+    static class Adapter implements JsonSerializer<Metadata> {
+      @Override public JsonElement serialize(Metadata src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JSONObjectBuilder()
+            .add("input", new JSONObjectBuilder()
+                .add("data", new JSONObjectBuilder()
+                    .add("metadata", src.metadata)
+                )
+            )
+            .build();
+      }
+    }
+  }
+
 
   @JsonAdapter(InputImage.Adapter.class)
   static class InputImage extends SearchClause {

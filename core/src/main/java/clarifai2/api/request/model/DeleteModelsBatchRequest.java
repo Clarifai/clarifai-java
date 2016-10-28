@@ -1,9 +1,8 @@
-package clarifai2.api.request.concept;
+package clarifai2.api.request.model;
 
 import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
@@ -11,29 +10,29 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> {
+public final class DeleteModelsBatchRequest extends ClarifaiRequest.Builder<JsonNull> {
 
-  @NotNull private final List<Concept> concepts = new ArrayList<>();
+  @NotNull private final List<String> modelIDs = new ArrayList<>();
 
-  public AddConceptsRequest(@NotNull BaseClarifaiClient client) {
+  public DeleteModelsBatchRequest(@NotNull BaseClarifaiClient client) {
     super(client);
   }
 
-  @NotNull public AddConceptsRequest plus(@NotNull Collection<Concept> concepts) {
-    this.concepts.addAll(concepts);
+  @NotNull public DeleteModelsBatchRequest plus(@NotNull String... modelIDs) {
+    Collections.addAll(this.modelIDs, modelIDs);
     return this;
   }
 
-  @NotNull public AddConceptsRequest plus(@NotNull Concept... concepts) {
-    Collections.addAll(this.concepts, concepts);
+  @NotNull public DeleteModelsBatchRequest plus(@NotNull List<String> modelIDs) {
+    this.modelIDs.addAll(modelIDs);
     return this;
   }
 
@@ -41,17 +40,15 @@ public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> 
     return new DeserializedRequest<JsonNull>() {
       @NotNull @Override public Request httpRequest() {
         final JsonObject body = new JSONObjectBuilder()
-            .add("concepts", new JSONArrayBuilder()
-                .addAll(concepts, new Func1<Concept, JsonElement>() {
-                  @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                    return new JSONObjectBuilder()
-                        .add("id", concept.id())
-                        .add("name", concept.name())
-                        .build();
+            .add("ids", new JSONArrayBuilder()
+                .addAll(modelIDs, new Func1<String, JsonElement>() {
+                  @NotNull @Override public JsonElement call(@NotNull String modelID) {
+                    return new JsonPrimitive(modelID);
                   }
                 })
-            ).build();
-        return postRequest("/v2/concepts", body);
+            )
+            .build();
+        return postRequest("/v2/models", body);
       }
 
       @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {

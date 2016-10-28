@@ -10,12 +10,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class GetConceptsRequest
-    extends ClarifaiPaginatedRequest.Builder<List<Concept>, GetConceptsRequest> {
+public final class GetConceptsRequest extends ClarifaiPaginatedRequest.Builder<List<Concept>, GetConceptsRequest> {
 
   public GetConceptsRequest(@NotNull final BaseClarifaiClient helper) {
     super(helper);
@@ -23,7 +21,7 @@ public final class GetConceptsRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<Concept>> unmarshaler() {
     return new JSONUnmarshaler<List<Concept>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<Concept> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,

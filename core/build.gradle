@@ -123,18 +123,20 @@ buildConfig {
 
 dependencies {
   compile(
-      deps.okhttp,
-      deps.gson,
+      "com.squareup.okhttp3:okhttp:$versions.okhttp",
+      "com.google.code.gson:gson:2.7",
   )
 
   compileOnly(
-      deps.autoValueAnnotations,
+      "com.jakewharton.auto.value:auto-value-annotations:$versions.autoValue",
       deps.nullityAnnotations,
+      "com.github.kevinmost.auto-value-custom-hashcode-equals:adapter:$versions.customHashCodeEquals",
   )
 
   apt(
-      deps.autoValue,
+      "com.google.auto.value:auto-value:$versions.autoValue",
       "com.gabrielittner.auto.value:auto-value-with:1.0.0",
+      "com.github.kevinmost.auto-value-custom-hashcode-equals:processor:$versions.customHashCodeEquals",
   )
 }
 

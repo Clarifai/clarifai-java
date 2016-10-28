@@ -18,6 +18,20 @@ import java.lang.reflect.Type;
 @JsonAdapter(ClarifaiStatus.Adapter.class)
 public abstract class ClarifaiStatus {
 
+  @Nullable private static ClarifaiStatus success;
+
+  @NotNull public static ClarifaiStatus success() {
+    if (success == null) {
+      success = new AutoValue_ClarifaiStatus(
+          false,
+          10000,
+          "Ok",
+          null
+      );
+    }
+    return success;
+  }
+
   @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
     return new AutoValue_ClarifaiStatus(
         true,
@@ -27,13 +41,18 @@ public abstract class ClarifaiStatus {
     );
   }
 
+  @Nullable private static ClarifaiStatus unknown;
+
   @NotNull public static ClarifaiStatus unknown() {
-    return new AutoValue_ClarifaiStatus(
-        false,
-        0,
-        "Unknown response",
-        null
-    );
+    if (unknown == null) {
+      unknown = new AutoValue_ClarifaiStatus(
+          false,
+          0,
+          "Unknown response",
+          null
+      );
+    }
+    return unknown;
   }
 
   /**

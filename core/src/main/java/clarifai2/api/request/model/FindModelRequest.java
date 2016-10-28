@@ -17,8 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class FindModelRequest
-    extends ClarifaiPaginatedRequest.Builder<List<Model<?>>, FindModelRequest> {
+public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<List<Model<?>>, FindModelRequest> {
 
   @Nullable private String name;
   @Nullable private ModelType modelType;
@@ -39,7 +38,7 @@ public final class FindModelRequest
 
   @NotNull @Override protected JSONUnmarshaler<List<Model<?>>> unmarshaler() {
     return new JSONUnmarshaler<List<Model<?>>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<Model<?>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,

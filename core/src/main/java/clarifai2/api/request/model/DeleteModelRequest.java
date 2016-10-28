@@ -2,18 +2,15 @@ package clarifai2.api.request.model;
 
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.model.Model;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
-public final class DeleteModelRequest extends ClarifaiRequest.Builder<List<Model<?>>> {
+public final class DeleteModelRequest extends ClarifaiRequest.Builder<JsonNull> {
 
   @NotNull private final String modelID;
 
@@ -22,19 +19,19 @@ public final class DeleteModelRequest extends ClarifaiRequest.Builder<List<Model
     this.modelID = modelID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<Model<?>>> unmarshaler() {
-    return new JSONUnmarshaler<List<Model<?>>>() {
-      @Nullable @Override
-      public List<Model<?>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return Collections.emptyList();
+  @NotNull @Override protected DeserializedRequest<JsonNull> request() {
+    return new DeserializedRequest<JsonNull>() {
+      @NotNull @Override public Request httpRequest() {
+        return deleteRequest("/v2/models/" + modelID, new JsonObject());
+      }
+
+      @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {
+        return new JSONUnmarshaler<JsonNull>() {
+          @NotNull @Override public JsonNull fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            return JsonNull.INSTANCE;
+          }
+        };
       }
     };
-  }
-
-  @NotNull @Override protected Request buildRequest() {
-    return new Request.Builder()
-        .url(buildURL("/v2/models/" + modelID))
-        .delete()
-        .build();
   }
 }

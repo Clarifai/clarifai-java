@@ -13,6 +13,14 @@ import java.util.Map;
 @JsonAdapter(ModelTrainingStatus.Adapter.class)
 public enum ModelTrainingStatus {
   /**
+   * This model has been trained.
+   */
+  TRAINED(21100),
+  /**
+   * This model is currently being trained by the server.
+   */
+  TRAINING_IN_PROGRESS(21101),
+  /**
    * This model hasn't been trained. Use {@link ClarifaiClient#trainModel(String)} or {@link Model#train()}
    * to train it.
    */
@@ -22,23 +30,44 @@ public enum ModelTrainingStatus {
    */
   TRAINING_QUEUED(21103),
   /**
-   * This model is currently being trained by the server.
+   * Model training had no data
    */
-  TRAINING_IN_PROGRESS(21101),
-  /**
-   * This model has been trained.
-   */
-  TRAINED(21100),
+  MODEL_TRAINING_NO_DATA(21110),
   /**
    * There are no positive examples for this model, so it cannot be trained. Please add at least one positive example
    * for each of the model's concepts before trying to train it.
    */
-  NO_POSITIVE_EXAMPLES(21111),;
+  NO_POSITIVE_EXAMPLES(21111),
+  /**
+   * Custom model training was ONE_VS_N but with a single class
+   */
+  MODEL_TRAINING_ONE_VS_N_SINGLE_CLASS(21112),
+  /**
+   * Training took longer than the server allows
+   */
+  MODEL_TRAINING_TIMED_OUT(21113),
+  /**
+   * Training got error waiting on asset pipeline to finish
+   */
+  MODEL_TRAINING_WAITING_ERROR(21114),
+  /**
+   * Training threw an unknown error
+   */
+  MODEL_TRAINING_UNKNOWN_ERROR(21115),
+  ;
 
   private final int statusCode;
 
   ModelTrainingStatus(int statusCode) {
     this.statusCode = statusCode;
+  }
+
+  public boolean isError() {
+    return 21110 <= statusCode && statusCode <= 21119;
+  }
+
+  public boolean isTerminalEvent() {
+    return this.isError() || this == TRAINED;
   }
 
   static class Adapter implements JsonDeserializer<ModelTrainingStatus> {

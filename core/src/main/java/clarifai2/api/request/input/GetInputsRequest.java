@@ -10,20 +10,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class GetInputsRequest
-    extends ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, GetInputsRequest> {
-
+public final class GetInputsRequest extends ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, GetInputsRequest> {
   public GetInputsRequest(@NotNull final BaseClarifaiClient client) {
     super(client);
   }
 
   @NotNull @Override protected JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
     return new JSONUnmarshaler<List<ClarifaiInput>>() {
-      @Nullable @Override
+      @NotNull @Override
       public List<ClarifaiInput> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
         return InternalUtil.fromJson(
             gson,
