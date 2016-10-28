@@ -124,11 +124,6 @@ public interface ClarifaiRequest<RESULT> {
     void onClarifaiResponseNetworkError(@NotNull IOException e);
   }
 
-  public abstract class Adapter<T> implements ClarifaiRequest<T> {
-
-    @Override public final void executeAsync(@Nullable OnSuccess<T> onSuccess) throws ClarifaiException {
-      executeAsync(onSuccess, null);
-    }
 
   /**
    * A request and the deserialization that goes along with it, if the request was successful

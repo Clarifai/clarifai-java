@@ -3,7 +3,6 @@ package clarifai2.test;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
-import clarifai2.api.ClarifaiUtil;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.input.ClarifaiInput;

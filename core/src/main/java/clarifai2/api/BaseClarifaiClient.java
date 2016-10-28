@@ -3,7 +3,6 @@ package clarifai2.api;
 import clarifai2.BuildConfig;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.AutoValueTypeAdapterFactory;
-import clarifai2.internal.InternalUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
