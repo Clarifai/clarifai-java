@@ -190,6 +190,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void t15_trainModel() {
+    assertSuccess(client.addInputs()
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
+            .withConcepts(Concept.forID("outdoors23"))
+        )
+        .allowDuplicateURLs(true)
+    );
     assertSuccess(client.trainModel(getModelID()));
     while (true) {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
