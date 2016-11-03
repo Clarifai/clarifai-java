@@ -18,6 +18,7 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
+import com.kevinmost.junit_retry_rule.Retry;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -45,10 +46,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     startTime = System.nanoTime();
   }
 
+  @Retry
   @Test public void t00_deleteAllInputs() {
     assertSuccess(client.deleteAllInputs());
   }
 
+  @Retry
   @Test public void t01a_addInputs() throws Exception {
     assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
@@ -65,6 +68,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Retry
   @Test public void t01b_addInputs_bulk() throws Exception {
     final Concept ferrari23 = Concept.forID("ferrari23");
     final Concept outdoors23 = Concept.forID("outdoors23");
@@ -108,6 +112,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Retry
   @Test public void t01c_addInputWithMetadata() {
     assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
         .withID("inputWithMetadata")
@@ -118,6 +123,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
+  @Retry
   @Test public void t02_addConceptsToInput() {
     assertSuccess(client.addConceptsToInput("foo1")
         .plus(
@@ -127,42 +133,52 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Retry
   @Test public void t03_getAllInputs() {
     assertSuccess(client.getInputs());
   }
 
+  @Retry
   @Test public void t04_getInputByID() {
     assertSuccess(client.getInputByID("foo1"));
   }
 
+  @Retry
   @Test public void t05_deleteInput() {
     assertSuccess(client.deleteInput("foo1"));
   }
 
+  @Retry
   @Test public void t06_getInputsStatus() {
     assertSuccess(client.getInputsStatus());
   }
 
+  @Retry
   @Test public void t07_getConcepts() {
     assertSuccess(client.getConcepts());
   }
 
+  @Retry
   @Test public void t08_getConceptByID() {
     assertSuccess(client.getConceptByID("concept2"));
   }
 
+  @Retry
   @Test public void t09_searchConcepts() {
     assertSuccess(client.searchConcepts("conc*"));
   }
 
+  @Retry
   @Test public void t10_getAllModels() {
     assertSuccess(client.getModels());
   }
 
+  @Retry
   @Test public void t11_deleteAllModels() {
     assertSuccess(client.deleteAllModels());
   }
 
+  @Retry
   @Test public void t12a_createModel() {
     assertSuccess(client.createModel(getModelID())
         .withOutputInfo(ConceptOutputInfo.forConcepts(
@@ -172,16 +188,19 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
 
+  @Retry
   @Test public void t13_getModelByID() {
     assertSuccess(client.getModelByID(getModelID()));
   }
 
+  @Retry
   @Test public void t14a_addConceptsToModel() {
     assertSuccess(client.addConceptsToModel(getModelID())
         .plus(Concept.forID("outdoors23"))
     );
   }
 
+  @Retry
   @Test public void t14b_addConceptsToModel_OO() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
         .addConcepts()
@@ -189,6 +208,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Retry
   @Test public void t15_trainModel() {
     assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
@@ -214,13 +234,14 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     }
   }
 
-
+  @Retry
   @Test public void t16a_predictWithModel() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
     );
   }
 
+  @Retry
   @Test public void t16b_predictWithModel_OO() {
     assertSuccess(client.getDefaultModels().generalModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
@@ -231,12 +252,14 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         )));
   }
 
+  @Retry
   @Test public void t17a_searchInputsWithModel() {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
     ));
   }
 
+  @Retry
   @Test public void t17b_searchInputsWithModel_complexSearch() {
     assertSuccess(
         client.searchInputs(matchConcept(Concept.forID("outdoors23").withValue(true)))
@@ -245,6 +268,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
+  @Retry
   @Test public void t17c_searchInputsWithModel_metadata() {
     final List<SearchHit> hits = assertSuccess(
         client.searchInputs(matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
@@ -268,6 +292,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     logger.info(response.getStatus().toString());
   }
 
+  @Retry
   @Test public void testDeleteBatch() {
     assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("kotlin"),
@@ -326,6 +351,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     toBeClosed.getModels().getPage(1).executeSync();
   }
 
+  @Retry
   @Test
   public void testModifyModel() {
     final String modelName = "modifyingModel" + System.nanoTime();
