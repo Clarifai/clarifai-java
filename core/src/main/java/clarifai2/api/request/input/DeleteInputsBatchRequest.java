@@ -15,8 +15,8 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class DeleteInputsBatchRequest extends ClarifaiRequest.Builder<JsonNull> {
@@ -28,8 +28,7 @@ public class DeleteInputsBatchRequest extends ClarifaiRequest.Builder<JsonNull> 
   }
 
   @NotNull public DeleteInputsBatchRequest plus(@NotNull String... inputIDs) {
-    Collections.addAll(this.inputIDs, inputIDs);
-    return this;
+    return plus(Arrays.asList(inputIDs));
   }
 
   @NotNull public DeleteInputsBatchRequest plus(@NotNull Collection<String> inputIDs) {

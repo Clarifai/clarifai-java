@@ -15,8 +15,8 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public final class AddInputsRequest extends ClarifaiRequest.Builder<List<ClarifaiInput>> {
@@ -30,8 +30,7 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
   }
 
   @NotNull public AddInputsRequest plus(@NotNull ClarifaiInput... inputs) {
-    Collections.addAll(this.inputs, inputs);
-    return this;
+    return plus(Arrays.asList(inputs));
   }
 
   @NotNull public AddInputsRequest plus(@NotNull Collection<ClarifaiInput> inputs) {
