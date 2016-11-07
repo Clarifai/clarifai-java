@@ -125,7 +125,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t02_addConceptsToInput() {
-    assertSuccess(client.addConceptsToInput("foo1")
+    assertSuccess(client.mergeConceptsForInput("foo1")
         .plus(
             Concept.forID("concept2"),
             Concept.forID("concept3")
@@ -195,7 +195,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t14a_addConceptsToModel() {
-    assertSuccess(client.addConceptsToModel(getModelID())
+    assertSuccess(client.mergeConceptsForModel(getModelID())
         .plus(Concept.forID("outdoors23"))
     );
   }
@@ -203,7 +203,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t14b_addConceptsToModel_OO() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
-        .addConcepts()
+        .mergeConcepts()
         .plus(Concept.forID("outdoors23"))
     );
   }
@@ -283,7 +283,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void errorsExposedToUser() {
-    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().addConcepts()
+    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().mergeConcepts()
         .plus(Concept.forID("concept2"))
         .executeSync();
     if (response.isSuccessful()) {

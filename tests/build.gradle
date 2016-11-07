@@ -31,6 +31,6 @@ dependencies {
 
       "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
 
-      "com.github.kevinmost:junit-retry-rule:cc1e7b562f",
+      "com.github.kevinmost:junit-retry-rule:cbdd972",
   )
 }

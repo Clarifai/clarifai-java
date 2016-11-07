@@ -3,12 +3,11 @@ package clarifai2.api;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.concept.AddConceptsRequest;
-import clarifai2.api.request.concept.DeleteConceptsFromInputRequest;
-import clarifai2.api.request.input.AddConceptsToInputRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
 import clarifai2.api.request.input.DeleteInputsBatchRequest;
+import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
@@ -60,20 +59,30 @@ public interface ClarifaiClient {
   @NotNull AddInputsRequest addInputs();
 
   /**
-   * Adds the given concepts to the input with the given ID.
+   * Merges any specified concepts into the list of concepts that are associated with this input.
+   *
+   * If the IDs on any of the given concepts already exist on this input, the new concept will overwrite the old one.
    *
    * @param inputID the input to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified input
    */
-  @NotNull AddConceptsToInputRequest addConceptsToInput(@NotNull String inputID);
+  @NotNull PatchInputRequest mergeConceptsForInput(@NotNull String inputID);
 
   /**
-   * Deletes the concepts with the given IDs from the input with the given ID.
+   * Overwrites the list of concepts on this input with the user's provided values.
    *
    * @param inputID the input to modify
-   * @return a request that will, when executed, return the newly-modified input
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
    */
-  @NotNull DeleteConceptsFromInputRequest deleteConceptsFromInput(@NotNull String inputID);
+  @NotNull PatchInputRequest setConceptsForInput(@NotNull String inputID);
+
+  /**
+   * Removes the concepts with the given IDs from this input.
+   *
+   * @param inputID the input to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
+   */
+  @NotNull PatchInputRequest removeConceptsForInput(@NotNull String inputID);
 
   /**
    * Get all of the inputs associated with this app
@@ -225,17 +234,40 @@ public interface ClarifaiClient {
   @NotNull FindModelRequest findModel();
 
   /**
-   * @param modelID the ID of the model to modify
-   * @return a request builder that allows you to link {@link Concept}s to a model
+   * Merges any specified concepts into the list of concepts that are associated with this model.
+   *
+   * If the IDs on any of the given concepts already exist on this model, the new concept will overwrite the old one.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
    */
-  @NotNull PatchModelRequest addConceptsToModel(@NotNull String modelID);
+  @NotNull PatchModelRequest mergeConceptsForModel(@NotNull String modelID);
 
   /**
-   * @param modelID the ID of the model to modify
-   * @return a request builder that allows you to unlink {@link Concept}s from a model
+   * Overwrites the list of concepts on this model with the user's provided values.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
    */
-  @NotNull PatchModelRequest deleteConceptsFromModel(@NotNull String modelID);
+  @NotNull PatchModelRequest setConceptsForModel(@NotNull String modelID);
 
+  /**
+   * Removes the concepts with the given IDs from this model.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
+   */
+  @NotNull PatchModelRequest removeConceptsForModel(@NotNull String modelID);
+
+  /**
+   * Allows the user to change the name and output configuration of their model.
+   *
+   * To change the model's list of concepts, you must use {@link #mergeConceptsForModel(String)},
+   * {@link #setConceptsForModel(String)}, or {@link #removeConceptsForModel(String)}.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
+   */
   @NotNull ModifyModelRequest modifyModel(@NotNull String modelID);
 
   /**

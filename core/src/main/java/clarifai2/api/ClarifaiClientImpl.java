@@ -3,11 +3,9 @@ package clarifai2.api;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.concept.AddConceptsRequest;
-import clarifai2.api.request.concept.DeleteConceptsFromInputRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
-import clarifai2.api.request.input.AddConceptsToInputRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputsBatchRequest;
@@ -15,6 +13,7 @@ import clarifai2.api.request.input.DeleteInputRequest;
 import clarifai2.api.request.input.GetInputRequest;
 import clarifai2.api.request.input.GetInputsRequest;
 import clarifai2.api.request.input.GetInputsStatusRequest;
+import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
@@ -33,7 +32,6 @@ import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.ClarifaiInputUpdateAction;
 import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
@@ -58,14 +56,16 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new AddInputsRequest(this);
   }
 
-  @NotNull @Override
-  public AddConceptsToInputRequest addConceptsToInput(@NotNull final String inputID) {
-    return new AddConceptsToInputRequest(this, inputID);
+  @NotNull @Override public PatchInputRequest mergeConceptsForInput(@NotNull String inputID) {
+    return new PatchInputRequest(this, inputID, "merge");
   }
 
-  @NotNull @Override
-  public DeleteConceptsFromInputRequest deleteConceptsFromInput(@NotNull final String inputID) {
-    return new DeleteConceptsFromInputRequest(this, inputID);
+  @NotNull @Override public PatchInputRequest setConceptsForInput(@NotNull String inputID) {
+    return new PatchInputRequest(this, inputID, "overwrite");
+  }
+
+  @NotNull @Override public PatchInputRequest removeConceptsForInput(@NotNull String inputID) {
+    return new PatchInputRequest(this, inputID, "remove");
   }
 
   @NotNull @Override public ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, ?> getInputs() {
@@ -174,12 +174,16 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new FindModelRequest(this);
   }
 
-  @NotNull @Override public PatchModelRequest addConceptsToModel(@NotNull final String modelID) {
-    return new PatchModelRequest(this, modelID, ClarifaiInputUpdateAction.MERGE_CONCEPTS);
+  @NotNull @Override public PatchModelRequest mergeConceptsForModel(@NotNull String modelID) {
+    return new PatchModelRequest(this, modelID, "merge");
   }
 
-  @NotNull @Override public PatchModelRequest deleteConceptsFromModel(@NotNull final String modelID) {
-    return new PatchModelRequest(this, modelID, ClarifaiInputUpdateAction.DELETE_CONCEPTS);
+  @NotNull @Override public PatchModelRequest setConceptsForModel(@NotNull String modelID) {
+    return new PatchModelRequest(this, modelID, "overwrite");
+  }
+
+  @NotNull @Override public PatchModelRequest removeConceptsForModel(@NotNull String modelID) {
+    return new PatchModelRequest(this, modelID, "remove");
   }
 
   @NotNull @Override public ModifyModelRequest modifyModel(@NotNull String modelID) {
