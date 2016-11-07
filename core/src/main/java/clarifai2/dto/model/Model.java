@@ -6,6 +6,7 @@ import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
+import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
@@ -28,7 +29,7 @@ import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(Model.Adapter.class)
-public abstract class Model<PREDICTION extends Prediction> {
+public abstract class Model<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
   @SuppressWarnings("unchecked")
   @NotNull
@@ -95,7 +96,6 @@ public abstract class Model<PREDICTION extends Prediction> {
     return ((ClusterModel) this);
   }
 
-  @NotNull public abstract String id();
   @Nullable public abstract String name();
   @Nullable public abstract Date createdAt();
   @Nullable public abstract String appID();
