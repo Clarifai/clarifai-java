@@ -6,11 +6,12 @@ import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
-import clarifai2.api.request.input.DeleteInputsBatchRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
+import clarifai2.api.request.input.DeleteInputsBatchRequest;
 import clarifai2.api.request.input.GetInputRequest;
 import clarifai2.api.request.input.GetInputsRequest;
 import clarifai2.api.request.input.GetInputsStatusRequest;
+import clarifai2.api.request.input.PatchInputMetadataRequest;
 import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
@@ -31,6 +32,7 @@ import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.prediction.Prediction;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -59,6 +61,11 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public PatchInputRequest removeConceptsForInput(@NotNull String inputID) {
     return new PatchInputRequest(this, inputID, "remove");
+  }
+
+  @NotNull @Override
+  public PatchInputMetadataRequest addMetadataForInput(@NotNull String inputID, @NotNull JsonObject metadata) {
+    return new PatchInputMetadataRequest(this, inputID, metadata);
   }
 
   @NotNull @Override public GetInputsRequest getInputs() {

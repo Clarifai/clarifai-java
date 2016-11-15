@@ -11,6 +11,7 @@ import clarifai2.api.request.input.DeleteInputsBatchRequest;
 import clarifai2.api.request.input.GetInputRequest;
 import clarifai2.api.request.input.GetInputsRequest;
 import clarifai2.api.request.input.GetInputsStatusRequest;
+import clarifai2.api.request.input.PatchInputMetadataRequest;
 import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
@@ -35,6 +36,7 @@ import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
+import com.google.gson.JsonObject;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +70,7 @@ public interface ClarifaiClient {
 
   /**
    * Merges any specified concepts into the list of concepts that are associated with this input.
-   *
+   * <p>
    * If the IDs on any of the given concepts already exist on this input, the new concept will overwrite the old one.
    *
    * @param inputID the input to modify
@@ -91,6 +93,27 @@ public interface ClarifaiClient {
    * @return a builder to construct a request that will, when executed, return the newly-modified input
    */
   @NotNull PatchInputRequest removeConceptsForInput(@NotNull String inputID);
+
+  /**
+   * Adds the given metadata to this input's metadata.
+   *
+   * The keys in the new metadata are parsed depth-first, and the existing metadata is checked for a conflicting key
+   * at that location.
+   *
+   * If the existing metadata does not have a key that conflicts with an entry in the new metadata, that new entry is
+   * added to the existing metadata.
+   *
+   * If the existing metadata DOES have a key that conflicts with an entry in the new metadata:
+   * - If the existing and new values are of different types (primitive vs list vs dictionary), the new value will overwrite the existing value;
+   * - Otherwise, if the existing and new values are both primitives or both lists, the new value will overwrite the existing value;
+   * - Otherwise, both the existing and new value must be dictionaries, and the new dictionary will be merged
+   * into the existing dictionary, with conflicts being resolved in the same manner described above
+   *
+   * @param inputID  the input to merge this metadata into
+   * @param metadata the metadata to merge
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
+   */
+  @NotNull PatchInputMetadataRequest addMetadataForInput(@NotNull String inputID, @NotNull JsonObject metadata);
 
   /**
    * Get all of the inputs associated with this app
@@ -243,7 +266,7 @@ public interface ClarifaiClient {
 
   /**
    * Merges any specified concepts into the list of concepts that are associated with this model.
-   *
+   * <p>
    * If the IDs on any of the given concepts already exist on this model, the new concept will overwrite the old one.
    *
    * @param modelID the model to modify
@@ -269,7 +292,7 @@ public interface ClarifaiClient {
 
   /**
    * Allows the user to change the name and output configuration of their model.
-   *
+   * <p>
    * To change the model's list of concepts, you must use {@link #mergeConceptsForModel(String)},
    * {@link #setConceptsForModel(String)}, or {@link #removeConceptsForModel(String)}.
    *
@@ -294,11 +317,11 @@ public interface ClarifaiClient {
 
   /**
    * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.
-   *
+   * <p>
    * Note that most users will not need to use this method. According to the OkHttp documentation, clients will
    * automatically relinquish resources that are unused over time. This method is only required if aggressive
    * relinquishment of resources is needed.
-   *
+   * <p>
    * Using this {@link ClarifaiClient} instance after this method has been called is an error.
    */
   void close();

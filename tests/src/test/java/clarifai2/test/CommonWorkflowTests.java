@@ -18,10 +18,11 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.kevinmost.junit_retry_rule.Retry;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -34,6 +35,10 @@ import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.api.request.input.SearchClause.matchMetadata;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -219,9 +224,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.trainModel(getModelID()));
     while (true) {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
-      if (version == null) {
-        Assert.fail("Model version can't be null");
-      }
+      assertNotNull(version);
       final ModelTrainingStatus status = version.status();
       if (!status.isTerminalEvent()) {
         InternalUtil.sleep(200);
@@ -230,7 +233,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
       if (status == ModelTrainingStatus.TRAINED) {
         return;
       }
-      Assert.fail("Version had error while training: " + version.status());
+      fail("Version had error while training: " + version.status());
     }
   }
 
@@ -278,8 +281,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .findFirst()
         .orElseThrow(() -> new AssertionError(""))
         .input();
-    Assert.assertEquals("inputWithMetadata", hit.id());
-    Assert.assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
+    assertEquals("inputWithMetadata", hit.id());
+    assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
   }
 
   @Test public void errorsExposedToUser() {
@@ -287,7 +290,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .plus(Concept.forID("concept2"))
         .executeSync();
     if (response.isSuccessful()) {
-      Assert.fail("You shouldn't be able to add concepts to the built-in general model");
+      fail("You shouldn't be able to add concepts to the built-in general model");
     }
     logger.info(response.getStatus().toString());
   }
@@ -326,10 +329,10 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .getPage(1)
         .executeSync();
     if (badResponse.isSuccessful()) {
-      Assert.fail("this response used a bad port, it should not have been successful. Response: " + badResponse.get());
+      fail("this response used a bad port, it should not have been successful. Response: " + badResponse.get());
     }
     final ClarifaiStatus details = badResponse.getStatus();
-    Assert.assertTrue(details.networkErrorOccurred());
+    assertTrue(details.networkErrorOccurred());
     logger.info(details.errorDetails());
   }
 
@@ -367,8 +370,39 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
     final List<Concept> concepts =
         assertSuccess(client.getModelByID(modelName)).asConceptModel().outputInfo().concepts();
-    Assert.assertEquals(1, concepts.size());
-    Assert.assertEquals("bar", concepts.get(0).name());
+    assertEquals(1, concepts.size());
+    assertEquals("bar", concepts.get(0).name());
+  }
+
+  @Retry
+  @Test
+  public void testMergeMetadata() {
+    final String inputID = assertSuccess(client.addInputs()
+        .allowDuplicateURLs(true)
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+        )
+    ).get(0).id();
+    assertNotNull(inputID);
+    final JsonObject newMetadata = assertSuccess(
+        client.addMetadataForInput(
+            inputID,
+            new JSONObjectBuilder()
+                .add("foo", "bar")
+                .build()
+        )
+    ).metadata();
+    assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), newMetadata);
+  }
+
+  @Test public void testMetadataDoesNotAllowNullDictionaryValues() {
+    thrown.expect(IllegalArgumentException.class);
+    client.addInputs()
+        .allowDuplicateURLs(true)
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+            // Will throw IAE because we have a null value
+            .withMetadata(new JSONObjectBuilder().add("foo", JsonNull.INSTANCE).build())
+        )
+        .executeSync();
   }
 
   /////////////////

@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public abstract class BaseClarifaiAPITest {
 
   @NotNull @Rule public final TestName testName = new TestName();
   @NotNull @Rule public final RetryRule retryRule = new RetryRule();
+  @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();
 
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
 

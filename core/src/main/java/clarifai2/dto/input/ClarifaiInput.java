@@ -71,6 +71,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a copy of this {@link ClarifaiInput} with its metadata set to the specified value
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
+    InternalUtil.assertMetadataHasNoNulls(metadata);
     return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts());
   }
 
