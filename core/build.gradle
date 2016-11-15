@@ -1,8 +1,3 @@
-import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.grgit.Tag
-import org.ajoberstar.grgit.Commit
-import org.ajoberstar.grgit.operation.FetchOp
-
 plugins {
   id "java"
   id "maven"
@@ -13,113 +8,11 @@ plugins {
   id "com.github.ben-manes.versions" version "0.13.0"
   id "de.fuerstenau.buildconfig" version "1.1.4"
   id "com.jfrog.bintray" version "1.7.1"
-  id "org.ajoberstar.grgit" version "1.5.1"
+  id "net.researchgate.release" version "2.4.1"
 }
 apply from: rootProject.file("scripts/buildArtifacts.gradle")
 
 group 'com.clarifai.clarifai-api2'
-
-final Grgit git = Grgit.open()
-version getVersionName(git)
-
-def sensitiveFile = rootProject.file("sensitive.properties")
-if (sensitiveFile.exists()) {
-  final Properties sensitiveProperties = new Properties()
-  sensitiveProperties.load(sensitiveFile.newReader())
-  // Huge thanks to Cedric Beust for documenting these arcane and confusing options here:
-  // http://beust.com/weblog/2015/07/13/the-long-and-arduous-road-to-jcenter-and-maven-bliss/
-
-  // Why do we have to do this? I thought the plugin handled this for us... ¯\_(ツ)_/¯
-  install {
-    repositories.mavenInstaller {
-      pom.project {
-        name "Clarifai"
-        description "Clarifai Java API Client"
-        url 'https://github.com/googlesamples/easygoogle'
-        inceptionYear "2016"
-
-        groupId project.group
-        artifactId project.name
-        version project.version
-
-        licenses {
-          license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
-          }
-        }
-        scm {
-          url 'https://github.com/Clarifai/clarifai-java'
-          connection 'https://github.com/Clarifai/clarifai-java.git'
-        }
-        developers {
-          developer {
-            name 'Clarifai, Inc.'
-          }
-        }
-      }
-    }
-  }
-  bintray {
-    user = sensitiveProperties["jcenterUsername"]
-    key = sensitiveProperties["jcenterApiKey"]
-
-    publish = true
-    configurations = ["archives"]
-
-    pkg {
-      userOrg = "clarifai"
-      repo = "Clarifai"
-      name = "Clarifai"
-      desc = "Clarifai Java API client"
-
-      licenses = ["Apache-2.0"]
-
-      websiteUrl = "https://github.com/Clarifai/clarifai-java"
-      issueTrackerUrl = "${websiteUrl}/issues"
-      vcsUrl = "${websiteUrl}.git"
-
-      version {
-        name = project.version
-        released = new Date()
-
-        gpg { sign = true }
-
-        mavenCentralSync {
-          sync = true
-          user = sensitiveProperties["sonatypeUsername"]
-          password = sensitiveProperties["sonatypePassword"]
-        }
-      }
-    }
-  }
-}
-bintrayUpload.doFirst {
-  if (git.branch.getCurrent().name != "master") {
-    throw new GradleException("Should not publish new builds from any branch other than master!");
-  }
-  if (!git.status().isClean()) {
-    throw new GradleException("Can't do an upload from an unclean git repo!")
-  }
-}
-
-
-signing {
-  required { gradle.taskGraph.hasTask("bintrayUpload") }
-  sign configurations.archives
-}
-
-//noinspection GroovyUnusedAssignment
-sourceCompatibility = JavaVersion.VERSION_1_7
-//noinspection GroovyUnusedAssignment
-targetCompatibility = JavaVersion.VERSION_1_7
-
-
-buildConfig {
-  packageName = "clarifai2"
-  clsName = "BuildConfig"
-}
 
 dependencies {
   compile(
@@ -140,33 +33,130 @@ dependencies {
   )
 }
 
-// Our version names are the latest git tag in the repo if the current HEAD is that git tag (eg, "2.0.0-beta1")
-// If the current HEAD is not that git tag, the commit-hash is appended to that tag (eg, "2.0.0-beta1-ab123fe4")
-private String getVersionName(Grgit git) {
-  if (version != "unspecified") { // For example, Jitpack just does this for us! Awesome.
-    getLogger().println("Version param specified from gradle command-line: ${version}")
-    return version
-  }
-  final Tag tag = getLatestGitTag(git)
-  final Commit head = git.head()
+def sensitiveFile = rootProject.file("sensitive.properties")
+if (sensitiveFile.exists()) {
+  mergePropertiesFileIntoProject(sensitiveFile)
+  // Huge thanks to Cedric Beust for documenting these arcane and confusing options here:
+  // http://beust.com/weblog/2015/07/13/the-long-and-arduous-road-to-jcenter-and-maven-bliss/
+  def clarifai = [
+      orgName: "Clarifai",
+      description: "Clarifai Java API Client",
+      github: "https://github.com/Clarifai/clarifai-java",
+  ]
 
-  final String result;
-  if (tag.commit.id == head.id) {
-    result = tag.name
-    getLogger().println("This is a tagged commit, the version will be the tag name: $result")
-  } else {
-    result = "${tag.name}-${head.getAbbreviatedId()}"
-    getLogger().println("This is not a tagged commit, the version will be: ${result}")
-  }
-  return result
-}
+  // Why do we have to do this? I thought the plugin handled this for us... ¯\_(ツ)_/¯
+  install {
+    repositories.mavenInstaller {
+      pom.project {
+        name clarifai.orgName
+        description clarifai.description
+        url clarifai.github
+        inceptionYear "2016"
 
-private static Tag getLatestGitTag(Grgit git) {
-  git.remote.list().each {
-    try {
-      git.fetch(remote: it.name, tagMode: FetchOp.TagMode.ALL)
-    } catch (Exception ignored) {
+        groupId project.group
+        artifactId project.name
+        version project.version
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+          }
+        }
+        scm {
+          url clarifai.github
+          connection "${clarifai.github}.git"
+        }
+        developers {
+          developer {
+            name "${clarifai.orgName}, Inc."
+          }
+        }
+      }
     }
   }
-  git.tag.list().sort { -it.commit.time }.first()
+  bintray {
+    user = project.jcenterUsername
+    key = project.jcenterApiKey
+
+    publish = true
+    configurations = ["archives"]
+
+    pkg {
+      userOrg = clarifai.orgName.toLowerCase()
+      repo = clarifai.orgName
+      name = clarifai.orgName
+      desc = clarifai.description
+
+      licenses = ["Apache-2.0"]
+
+      websiteUrl = clarifai.github
+      issueTrackerUrl = "${clarifai.github}/issues"
+      vcsUrl = "${clarifai.github}.git"
+
+      version {
+        name = project.version
+        released = new Date()
+
+        gpg { sign = true }
+
+        mavenCentralSync {
+          sync = true
+          user = project.sonatypeUsername
+          password = project.sonatypePassword
+        }
+      }
+    }
+  }
+}
+
+
+signing {
+  required { currentlyDeploying() }
+  sign configurations.archives
+}
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = JavaVersion.VERSION_1_7
+//noinspection GroovyUnusedAssignment
+targetCompatibility = JavaVersion.VERSION_1_7
+
+
+buildConfig {
+  packageName = "clarifai2"
+  clsName = "BuildConfig"
+}
+
+release {
+  failOnCommitNeeded = true
+  failOnPublishNeeded = true
+  failOnSnapshotDependencies = true
+  failOnUnversionedFiles = true
+  failOnUpdateNeeded = true
+  revertOnFail = true
+  preCommitText = ""
+  preTagCommitMessage = ""
+  tagCommitMessage = ""
+  newVersionCommitMessage = ""
+  tagTemplate = '${version}'
+  versionPropertyFile = 'gradle.properties'
+  versionProperties = []
+  buildTasks = ['build']
+  git {
+    requireBranch = 'master'
+    pushToRemote = 'public'
+    commitVersionFileOnly = false
+  }
+}
+afterReleaseBuild.dependsOn bintrayUpload
+
+private boolean currentlyDeploying() {
+  return gradle.taskGraph.hasTask("bintrayUpload")
+}
+
+private void mergePropertiesFileIntoProject(File file) {
+  final def props = new Properties()
+  props.load(new FileInputStream(file));
+  props.each { project.ext.set(it.key, it.value) }
 }

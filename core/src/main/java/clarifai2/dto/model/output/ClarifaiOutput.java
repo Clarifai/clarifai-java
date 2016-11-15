@@ -1,5 +1,6 @@
 package clarifai2.dto.model.output;
 
+import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
@@ -22,9 +23,8 @@ import java.util.Map;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiOutput.Adapter.class)
-public abstract class ClarifaiOutput<PREDICTION extends Prediction> {
+public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
-  @NotNull public abstract String id();
   @NotNull public abstract Date createdAt();
   @NotNull public abstract Model<PREDICTION> model();
   @NotNull public abstract ClarifaiInput input();

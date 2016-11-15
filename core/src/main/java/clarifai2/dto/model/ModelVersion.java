@@ -1,5 +1,6 @@
 package clarifai2.dto.model;
 
+import clarifai2.dto.HasClarifaiIDRequired;
 import com.google.auto.value.AutoValue;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,9 +15,8 @@ import java.util.Date;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ModelVersion.Adapter.class)
-public abstract class ModelVersion {
+public abstract class ModelVersion implements HasClarifaiIDRequired {
 
-  @NotNull public abstract String id();
   @NotNull public abstract Date createdAt();
   @NotNull public abstract ModelTrainingStatus status();
 

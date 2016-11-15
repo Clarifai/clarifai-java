@@ -11,7 +11,7 @@ subprojects {
       autoValue: "1.3",
       slf4j: "1.7.21",
 
-      customHashCodeEquals: "a460f76",
+      customHashCodeEquals: "f268f91",
   ]
 
   ext.deps = [

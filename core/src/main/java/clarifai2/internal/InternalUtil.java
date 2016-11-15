@@ -4,6 +4,7 @@ import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
@@ -24,6 +25,28 @@ public final class InternalUtil {
 
   private InternalUtil() {
     throw new UnsupportedOperationException("No instances");
+  }
+
+  public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
+    if (InternalUtil.areNullsPresentInDictionaries(json)) {
+      throw new IllegalArgumentException("You cannot use null as an entry's value in your metadata!");
+    }
+  }
+
+  /**
+   * @param json the JSON to check
+   * @return {@code true} if this JSON is a {@link JsonNull} or if any of the elements it contains, recursively, are {@link JsonNull}s
+   */
+  public static boolean areNullsPresentInDictionaries(@NotNull JsonElement json) {
+    if (!json.isJsonObject()) {
+      return json.isJsonNull();
+    }
+    for (final Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet()) {
+      if (areNullsPresentInDictionaries(entry.getValue())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @NotNull public static JsonObject jsonDeepCopy(@NotNull JsonObject source) {
