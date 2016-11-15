@@ -21,6 +21,8 @@ import java.util.List;
 
 public final class AddInputsRequest extends ClarifaiRequest.Builder<List<ClarifaiInput>> {
 
+  private static final int MAX_NUM_INPUTS = 128;
+
   @NotNull private final List<ClarifaiInput> inputs = new ArrayList<>();
 
   private boolean allowDuplicateURLs = false;
@@ -34,6 +36,9 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
   }
 
   @NotNull public AddInputsRequest plus(@NotNull Collection<ClarifaiInput> inputs) {
+    if (inputs.size() > MAX_NUM_INPUTS) {
+      throw new IllegalArgumentException(String.format("Can't add more than %d inputs in one request", MAX_NUM_INPUTS));
+    }
     this.inputs.addAll(inputs);
     return this;
   }
