@@ -1,7 +1,5 @@
 package clarifai2.api;
 
-import clarifai2.api.request.ClarifaiPaginatedRequest;
-import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
@@ -31,12 +29,7 @@ import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
-import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
-import clarifai2.dto.model.Model;
-import clarifai2.dto.model.ModelVersion;
-import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,12 +61,12 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new PatchInputRequest(this, inputID, "remove");
   }
 
-  @NotNull @Override public ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, ?> getInputs() {
+  @NotNull @Override public GetInputsRequest getInputs() {
     return new GetInputsRequest(this);
   }
 
-  @NotNull @Override public ClarifaiRequest<ClarifaiInput> getInputByID(@NotNull final String inputID) {
-    return new GetInputRequest(this, inputID).build();
+  @NotNull @Override public GetInputRequest getInputByID(@NotNull final String inputID) {
+    return new GetInputRequest(this, inputID);
   }
 
   @NotNull @Override public DeleteInputRequest deleteInput(@NotNull String inputID) {
@@ -89,8 +82,8 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new DeleteAllInputsRequest(this);
   }
 
-  @NotNull @Override public ClarifaiRequest<ClarifaiInputsStatus> getInputsStatus() {
-    return new GetInputsStatusRequest(this).build();
+  @NotNull @Override public GetInputsStatusRequest getInputsStatus() {
+    return new GetInputsStatusRequest(this);
   }
 
   @NotNull @Override public SearchInputsRequest searchInputs(@NotNull SearchClause searchClause) {
@@ -109,16 +102,16 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new AddConceptsRequest(this);
   }
 
-  @NotNull @Override public ClarifaiPaginatedRequest.Builder<List<Concept>, ?> getConcepts() {
+  @NotNull @Override public GetConceptsRequest getConcepts() {
     return new GetConceptsRequest(this);
   }
 
-  @NotNull @Override public ClarifaiRequest<Concept> getConceptByID(@NotNull final String conceptID) {
-    return new GetConceptByIDRequest(this, conceptID).build();
+  @NotNull @Override public GetConceptByIDRequest getConceptByID(@NotNull final String conceptID) {
+    return new GetConceptByIDRequest(this, conceptID);
   }
 
   @NotNull @Override
-  public ClarifaiPaginatedRequest.Builder<List<Concept>, ?> searchConcepts(@NotNull final String conceptSearchQuery) {
+  public SearchConceptsRequest searchConcepts(@NotNull final String conceptSearchQuery) {
     return new SearchConceptsRequest(this, conceptSearchQuery);
   }
 
@@ -130,13 +123,13 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return builtInModels;
   }
 
-  @NotNull @Override public ClarifaiPaginatedRequest.Builder<List<Model<?>>, ?> getModels() {
+  @NotNull @Override public GetModelsRequest getModels() {
     return new GetModelsRequest(this);
   }
 
 
-  @NotNull @Override public ClarifaiRequest<Model<?>> getModelByID(@NotNull String modelID) {
-    return new GetModelRequest(this, modelID).build();
+  @NotNull @Override public GetModelRequest getModelByID(@NotNull String modelID) {
+    return new GetModelRequest(this, modelID);
   }
 
   @NotNull @Override public DeleteModelRequest deleteModel(@NotNull final String modelID) {
@@ -148,8 +141,8 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
   }
 
   @NotNull @Override
-  public ClarifaiRequest<List<ModelVersion>> deleteModelVersion(@NotNull String modelID, @NotNull String versionID) {
-    return new DeleteModelVersionRequest(this, modelID, versionID).build();
+  public DeleteModelVersionRequest deleteModelVersion(@NotNull String modelID, @NotNull String versionID) {
+    return new DeleteModelVersionRequest(this, modelID, versionID);
   }
 
   @NotNull @Override public DeleteAllModelsRequest deleteAllModels() {
@@ -157,12 +150,12 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
   }
 
   @NotNull @Override
-  public ClarifaiRequest<ModelVersion> getModelVersionByID(@NotNull String modelID, @NotNull String versionID) {
+  public GetModelVersionRequest getModelVersionByID(@NotNull String modelID, @NotNull String versionID) {
     return new GetModelVersionRequest(this, modelID, versionID);
   }
 
   @NotNull @Override
-  public ClarifaiPaginatedRequest.Builder<List<ModelVersion>, ?> getModelVersions(@NotNull final String modelID) {
+  public GetModelVersionsRequest getModelVersions(@NotNull final String modelID) {
     return new GetModelVersionsRequest(this, modelID);
   }
 

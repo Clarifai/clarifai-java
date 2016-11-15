@@ -1,27 +1,35 @@
 package clarifai2.api;
 
-import clarifai2.api.request.ClarifaiPaginatedRequest;
-import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.concept.AddConceptsRequest;
+import clarifai2.api.request.concept.GetConceptByIDRequest;
+import clarifai2.api.request.concept.GetConceptsRequest;
+import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
 import clarifai2.api.request.input.DeleteInputsBatchRequest;
+import clarifai2.api.request.input.GetInputRequest;
+import clarifai2.api.request.input.GetInputsRequest;
+import clarifai2.api.request.input.GetInputsStatusRequest;
 import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
+import clarifai2.api.request.model.DeleteModelVersionRequest;
 import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
+import clarifai2.api.request.model.GetModelRequest;
+import clarifai2.api.request.model.GetModelVersionRequest;
+import clarifai2.api.request.model.GetModelVersionsRequest;
+import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
@@ -89,7 +97,7 @@ public interface ClarifaiClient {
    *
    * @return a paginated request to look through all of the {@link ClarifaiInput}s in this app
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, ?> getInputs();
+  @NotNull GetInputsRequest getInputs();
 
   /**
    * Get the input with the given ID
@@ -97,7 +105,7 @@ public interface ClarifaiClient {
    * @param inputID the ID of the input to get
    * @return a request that will, when executed, return the input that was retrieved
    */
-  @NotNull ClarifaiRequest<ClarifaiInput> getInputByID(@NotNull String inputID);
+  @NotNull GetInputRequest getInputByID(@NotNull String inputID);
 
   /**
    * Deletes the input with the given ID
@@ -129,7 +137,7 @@ public interface ClarifaiClient {
    * @return the current status of your Clarifai inputs (how many have been processed, how many are yet to be
    * processed, and how many errors occurred during processing)
    */
-  @NotNull ClarifaiRequest<ClarifaiInputsStatus> getInputsStatus();
+  @NotNull GetInputsStatusRequest getInputsStatus();
 
   /**
    * @param searchClause the clause to begin this search with
@@ -157,7 +165,7 @@ public interface ClarifaiClient {
   /**
    * @return a paginated request to look through all of the {@link Concept}s in this app
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Concept>, ?> getConcepts();
+  @NotNull GetConceptsRequest getConcepts();
 
   /**
    * Get the concept associated with this concept ID
@@ -165,7 +173,7 @@ public interface ClarifaiClient {
    * @param conceptID the ID of the concept to get
    * @return a request that will, when executed, return the concept that was retrieved
    */
-  @NotNull ClarifaiRequest<Concept> getConceptByID(@NotNull String conceptID);
+  @NotNull GetConceptByIDRequest getConceptByID(@NotNull String conceptID);
 
   /**
    * Get the concepts that match this search string
@@ -174,7 +182,7 @@ public interface ClarifaiClient {
    *                           "l*" to search all concepts beginning with the letter 'l'.
    * @return a paginated request that, when executed, will return all of the concepts that match this search query
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Concept>, ?> searchConcepts(@NotNull String conceptSearchQuery);
+  @NotNull SearchConceptsRequest searchConcepts(@NotNull String conceptSearchQuery);
 
   /**
    * Create a new {@link Model}.
@@ -196,9 +204,9 @@ public interface ClarifaiClient {
    *
    * @return a request that, when executed, will return all of the models associated with this app.
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Model<?>>, ?> getModels();
+  @NotNull GetModelsRequest getModels();
 
-  @NotNull ClarifaiRequest<Model<?>> getModelByID(@NotNull String modelID);
+  @NotNull GetModelRequest getModelByID(@NotNull String modelID);
 
   @NotNull DeleteModelRequest deleteModel(@NotNull String modelID);
 
@@ -206,9 +214,9 @@ public interface ClarifaiClient {
 
   @NotNull DeleteAllModelsRequest deleteAllModels();
 
-  @NotNull ClarifaiRequest<List<ModelVersion>> deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
+  @NotNull DeleteModelVersionRequest deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
 
-  @NotNull ClarifaiRequest<ModelVersion> getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
+  @NotNull GetModelVersionRequest getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
 
   /**
    * Returns all of the {@link ModelVersion}s for this {@link Model}
@@ -216,7 +224,7 @@ public interface ClarifaiClient {
    * @param modelID the id of the model
    * @return a request that, when executed, will return all of the versions associated with this model.
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<ModelVersion>, ?> getModelVersions(@NotNull String modelID);
+  @NotNull GetModelVersionsRequest getModelVersions(@NotNull String modelID);
 
   /**
    * Returns all of the {@link ClarifaiInput}s for this {@link Model}
