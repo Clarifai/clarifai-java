@@ -149,7 +149,7 @@ release {
     commitVersionFileOnly = false
   }
 }
-bintrayUpload.dependsOn release
+afterReleaseBuild.dependsOn bintrayUpload
 
 private boolean currentlyDeploying() {
   return gradle.taskGraph.hasTask("bintrayUpload")
