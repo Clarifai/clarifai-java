@@ -15,8 +15,8 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> {
@@ -27,13 +27,12 @@ public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> 
     super(client);
   }
 
-  @NotNull public AddConceptsRequest plus(@NotNull Collection<Concept> concepts) {
-    this.concepts.addAll(concepts);
-    return this;
+  @NotNull public AddConceptsRequest plus(@NotNull Concept... concepts) {
+    return plus(Arrays.asList(concepts));
   }
 
-  @NotNull public AddConceptsRequest plus(@NotNull Concept... concepts) {
-    Collections.addAll(this.concepts, concepts);
+  @NotNull public AddConceptsRequest plus(@NotNull Collection<Concept> concepts) {
+    this.concepts.addAll(concepts);
     return this;
   }
 

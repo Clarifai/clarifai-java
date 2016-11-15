@@ -1,5 +1,6 @@
 package clarifai2.dto.prediction;
 
+import clarifai2.dto.HasClarifaiIDRequired;
 import com.google.auto.value.AutoValue;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -13,9 +14,7 @@ import java.lang.reflect.Type;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Cluster.Adapter.class)
-public abstract class Cluster extends Prediction {
-
-  @NotNull public abstract String id();
+public abstract class Cluster extends Prediction implements HasClarifaiIDRequired {
 
   @NotNull public abstract int numClusters();
 

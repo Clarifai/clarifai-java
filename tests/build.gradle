@@ -30,5 +30,7 @@ dependencies {
       "org.slf4j:slf4j-simple:$versions.slf4j",
 
       "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
+
+      "com.github.kevinmost:junit-retry-rule:cbdd972",
   )
 }

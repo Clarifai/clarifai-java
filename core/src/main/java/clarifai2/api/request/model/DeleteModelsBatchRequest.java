@@ -15,7 +15,8 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public final class DeleteModelsBatchRequest extends ClarifaiRequest.Builder<JsonNull> {
@@ -27,11 +28,10 @@ public final class DeleteModelsBatchRequest extends ClarifaiRequest.Builder<Json
   }
 
   @NotNull public DeleteModelsBatchRequest plus(@NotNull String... modelIDs) {
-    Collections.addAll(this.modelIDs, modelIDs);
-    return this;
+    return plus(Arrays.asList(modelIDs));
   }
 
-  @NotNull public DeleteModelsBatchRequest plus(@NotNull List<String> modelIDs) {
+  @NotNull public DeleteModelsBatchRequest plus(@NotNull Collection<String> modelIDs) {
     this.modelIDs.addAll(modelIDs);
     return this;
   }
