@@ -8,11 +8,17 @@ plugins {
   id "com.github.ben-manes.versions" version "0.13.0"
   id "de.fuerstenau.buildconfig" version "1.1.4"
   id "com.jfrog.bintray" version "1.7.1"
-  id "net.researchgate.release" version "2.4.1"
+  id "com.palantir.git-version" version "0.5.2"
 }
 apply from: rootProject.file("scripts/buildArtifacts.gradle")
 
 group 'com.clarifai.clarifai-api2'
+def details = versionDetails()
+if (details.commitDistance == 0) {
+  version details.lastTag
+} else {
+  version details.lastTag + '-' + details.gitHash
+}
 
 dependencies {
   compile(
@@ -52,10 +58,6 @@ if (sensitiveFile.exists()) {
         description clarifai.description
         url clarifai.github
         inceptionYear "2016"
-
-        groupId project.group
-        artifactId project.name
-        version project.version
 
         licenses {
           license {
@@ -127,29 +129,6 @@ buildConfig {
   packageName = "clarifai2"
   clsName = "BuildConfig"
 }
-
-release {
-  failOnCommitNeeded = true
-  failOnPublishNeeded = true
-  failOnSnapshotDependencies = true
-  failOnUnversionedFiles = true
-  failOnUpdateNeeded = true
-  revertOnFail = true
-  preCommitText = ""
-  preTagCommitMessage = ""
-  tagCommitMessage = ""
-  newVersionCommitMessage = ""
-  tagTemplate = '${version}'
-  versionPropertyFile = 'gradle.properties'
-  versionProperties = []
-  buildTasks = ['build']
-  git {
-    requireBranch = 'master'
-    pushToRemote = 'public'
-    commitVersionFileOnly = false
-  }
-}
-afterReleaseBuild.dependsOn bintrayUpload
 
 private boolean currentlyDeploying() {
   return gradle.taskGraph.hasTask("bintrayUpload")
