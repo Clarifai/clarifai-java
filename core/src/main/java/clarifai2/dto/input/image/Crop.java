@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
@@ -53,6 +54,10 @@ public abstract class Crop {
 
   static class Adapter implements JsonSerializer<Crop>, JsonDeserializer<Crop> {
     @Override public JsonElement serialize(Crop src, Type typeOfSrc, JsonSerializationContext context) {
+      // Keep the bloat in our outgoing request size down by skipping all default crops
+      if (src.equals(Crop.create())) {
+        return JsonNull.INSTANCE;
+      }
       return new JSONArrayBuilder()
           .add(src.top())
           .add(src.left())
@@ -62,6 +67,9 @@ public abstract class Crop {
     }
 
     @Override public Crop deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      if (json == null || json.isJsonNull()) {
+        return Crop.create();
+      }
       final JsonArray array = json.getAsJsonArray();
       return new AutoValue_Crop(
           array.get(0).getAsFloat(),

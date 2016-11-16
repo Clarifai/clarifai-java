@@ -1,33 +1,42 @@
 package clarifai2.api;
 
-import clarifai2.api.request.ClarifaiPaginatedRequest;
-import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.concept.AddConceptsRequest;
-import clarifai2.api.request.concept.DeleteConceptsFromInputRequest;
-import clarifai2.api.request.input.AddConceptsToInputRequest;
+import clarifai2.api.request.concept.GetConceptByIDRequest;
+import clarifai2.api.request.concept.GetConceptsRequest;
+import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
 import clarifai2.api.request.input.DeleteInputsBatchRequest;
+import clarifai2.api.request.input.GetInputRequest;
+import clarifai2.api.request.input.GetInputsRequest;
+import clarifai2.api.request.input.GetInputsStatusRequest;
+import clarifai2.api.request.input.PatchInputMetadataRequest;
+import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
+import clarifai2.api.request.model.DeleteModelVersionRequest;
 import clarifai2.api.request.model.DeleteModelsBatchRequest;
 import clarifai2.api.request.model.FindModelRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
+import clarifai2.api.request.model.GetModelRequest;
+import clarifai2.api.request.model.GetModelVersionRequest;
+import clarifai2.api.request.model.GetModelVersionsRequest;
+import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
+import com.google.gson.JsonObject;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,27 +69,58 @@ public interface ClarifaiClient {
   @NotNull AddInputsRequest addInputs();
 
   /**
-   * Adds the given concepts to the input with the given ID.
+   * Merges any specified concepts into the list of concepts that are associated with this input.
+   * <p>
+   * If the IDs on any of the given concepts already exist on this input, the new concept will overwrite the old one.
    *
    * @param inputID the input to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified input
    */
-  @NotNull AddConceptsToInputRequest addConceptsToInput(@NotNull String inputID);
+  @NotNull PatchInputRequest mergeConceptsForInput(@NotNull String inputID);
 
   /**
-   * Deletes the concepts with the given IDs from the input with the given ID.
+   * Overwrites the list of concepts on this input with the user's provided values.
    *
    * @param inputID the input to modify
-   * @return a request that will, when executed, return the newly-modified input
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
    */
-  @NotNull DeleteConceptsFromInputRequest deleteConceptsFromInput(@NotNull String inputID);
+  @NotNull PatchInputRequest setConceptsForInput(@NotNull String inputID);
+
+  /**
+   * Removes the concepts with the given IDs from this input.
+   *
+   * @param inputID the input to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
+   */
+  @NotNull PatchInputRequest removeConceptsForInput(@NotNull String inputID);
+
+  /**
+   * Adds the given metadata to this input's metadata.
+   *
+   * The keys in the new metadata are parsed depth-first, and the existing metadata is checked for a conflicting key
+   * at that location.
+   *
+   * If the existing metadata does not have a key that conflicts with an entry in the new metadata, that new entry is
+   * added to the existing metadata.
+   *
+   * If the existing metadata DOES have a key that conflicts with an entry in the new metadata:
+   * - If the existing and new values are of different types (primitive vs list vs dictionary), the new value will overwrite the existing value;
+   * - Otherwise, if the existing and new values are both primitives or both lists, the new value will overwrite the existing value;
+   * - Otherwise, both the existing and new value must be dictionaries, and the new dictionary will be merged
+   * into the existing dictionary, with conflicts being resolved in the same manner described above
+   *
+   * @param inputID  the input to merge this metadata into
+   * @param metadata the metadata to merge
+   * @return a builder to construct a request that will, when executed, return the newly-modified input
+   */
+  @NotNull PatchInputMetadataRequest addMetadataForInput(@NotNull String inputID, @NotNull JsonObject metadata);
 
   /**
    * Get all of the inputs associated with this app
    *
    * @return a paginated request to look through all of the {@link ClarifaiInput}s in this app
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<ClarifaiInput>, ?> getInputs();
+  @NotNull GetInputsRequest getInputs();
 
   /**
    * Get the input with the given ID
@@ -88,7 +128,7 @@ public interface ClarifaiClient {
    * @param inputID the ID of the input to get
    * @return a request that will, when executed, return the input that was retrieved
    */
-  @NotNull ClarifaiRequest<ClarifaiInput> getInputByID(@NotNull String inputID);
+  @NotNull GetInputRequest getInputByID(@NotNull String inputID);
 
   /**
    * Deletes the input with the given ID
@@ -120,7 +160,7 @@ public interface ClarifaiClient {
    * @return the current status of your Clarifai inputs (how many have been processed, how many are yet to be
    * processed, and how many errors occurred during processing)
    */
-  @NotNull ClarifaiRequest<ClarifaiInputsStatus> getInputsStatus();
+  @NotNull GetInputsStatusRequest getInputsStatus();
 
   /**
    * @param searchClause the clause to begin this search with
@@ -148,7 +188,7 @@ public interface ClarifaiClient {
   /**
    * @return a paginated request to look through all of the {@link Concept}s in this app
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Concept>, ?> getConcepts();
+  @NotNull GetConceptsRequest getConcepts();
 
   /**
    * Get the concept associated with this concept ID
@@ -156,7 +196,7 @@ public interface ClarifaiClient {
    * @param conceptID the ID of the concept to get
    * @return a request that will, when executed, return the concept that was retrieved
    */
-  @NotNull ClarifaiRequest<Concept> getConceptByID(@NotNull String conceptID);
+  @NotNull GetConceptByIDRequest getConceptByID(@NotNull String conceptID);
 
   /**
    * Get the concepts that match this search string
@@ -165,7 +205,7 @@ public interface ClarifaiClient {
    *                           "l*" to search all concepts beginning with the letter 'l'.
    * @return a paginated request that, when executed, will return all of the concepts that match this search query
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Concept>, ?> searchConcepts(@NotNull String conceptSearchQuery);
+  @NotNull SearchConceptsRequest searchConcepts(@NotNull String conceptSearchQuery);
 
   /**
    * Create a new {@link Model}.
@@ -187,9 +227,9 @@ public interface ClarifaiClient {
    *
    * @return a request that, when executed, will return all of the models associated with this app.
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<Model<?>>, ?> getModels();
+  @NotNull GetModelsRequest getModels();
 
-  @NotNull ClarifaiRequest<Model<?>> getModelByID(@NotNull String modelID);
+  @NotNull GetModelRequest getModelByID(@NotNull String modelID);
 
   @NotNull DeleteModelRequest deleteModel(@NotNull String modelID);
 
@@ -197,9 +237,9 @@ public interface ClarifaiClient {
 
   @NotNull DeleteAllModelsRequest deleteAllModels();
 
-  @NotNull ClarifaiRequest<List<ModelVersion>> deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
+  @NotNull DeleteModelVersionRequest deleteModelVersion(@NotNull String modelID, @NotNull String versionID);
 
-  @NotNull ClarifaiRequest<ModelVersion> getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
+  @NotNull GetModelVersionRequest getModelVersionByID(@NotNull String modelID, @NotNull String versionID);
 
   /**
    * Returns all of the {@link ModelVersion}s for this {@link Model}
@@ -207,7 +247,7 @@ public interface ClarifaiClient {
    * @param modelID the id of the model
    * @return a request that, when executed, will return all of the versions associated with this model.
    */
-  @NotNull ClarifaiPaginatedRequest.Builder<List<ModelVersion>, ?> getModelVersions(@NotNull String modelID);
+  @NotNull GetModelVersionsRequest getModelVersions(@NotNull String modelID);
 
   /**
    * Returns all of the {@link ClarifaiInput}s for this {@link Model}
@@ -225,17 +265,40 @@ public interface ClarifaiClient {
   @NotNull FindModelRequest findModel();
 
   /**
-   * @param modelID the ID of the model to modify
-   * @return a request builder that allows you to link {@link Concept}s to a model
+   * Merges any specified concepts into the list of concepts that are associated with this model.
+   * <p>
+   * If the IDs on any of the given concepts already exist on this model, the new concept will overwrite the old one.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
    */
-  @NotNull PatchModelRequest addConceptsToModel(@NotNull String modelID);
+  @NotNull PatchModelRequest mergeConceptsForModel(@NotNull String modelID);
 
   /**
-   * @param modelID the ID of the model to modify
-   * @return a request builder that allows you to unlink {@link Concept}s from a model
+   * Overwrites the list of concepts on this model with the user's provided values.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
    */
-  @NotNull PatchModelRequest deleteConceptsFromModel(@NotNull String modelID);
+  @NotNull PatchModelRequest setConceptsForModel(@NotNull String modelID);
 
+  /**
+   * Removes the concepts with the given IDs from this model.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
+   */
+  @NotNull PatchModelRequest removeConceptsForModel(@NotNull String modelID);
+
+  /**
+   * Allows the user to change the name and output configuration of their model.
+   * <p>
+   * To change the model's list of concepts, you must use {@link #mergeConceptsForModel(String)},
+   * {@link #setConceptsForModel(String)}, or {@link #removeConceptsForModel(String)}.
+   *
+   * @param modelID the model to modify
+   * @return a builder to construct a request that will, when executed, return the newly-modified model
+   */
   @NotNull ModifyModelRequest modifyModel(@NotNull String modelID);
 
   /**
@@ -254,11 +317,11 @@ public interface ClarifaiClient {
 
   /**
    * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.
-   *
+   * <p>
    * Note that most users will not need to use this method. According to the OkHttp documentation, clients will
    * automatically relinquish resources that are unused over time. This method is only required if aggressive
    * relinquishment of resources is needed.
-   *
+   * <p>
    * Using this {@link ClarifaiClient} instance after this method has been called is an error.
    */
   void close();

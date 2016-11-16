@@ -1,5 +1,6 @@
 package clarifai2.dto.prediction;
 
+import clarifai2.dto.HasClarifaiID;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
@@ -19,7 +20,7 @@ import java.util.Date;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Concept.Adapter.class)
-public abstract class Concept extends Prediction {
+public abstract class Concept extends Prediction implements HasClarifaiID {
 
   @NotNull public static Concept forID(@NotNull String id) {
     return new AutoValue_Concept(id, null, null, null, 1.0F);
@@ -28,11 +29,6 @@ public abstract class Concept extends Prediction {
   @NotNull public static Concept forName(@NotNull String name) {
     return new AutoValue_Concept(null, name, null, null, 1.0F);
   }
-
-  /**
-   * @return this concept's unique ID
-   */
-  @Nullable public abstract String id();
 
   /**
    * @return this concept's name (meant to be human-readable). This can be the same as the ID in some situations.

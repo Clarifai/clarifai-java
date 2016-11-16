@@ -1,5 +1,6 @@
 package clarifai2.dto.input;
 
+import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.InternalUtil;
@@ -25,7 +26,7 @@ import java.util.List;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiInput.Adapter.class)
-public abstract class ClarifaiInput {
+public abstract class ClarifaiInput implements HasClarifaiID {
 
   /**
    * @param image the image to represent
@@ -35,7 +36,6 @@ public abstract class ClarifaiInput {
     return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList());
   }
 
-  @Nullable public abstract String id();
   @Nullable public abstract Date createdAt();
 
   /**
@@ -71,6 +71,7 @@ public abstract class ClarifaiInput {
    * @return a copy of this {@link ClarifaiInput} with its metadata set to the specified value
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
+    InternalUtil.assertMetadataHasNoNulls(metadata);
     return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts());
   }
 

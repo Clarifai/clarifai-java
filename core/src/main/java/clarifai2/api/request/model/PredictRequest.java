@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public final class PredictRequest<PREDICTION extends Prediction>
@@ -37,13 +37,12 @@ public final class PredictRequest<PREDICTION extends Prediction>
     this.modelID = modelID;
   }
 
-  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull Collection<ClarifaiInput> inputData) {
-    this.inputData.addAll(inputData);
-    return this;
+  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull ClarifaiInput... inputData) {
+    return withInputs(Arrays.asList(inputData));
   }
 
-  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull ClarifaiInput... inputData) {
-    Collections.addAll(this.inputData, inputData);
+  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull Collection<ClarifaiInput> inputData) {
+    this.inputData.addAll(inputData);
     return this;
   }
 

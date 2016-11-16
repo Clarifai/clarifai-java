@@ -62,7 +62,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void bulkUpdateInputWithConcepts() {
-    client.addConceptsToInput("{{id}}")
+    client.mergeConceptsForInput("{{id}}")
         .plus(
             Concept.forID("tree"),
             Concept.forID("water").withValue(false)
@@ -71,7 +71,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void bulkDeleteConceptsFromAnInput() {
-    client.deleteConceptsFromInput("{{id}}")
+    client.mergeConceptsForInput("{{id}}")
         .plus(
             Concept.forID("tree"),
             Concept.forID("water")
@@ -123,25 +123,25 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void addConceptsToModel() {
-    client.addConceptsToModel("{{model_id}}")
+    client.mergeConceptsForModel("{{model_id}}")
         .plus(Concept.forID("dogs"))
         .executeSync();
 
     // Or, if you have a ConceptModel object, you can do it in an OO fashion
     final ConceptModel model = client.getModelByID("{{model_id}}").executeSync().get().asConceptModel();
-    model.addConcepts()
+    model.mergeConcepts()
         .plus(Concept.forID("dogs"))
         .executeSync();
   }
 
   @Test public void removeConceptsFromAModel() {
-    client.deleteConceptsFromModel("{{model_id}}")
+    client.removeConceptsForModel("{{model_id}}")
         .plus(Concept.forID("dogs"))
         .executeSync();
 
     // Or, if you have a ConceptModel object, you can do it in an OO fashion
     final ConceptModel model = client.getModelByID("{{model_id}}").executeSync().get().asConceptModel();
-    model.deleteConcepts()
+    model.removeConcepts()
         .plus(Concept.forID("dogs"))
         .executeSync();
   }

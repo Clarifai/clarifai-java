@@ -6,6 +6,7 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
+import com.kevinmost.junit_retry_rule.RetryRule;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class BaseClarifaiAPITest {
 
-  @NotNull @Rule public TestName testName = new TestName();
+  @NotNull @Rule public final TestName testName = new TestName();
+  @NotNull @Rule public final RetryRule retryRule = new RetryRule();
+  @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();
 
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
 
