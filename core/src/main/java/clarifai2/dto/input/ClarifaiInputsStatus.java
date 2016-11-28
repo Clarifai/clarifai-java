@@ -22,6 +22,14 @@ public abstract class ClarifaiInputsStatus {
   @NotNull public abstract int toProcess();
   @NotNull public abstract int errors();
 
+  @AutoValue.Builder
+  public interface Builder {
+    @NotNull Builder processed(int processed);
+    @NotNull Builder toProcess(int toProcess);
+    @NotNull Builder errors(int errors);
+    @NotNull ClarifaiInputsStatus build();
+  }
+
   ClarifaiInputsStatus() {} // AutoValue instances only
 
   static class Adapter implements JsonSerializer<ClarifaiInputsStatus>, JsonDeserializer<ClarifaiInputsStatus> {
@@ -37,11 +45,11 @@ public abstract class ClarifaiInputsStatus {
     @Override
     public ClarifaiInputsStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
       final JsonObject root = json.getAsJsonObject();
-      return new AutoValue_ClarifaiInputsStatus(
-          root.get("errors").getAsInt(),
-          root.get("to_process").getAsInt(),
-          root.get("processed").getAsInt()
-      );
+      return new AutoValue_ClarifaiInputsStatus.Builder()
+          .processed(root.get("processed").getAsInt())
+          .toProcess(root.get("to_process").getAsInt())
+          .errors(root.get("errors").getAsInt())
+          .build();
     }
   }
 }
