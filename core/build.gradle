@@ -39,9 +39,7 @@ dependencies {
   )
 }
 
-def sensitiveFile = rootProject.file("sensitive.properties")
-if (sensitiveFile.exists()) {
-  mergePropertiesFileIntoProject(sensitiveFile)
+if (project.hasProperty("sonatypeUsernameClarifai")) {
   // Huge thanks to Cedric Beust for documenting these arcane and confusing options here:
   // http://beust.com/weblog/2015/07/13/the-long-and-arduous-road-to-jcenter-and-maven-bliss/
   def clarifai = [
@@ -79,8 +77,8 @@ if (sensitiveFile.exists()) {
     }
   }
   bintray {
-    user = project.jcenterUsername
-    key = project.jcenterApiKey
+    user = project.jcenterUsernameClarifai
+    key = project.jcenterApiKeyClarifai
 
     publish = true
     configurations = ["archives"]
@@ -105,8 +103,8 @@ if (sensitiveFile.exists()) {
 
         mavenCentralSync {
           sync = true
-          user = project.sonatypeUsername
-          password = project.sonatypePassword
+          user = project.sonatypeUsernameClarifai
+          password = project.sonatypePasswordClarifai
         }
       }
     }
@@ -132,10 +130,4 @@ buildConfig {
 
 private boolean currentlyDeploying() {
   return gradle.taskGraph.hasTask("bintrayUpload")
-}
-
-private void mergePropertiesFileIntoProject(File file) {
-  final def props = new Properties()
-  props.load(new FileInputStream(file));
-  props.each { project.ext.set(it.key, it.value) }
 }
