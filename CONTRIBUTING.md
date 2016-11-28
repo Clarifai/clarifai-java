@@ -17,9 +17,17 @@ Without these steps, you will be forced to build from the command-line every tim
 Credentials
 ------
 
-To push to our Sonatype (Maven Central) and jCenter accounts, you will need to fill in the credentials in
-the [sensitive.properties](sensitive.properties) file. Please see this file for instructions on how to obtain
-these credentials.
+To push to our Sonatype (Maven Central) and jCenter accounts, you will need to add the following properties to your
+`~/.gradle/gradle.properties`:
+
+```properties
+sonatypeUsernameClarifai=
+sonatypePasswordClarifai=
+jcenterUsernameClarifai=
+jcenterApiKeyClarifai=
+```
+
+These credentials should be obtained from a trusted source (currently one of the Clarifai project maintainers).
 
 
 Deploying
