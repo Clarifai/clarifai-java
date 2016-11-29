@@ -79,36 +79,36 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Concept outdoors23 = Concept.forID("outdoors23");
     assertSuccess(client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/HEoT5xR.png"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png"))
                 .withConcepts(
                     ferrari23.withValue(true)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/It5JRaj.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23.withValue(false)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/GeMQsiQ.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/eXCE9mf.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/EnrVc0B.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://s7d1.scene7.com/is/image/BedBathandBeyond/56879143899890p"))
+            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -216,7 +216,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t15_trainModel() {
     assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/penguin.bmp"))
             .withConcepts(Concept.forID("outdoors23"))
         )
         .allowDuplicateURLs(true)
