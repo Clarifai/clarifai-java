@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.util.Date;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ModelVersion.Adapter.class)
@@ -27,8 +29,8 @@ public abstract class ModelVersion implements HasClarifaiIDRequired {
       final JsonObject root = json.getAsJsonObject();
       return new AutoValue_ModelVersion(
           root.get("id").getAsString(),
-          context.<Date>deserialize(root.get("created_at"), Date.class),
-          context.<ModelTrainingStatus>deserialize(root.get("status"), ModelTrainingStatus.class)
+          fromJson(context, root.get("created_at"), Date.class),
+          fromJson(context, root.get("status"), ModelTrainingStatus.class)
       );
     }
   }

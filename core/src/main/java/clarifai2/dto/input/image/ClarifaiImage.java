@@ -14,6 +14,8 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(ClarifaiImage.Adapter.class)
 public abstract class ClarifaiImage {
@@ -47,7 +49,8 @@ public abstract class ClarifaiImage {
   static class Adapter implements JsonDeserializer<ClarifaiImage> {
     @Override
     public ClarifaiImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      return context.deserialize(
+      return fromJson(
+          context,
           json,
           json.getAsJsonObject().has("url") ? ClarifaiURLImage.class : ClarifaiFileImage.class
       );

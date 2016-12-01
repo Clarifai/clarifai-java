@@ -1,14 +1,17 @@
 package clarifai2.internal;
 
+import clarifai2.api.ClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.MediaType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +28,17 @@ public final class InternalUtil {
 
   private InternalUtil() {
     throw new UnsupportedOperationException("No instances");
+  }
+
+  @Contract("null -> fail") @NotNull public static <T> T assertNotNull(@Nullable T in) {
+    if (in == null) {
+      throw new NullPointerException();
+    }
+    return in;
+  }
+
+  @Contract("null -> false") public static boolean isJsonNull(@Nullable JsonElement in) {
+    return in != null && (!in.isJsonNull());
   }
 
   public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
@@ -91,13 +105,36 @@ public final class InternalUtil {
     }
   }
 
-  @NotNull
-  public static <T> T fromJson(@NotNull Gson gson, @NotNull JsonElement element, @NotNull TypeToken<T> token) {
-    final T result = gson.fromJson(element, token.getType());
-    if (result == null) {
-      throw new ClarifaiException("fromJson returned null. Json: " + element);
-    }
-    return result;
+  @NotNull public static ClarifaiClient clientInstance(@NotNull Gson gson) {
+    return gson.fromJson(new JsonObject(), ClarifaiClient.class);
+  }
+
+  @NotNull public static ClarifaiClient clientInstance(@NotNull JsonDeserializationContext context) {
+    return context.deserialize(new JsonObject(), ClarifaiClient.class);
+  }
+
+  @Nullable public static <T> T fromJson(
+      @NotNull JsonDeserializationContext context,
+      @Nullable JsonElement element,
+      @NotNull Class<T> type
+  ) {
+    return context.deserialize(element, type);
+  }
+
+  @Nullable public static <T> T fromJson(
+      @NotNull JsonDeserializationContext context,
+      @Nullable JsonElement element,
+      @NotNull TypeToken<T> type
+  ) {
+    return context.deserialize(element, type.getType());
+  }
+
+  @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<T> type) {
+    return gson.fromJson(element, type);
+  }
+
+  @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull TypeToken<T> type) {
+    return gson.fromJson(element, type.getType());
   }
 
   @Nullable
@@ -175,17 +212,4 @@ public final class InternalUtil {
     }
     return ous.toByteArray();
   }
-
-  @NotNull
-  public static String message(String header, String... tabbedInLines) {
-    final StringBuilder builder = new StringBuilder(header).append('\n');
-    for (String tabbedInLine : tabbedInLines) {
-      builder.append('\t')
-          .append(tabbedInLine)
-          .append('\n');
-    }
-    builder.setLength(builder.length() - 1);
-    return builder.toString();
-  }
-
 }

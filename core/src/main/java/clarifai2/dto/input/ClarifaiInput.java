@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiInput.Adapter.class)
@@ -102,7 +104,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
       {
         final JsonElement conceptsJSON = data.get("concepts");
         if (conceptsJSON != null) {
-          concepts = context.deserialize(conceptsJSON, new TypeToken<List<Concept>>() {}.getType());
+          concepts = fromJson(context, conceptsJSON, new TypeToken<List<Concept>>() {});
         } else {
           concepts = Collections.emptyList();
         }
@@ -112,8 +114,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
 
       return new AutoValue_ClarifaiInput(
           InternalUtil.<String>nullSafeTraverse(root, "id"),
-          context.<Date>deserialize(root.get("created_at"), Date.class),
-          context.<ClarifaiImage>deserialize(data.get("image"), ClarifaiImage.class),
+          fromJson(context, root.get("created_at"), Date.class),
+          fromJson(context, data.get("image"), ClarifaiImage.class),
           metadata,
           concepts
       );

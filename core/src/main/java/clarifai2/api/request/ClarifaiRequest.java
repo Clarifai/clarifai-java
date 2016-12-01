@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
+import static clarifai2.internal.InternalUtil.fromJson;
 
 /**
  * An interface returned by the {@link ClarifaiClient} used to execute an API request.
@@ -246,7 +247,7 @@ public interface ClarifaiRequest<RESULT> {
           return new ClarifaiResponse.NetworkError<>(ClarifaiStatus.unknown());
         }
         final JsonObject root = json.getAsJsonObject();
-        final ClarifaiStatus status = client.gson.fromJson(root.getAsJsonObject("status"), ClarifaiStatus.class);
+        final ClarifaiStatus status = fromJson(client.gson, root.getAsJsonObject("status"), ClarifaiStatus.class);
 
         final int code = response.code();
 

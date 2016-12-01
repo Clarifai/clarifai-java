@@ -94,4 +94,27 @@ public final class JSONArrayBuilder {
   @NotNull public JsonArray build() {
     return inner;
   }
+
+  @Override public int hashCode() {
+    return inner.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj instanceof JSONArrayBuilder) {
+      final JSONArrayBuilder that = (JSONArrayBuilder) obj;
+      return this == that || this.inner.equals(that.inner);
+    }
+    if (obj instanceof JsonArray) {
+      final JsonArray that = (JsonArray) obj;
+      return this.inner.equals(that);
+    }
+    return false;
+  }
+
+  @Override public String toString() {
+    return inner.toString();
+  }
 }

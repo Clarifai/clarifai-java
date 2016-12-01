@@ -53,4 +53,27 @@ public final class JSONObjectBuilder {
   @NotNull public JsonObject build() {
     return inner;
   }
+
+  @Override public int hashCode() {
+    return inner.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj instanceof JSONObjectBuilder) {
+      final JSONObjectBuilder that = (JSONObjectBuilder) obj;
+      return this == that || this.inner.equals(that.inner);
+    }
+    if (obj instanceof JsonObject) {
+      final JsonObject that = (JsonObject) obj;
+      return this.inner.equals(that);
+    }
+    return false;
+  }
+
+  @Override public String toString() {
+    return inner.toString();
+  }
 }

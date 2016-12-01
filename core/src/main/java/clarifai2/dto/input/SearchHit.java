@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(SearchHit.Adapter.class)
@@ -25,7 +27,7 @@ public abstract class SearchHit {
       final JsonObject root = json.getAsJsonObject();
       return new AutoValue_SearchHit(
           root.get("score").getAsFloat(),
-          context.<ClarifaiInput>deserialize(root.get("input"), ClarifaiInput.class)
+          fromJson(context, root.get("input"), ClarifaiInput.class)
       );
     }
   }

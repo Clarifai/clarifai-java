@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.net.URL;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiURLImage.Adapter.class)
@@ -39,7 +41,7 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
         JsonParseException {
       final JsonObject root = json.getAsJsonObject();
       return ClarifaiImage.of(root.get("url").getAsString())
-          .withCrop(context.<Crop>deserialize(root.get("crop"), Crop.class));
+          .withCrop(fromJson(context, root.get("crop"), Crop.class));
     }
   }
 }

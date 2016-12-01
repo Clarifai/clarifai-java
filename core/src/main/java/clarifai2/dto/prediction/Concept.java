@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Date;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Concept.Adapter.class)
@@ -75,7 +77,7 @@ public abstract class Concept extends Prediction implements HasClarifaiID {
       return new AutoValue_Concept(
           root.get("id").getAsString(),
           root.get("name").getAsString(),
-          context.<Date>deserialize(root.get("created_at"), Date.class),
+          fromJson(context, root.get("created_at"), Date.class),
           InternalUtil.<String>nullSafeTraverse(root, "app_id"),
           root.has("value") && !root.get("value").isJsonNull() ? root.get("value").getAsFloat() : 1.0F
       );

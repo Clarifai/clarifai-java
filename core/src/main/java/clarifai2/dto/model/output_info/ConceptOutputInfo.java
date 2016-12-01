@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ConceptOutputInfo.Adapter.class)
@@ -80,9 +82,10 @@ public abstract class ConceptOutputInfo extends OutputInfo {
       if (root.getAsJsonObject("data") == null) {
         concepts = Collections.emptyList();
       } else {
-        concepts = context.deserialize(
+        concepts = fromJson(
+            context,
             root.getAsJsonObject("data").getAsJsonArray("concepts"),
-            new TypeToken<List<Concept>>() {}.getType()
+            new TypeToken<List<Concept>>() {}
         );
       }
       boolean areConceptsMutuallyExclusive = false;

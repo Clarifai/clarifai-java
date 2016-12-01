@@ -27,6 +27,9 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
+import static clarifai2.internal.InternalUtil.clientInstance;
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(Model.Adapter.class)
 public abstract class Model<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
@@ -178,11 +181,11 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
       return getBuilder(modelType)
           .id(root.get("id").getAsString())
           .name(root.get("name").getAsString())
-          .createdAt(context.<Date>deserialize(root.get("created_at"), Date.class))
+          .createdAt(fromJson(context, root.get("created_at"), Date.class))
           .appID(InternalUtil.<String>nullSafeTraverse(root, "app_id"))
-          .modelVersion(context.<ModelVersion>deserialize(root.get("model_version"), ModelVersion.class))
-          ._outputInfo(context.<OutputInfo>deserialize(root.get("output_info"), OutputInfo.class))
-          .client(context.<ClarifaiClient>deserialize(new JsonObject(), ClarifaiClient.class))
+          .modelVersion(fromJson(context, root.get("model_version"), ModelVersion.class))
+          ._outputInfo(fromJson(context, root.get("output_info"), OutputInfo.class))
+          .client(clientInstance(context))
           .build()
           ;
     }

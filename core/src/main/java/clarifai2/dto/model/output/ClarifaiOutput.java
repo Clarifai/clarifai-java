@@ -12,6 +12,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -38,21 +41,20 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
       final JsonObject root = json.getAsJsonObject();
 
       final Class<? extends Prediction> predictionType =
-          ModelType.determineFromDataRoot(root.getAsJsonObject("data"))
-              .predictionType();
+          ModelType.determineFromDataRoot(root.getAsJsonObject("data")).predictionType();
 
       final List<Prediction> allPredictions = new ArrayList<>();
       for (final Map.Entry<String, JsonElement> data : root.getAsJsonObject("data").entrySet()) {
         final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
         for (final JsonElement predictionJSON : array) {
-          allPredictions.add(context.<Prediction>deserialize(predictionJSON, predictionType));
+          allPredictions.add(fromJson(context, predictionJSON, predictionType));
         }
       }
       return new AutoValue_ClarifaiOutput<>(
           root.get("id").getAsString(),
-          context.<Date>deserialize(root.get("created_at"), Date.class),
-          context.<Model<Prediction>>deserialize(root.get("model"), Model.class),
-          context.<ClarifaiInput>deserialize(root.get("input"), ClarifaiInput.class),
+          fromJson(context, root.get("created_at"), Date.class),
+          fromJson(context, root.get("model"), new TypeToken<Model<Prediction>>() {}),
+          fromJson(context, root.get("input"), ClarifaiInput.class),
           allPredictions
       );
     }

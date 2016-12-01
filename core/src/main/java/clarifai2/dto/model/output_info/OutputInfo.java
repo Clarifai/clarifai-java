@@ -9,6 +9,8 @@ import com.google.gson.annotations.JsonAdapter;
 
 import java.lang.reflect.Type;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @JsonAdapter(OutputInfo.Adapter.class)
 public abstract class OutputInfo {
 
@@ -23,7 +25,7 @@ public abstract class OutputInfo {
       if (root.has("type") && root.size() == 1) {
         return null;
       }
-      return context.deserialize(json, ModelType.determineFromOutputInfoRoot(root).infoType());
+      return fromJson(context, json, ModelType.determineFromOutputInfoRoot(root).infoType());
     }
   }
 }
