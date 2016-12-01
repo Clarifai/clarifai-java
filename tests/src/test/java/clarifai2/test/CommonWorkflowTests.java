@@ -29,8 +29,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -59,9 +58,11 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t00_deleteAllInputs() {
     assertSuccess(client.deleteAllInputs());
-    retryAndTimeout(1, TimeUnit.MINUTES, () ->
-        client.getInputs().build().getPage(1).executeSync().get().isEmpty()
-    );
+    while (true) {
+      if (assertSuccess(client.getInputs()).isEmpty()) {
+        break;
+      }
+    }
   }
 
   @Retry
@@ -87,36 +88,43 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Concept outdoors23 = Concept.forID("outdoors23");
     assertSuccess(client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png"))
                 .withConcepts(
                     ferrari23.withValue(true)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23.withValue(false)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -409,16 +417,19 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .executeSync();
   }
 
-  @Test public void testDefaultModels() throws InvocationTargetException, IllegalAccessException {
+  @Test public void testDefaultModels() throws IllegalAccessException {
     final DefaultModels defaultModels = client.getDefaultModels();
-    // Use reflection just to ensure we don't miss any models when we add new ones
-    for (final Method method : DefaultModels.class.getMethods()) {
-      if (isPublic(method.getModifiers()) && Model.class.isAssignableFrom(method.getReturnType())) {
-        final Model<?> model = (Model<?>) method.invoke(defaultModels);
-        assertSuccess(
-            model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
-        );
+    @SuppressWarnings("rawtypes") final Class<Model> modelClass = Model.class;
+    // Use reflection just to ensure we don't miss any fields
+    for (final Field field : DefaultModels.class.getDeclaredFields()) {
+      field.setAccessible(true);
+      if (!modelClass.isAssignableFrom(field.getType())) {
+        continue;
       }
+      final Model<?> model = modelClass.cast(field.get(defaultModels));
+      assertSuccess(
+          model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+      );
     }
   }
 

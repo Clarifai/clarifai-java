@@ -21,10 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
-import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -94,59 +91,31 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   ClarifaiInput() {} // AutoValue instances only
 
 
-  static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
-    @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
-      return new Serializer<ClarifaiInput>() {
-        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiInput value, @NotNull Gson gson) {
-          if (value == null) {
-            return JsonNull.INSTANCE;
-          }
-          final JSONObjectBuilder builder = new JSONObjectBuilder()
-              .add("id", value.id())
-              .add("data", new JSONObjectBuilder()
-                  .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-                  .add("image", toJson(gson, value.image(), ClarifaiImage.class))
-                  .add("metadata", value.metadata())
-              );
-          if (value.createdAt() != null) {
-            builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
-          }
-          return builder.build();
+  static class Adapter implements JsonSerializer<ClarifaiInput>, JsonDeserializer<ClarifaiInput> {
+
+    @Override
+    public ClarifaiInput deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      final JsonObject root = json.getAsJsonObject();
+      final JsonObject data = root.getAsJsonObject("data");
+
+      final List<Concept> concepts;
+      {
+        final JsonElement conceptsJSON = data.get("concepts");
+        if (conceptsJSON != null) {
+          concepts = fromJson(context, conceptsJSON, new TypeToken<List<Concept>>() {});
+        } else {
+          concepts = Collections.emptyList();
         }
       };
     }
 
-    @Nullable @Override protected Deserializer<ClarifaiInput> deserializer() {
-      return new Deserializer<ClarifaiInput>() {
-        @Nullable @Override
-        public ClarifaiInput deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<ClarifaiInput> type,
-            @NotNull Gson gson) {
-          final JsonObject root = assertJsonIs(json, JsonObject.class);
-          final JsonObject data = root.getAsJsonObject("data");
-
-          final List<Concept> concepts;
-          {
-            final JsonElement conceptsJSON = data.get("concepts");
-            if (conceptsJSON != null) {
-              concepts = fromJson(gson, conceptsJSON, new TypeToken<List<Concept>>() {});
-            } else {
-              concepts = Collections.emptyList();
-            }
-          }
-
-          final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
-
-          return new AutoValue_ClarifaiInput(
-              isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
-              fromJson(gson, root.get("created_at"), Date.class),
-              fromJson(gson, data.get("image"), ClarifaiImage.class),
-              metadata,
-              concepts
-          );
-        }
-      };
+      return new AutoValue_ClarifaiInput(
+          InternalUtil.<String>nullSafeTraverse(root, "id"),
+          fromJson(context, root.get("created_at"), Date.class),
+          fromJson(context, data.get("image"), ClarifaiImage.class),
+          metadata,
+          concepts
+      );
     }
 
     @NotNull @Override protected TypeToken<ClarifaiInput> typeToken() {

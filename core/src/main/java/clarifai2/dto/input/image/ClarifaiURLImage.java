@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 
-import static clarifai2.internal.InternalUtil.toJson;
+import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -58,8 +58,12 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
       };
     }
 
-    @NotNull @Override protected TypeToken<ClarifaiURLImage> typeToken() {
-      return new TypeToken<ClarifaiURLImage>() {};
+    @Override
+    public ClarifaiURLImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
+        JsonParseException {
+      final JsonObject root = json.getAsJsonObject();
+      return ClarifaiImage.of(root.get("url").getAsString())
+          .withCrop(fromJson(context, root.get("crop"), Crop.class));
     }
   }
 }
