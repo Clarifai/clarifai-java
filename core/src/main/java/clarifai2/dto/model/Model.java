@@ -105,7 +105,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   @Nullable public abstract ModelVersion modelVersion();
   @NotNull public abstract ModelType modelType();
   @Nullable public abstract OutputInfo outputInfo();
-  @Nullable abstract OutputInfo _outputInfo();
+  @IgnoreForHashCodeEquals @Nullable abstract OutputInfo _outputInfo();
 
   @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
 

@@ -29,7 +29,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.api.request.input.SearchClause.matchMetadata;
+import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -419,19 +421,16 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .executeSync();
   }
 
-  @Test public void testDefaultModels() throws IllegalAccessException {
+  @Test public void testDefaultModels() throws InvocationTargetException, IllegalAccessException {
     final DefaultModels defaultModels = client.getDefaultModels();
-    @SuppressWarnings("rawtypes") final Class<Model> modelClass = Model.class;
-    // Use reflection just to ensure we don't miss any fields
-    for (final Field field : DefaultModels.class.getDeclaredFields()) {
-      field.setAccessible(true);
-      if (!modelClass.isAssignableFrom(field.getType())) {
-        continue;
+    // Use reflection just to ensure we don't miss any models when we add new ones
+    for (final Method method : DefaultModels.class.getMethods()) {
+      if (isPublic(method.getModifiers()) && Model.class.isAssignableFrom(method.getReturnType())) {
+        final Model<?> model = (Model<?>) method.invoke(defaultModels);
+        assertSuccess(
+            model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+        );
       }
-      final Model<?> model = modelClass.cast(field.get(defaultModels));
-      assertSuccess(
-          model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
-      );
     }
   }
 
