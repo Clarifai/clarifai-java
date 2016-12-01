@@ -431,13 +431,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
 
   @Test public void faceDetectionModel() {
     client.getDefaultModels().faceDetectionModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("a403429f2ddf4b49b307e318f00e528b")))
         .executeSync();
   }
-
-  /*@Test public void demographicsModel() {
-    client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
-        .executeSync();
-  }*/
 }

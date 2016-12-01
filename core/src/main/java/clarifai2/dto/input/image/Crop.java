@@ -1,7 +1,6 @@
 package clarifai2.dto.input.image;
 
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -9,10 +8,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static clarifai2.internal.InternalUtil.isJsonNull;
 
 import static clarifai2.internal.InternalUtil.isJsonNull;
 
@@ -109,8 +112,30 @@ public abstract class Crop {
       };
     }
 
-    @NotNull @Override protected TypeToken<Crop> typeToken() {
-      return new TypeToken<Crop>() {};
+    @Override public Crop deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      if (isJsonNull(json)) {
+        return Crop.create();
+      }
+      if (json.isJsonArray()) {
+        final JsonArray array = json.getAsJsonArray();
+        return new AutoValue_Crop(
+            array.get(0).getAsFloat(),
+            array.get(1).getAsFloat(),
+            array.get(2).getAsFloat(),
+            array.get(3).getAsFloat()
+        );
+      }
+      if (json.isJsonObject()) {
+        final JsonObject root = json.getAsJsonObject();
+        if (root.has("top_row")) {
+          return create()
+              .top(root.get("top_row").getAsFloat())
+              .left(root.get("left_col").getAsFloat())
+              .bottom(root.get("bottom_row").getAsFloat())
+              .right(root.get("right_col").getAsFloat());
+        }
+      }
+      throw new ClarifaiException(String.format("Can't parse JSON %s as a Crop object", json));
     }
   }
 }

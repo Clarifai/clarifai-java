@@ -15,34 +15,23 @@ import static clarifai2.internal.InternalUtil.fromJson;
 
 import static clarifai2.internal.InternalUtil.fromJson;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @JsonAdapter(OutputInfo.Adapter.class)
 public abstract class OutputInfo {
 
   OutputInfo() {}
 
-  static class Adapter extends JSONAdapterFactory<OutputInfo> {
-    @Nullable @Override protected Deserializer<OutputInfo> deserializer() {
-      return new Deserializer<OutputInfo>() {
-        @Nullable @Override
-        public OutputInfo deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<OutputInfo> type,
-            @NotNull Gson gson
-        ) {
-          final JsonObject root = assertJsonIs(json, JsonObject.class);
-          if (root.has("message")) {
-            return null;
-          }
-          if (root.has("type") && root.size() == 1) {
-            return null;
-          }
-          return fromJson(gson, json, ModelType.determineFromOutputInfoRoot(root).infoType());
-        }
-      };
-    }
-
-    @NotNull @Override protected TypeToken<OutputInfo> typeToken() {
-      return new TypeToken<OutputInfo>() {};
+  static class Adapter implements JsonDeserializer<OutputInfo> {
+    @Override public OutputInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      final JsonObject root = json.getAsJsonObject();
+      if (root.has("message")) {
+        return null;
+      }
+      if (root.has("type") && root.size() == 1) {
+        return null;
+      }
+      return fromJson(context, json, ModelType.determineFromOutputInfoRoot(root).infoType());
     }
   }
 }

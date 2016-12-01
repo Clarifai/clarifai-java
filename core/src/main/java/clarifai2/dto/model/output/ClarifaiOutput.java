@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
@@ -67,33 +66,23 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               dataRoot.remove("focus");
             }
 
-            for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
-              final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
-              for (JsonElement predictionJSON : array) {
-                if (predictionType == Focus.class) {
-                  JsonObject addValue = predictionJSON.getAsJsonObject();
-                  addValue.add("value", new JsonPrimitive(value));
-                  predictionJSON = addValue;
-                }
-                allPredictions.add(fromJson(gson, predictionJSON, predictionType));
-              }
-            }
-          }
+      final Class<? extends Prediction> predictionType =
+          ModelType.determineFromDataRoot(root.getAsJsonObject("data")).predictionType();
 
-          return new AutoValue_ClarifaiOutput<>(
-              root.get("id").getAsString(),
-              fromJson(gson, root.get("created_at"), Date.class),
-              fromJson(gson, root.get("model"), new TypeToken<Model<Prediction>>() {}),
-              fromJson(gson, root.get("input"), ClarifaiInput.class),
-              allPredictions,
-              fromJson(gson, root.get("status"), ClarifaiStatus.class)
-          );
+      final List<Prediction> allPredictions = new ArrayList<>();
+      for (final Map.Entry<String, JsonElement> data : root.getAsJsonObject("data").entrySet()) {
+        final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+        for (final JsonElement predictionJSON : array) {
+          allPredictions.add(fromJson(context, predictionJSON, predictionType));
         }
-      };
-    }
-
-    @NotNull @Override protected TypeToken<ClarifaiOutput> typeToken() {
-      return new TypeToken<ClarifaiOutput>() {};
+      }
+      return new AutoValue_ClarifaiOutput<>(
+          root.get("id").getAsString(),
+          fromJson(context, root.get("created_at"), Date.class),
+          fromJson(context, root.get("model"), new TypeToken<Model<Prediction>>() {}),
+          fromJson(context, root.get("input"), ClarifaiInput.class),
+          allPredictions
+      );
     }
   }
 }

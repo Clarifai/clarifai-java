@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
-import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -89,37 +87,27 @@ public abstract class ConceptOutputInfo extends OutputInfo {
       };
     }
 
-    @Nullable @Override protected Deserializer<ConceptOutputInfo> deserializer() {
-      return new Deserializer<ConceptOutputInfo>() {
-        @Nullable @Override
-        public ConceptOutputInfo deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<ConceptOutputInfo> type,
-            @NotNull Gson gson
-        ) {
-          final JsonObject root = json.getAsJsonObject();
+    @Override
+    public ConceptOutputInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      final JsonObject root = json.getAsJsonObject();
 
-          final List<Concept> concepts = isJsonNull(root.getAsJsonObject("data"))
-              ? Collections.<Concept>emptyList()
-              : fromJson(
-                  gson,
-                  root.getAsJsonObject("data").getAsJsonArray("concepts"),
-                  new TypeToken<List<Concept>>() {}
-              );
-          boolean areConceptsMutuallyExclusive = false;
-          boolean isEnvironmentClosed = false;
-          String language = null;
-          {
-            final JsonObject outputConfig = root.getAsJsonObject("output_config");
-            if (outputConfig != null) {
-              areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
-              isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
-              if (outputConfig.get("language") != null) {
-                language = outputConfig.get("language").getAsString();
-              }
-            }
-          }
-          return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed, language);
+      final List<Concept> concepts;
+      if (root.getAsJsonObject("data") == null) {
+        concepts = Collections.emptyList();
+      } else {
+        concepts = fromJson(
+            context,
+            root.getAsJsonObject("data").getAsJsonArray("concepts"),
+            new TypeToken<List<Concept>>() {}
+        );
+      }
+      boolean areConceptsMutuallyExclusive = false;
+      boolean isEnvironmentClosed = false;
+      {
+        final JsonObject outputConfig = root.getAsJsonObject("output_config");
+        if (outputConfig != null) {
+          areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
+          isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
         }
       };
     }
