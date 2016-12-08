@@ -1,6 +1,7 @@
 package clarifai2.dto.model;
 
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
@@ -15,7 +16,9 @@ public abstract class ConceptModel extends Model<Concept> {
 
   /**
    * @see ClarifaiClient#mergeConceptsForModel(String)
+   * @deprecated use {@link #modify()}
    */
+  @Deprecated
   @NotNull
   public final PatchModelRequest mergeConcepts() {
     return client().mergeConceptsForModel(id());
@@ -23,7 +26,9 @@ public abstract class ConceptModel extends Model<Concept> {
 
   /**
    * @see ClarifaiClient#setConceptsForModel(String)
+   * @deprecated use {@link #modify()}
    */
+  @Deprecated
   @NotNull
   public final PatchModelRequest setConcepts() {
     return client().setConceptsForModel(id());
@@ -31,10 +36,16 @@ public abstract class ConceptModel extends Model<Concept> {
 
   /**
    * @see ClarifaiClient#removeConceptsForModel(String)
+   * @deprecated use {@link #modify()}
    */
+  @Deprecated
   @NotNull
   public final PatchModelRequest removeConcepts() {
     return client().removeConceptsForModel(id());
+  }
+
+  @NotNull public final ModifyModelRequest modify() {
+    return client().modifyModel(id());
   }
 
   @NotNull @Override public final ModelType modelType() { return ModelType.CONCEPT; }

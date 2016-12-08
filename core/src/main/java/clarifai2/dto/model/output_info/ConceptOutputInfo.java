@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -79,7 +80,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
       final JsonObject root = json.getAsJsonObject();
 
       final List<Concept> concepts;
-      if (root.getAsJsonObject("data") == null) {
+      if (isJsonNull(root.getAsJsonObject("data"))) {
         concepts = Collections.emptyList();
       } else {
         concepts = fromJson(

@@ -19,11 +19,12 @@ if (details.commitDistance == 0) {
 } else {
   version details.lastTag + '-' + details.gitHash
 }
+println("Computed version as: ${getVersion()}")
 
 dependencies {
   compile(
-      "com.squareup.okhttp3:okhttp:$versions.okhttp",
-      "com.google.code.gson:gson:2.7",
+      "com.squareup.okhttp3:okhttp:[$versions.okhttp, )",
+      "com.google.code.gson:gson:[$versions.gson, )",
   )
 
   compileOnly(

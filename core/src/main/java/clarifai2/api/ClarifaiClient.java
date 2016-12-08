@@ -96,13 +96,13 @@ public interface ClarifaiClient {
 
   /**
    * Adds the given metadata to this input's metadata.
-   *
+   * <p>
    * The keys in the new metadata are parsed depth-first, and the existing metadata is checked for a conflicting key
    * at that location.
-   *
+   * <p>
    * If the existing metadata does not have a key that conflicts with an entry in the new metadata, that new entry is
    * added to the existing metadata.
-   *
+   * <p>
    * If the existing metadata DOES have a key that conflicts with an entry in the new metadata:
    * - If the existing and new values are of different types (primitive vs list vs dictionary), the new value will overwrite the existing value;
    * - Otherwise, if the existing and new values are both primitives or both lists, the new value will overwrite the existing value;
@@ -271,7 +271,9 @@ public interface ClarifaiClient {
    *
    * @param modelID the model to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified model
+   * @deprecated use {@link #modifyModel(String)}
    */
+  @Deprecated
   @NotNull PatchModelRequest mergeConceptsForModel(@NotNull String modelID);
 
   /**
@@ -279,7 +281,9 @@ public interface ClarifaiClient {
    *
    * @param modelID the model to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified model
+   * @deprecated use {@link #modifyModel(String)}
    */
+  @Deprecated
   @NotNull PatchModelRequest setConceptsForModel(@NotNull String modelID);
 
   /**
@@ -287,14 +291,13 @@ public interface ClarifaiClient {
    *
    * @param modelID the model to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified model
+   * @deprecated use {@link #modifyModel(String)}
    */
+  @Deprecated
   @NotNull PatchModelRequest removeConceptsForModel(@NotNull String modelID);
 
   /**
-   * Allows the user to change the name and output configuration of their model.
-   * <p>
-   * To change the model's list of concepts, you must use {@link #mergeConceptsForModel(String)},
-   * {@link #setConceptsForModel(String)}, or {@link #removeConceptsForModel(String)}.
+   * Allows the user to change the name output configuration, or concepts of their model.
    *
    * @param modelID the model to modify
    * @return a builder to construct a request that will, when executed, return the newly-modified model

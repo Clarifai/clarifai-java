@@ -4,6 +4,7 @@ import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
+import clarifai2.api.request.model.Action;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
@@ -216,16 +217,15 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t14a_addConceptsToModel() {
-    assertSuccess(client.mergeConceptsForModel(getModelID())
-        .plus(Concept.forID("outdoors23"))
+    assertSuccess(client.modifyModel(getModelID())
+        .withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
   }
 
   @Retry
   @Test public void t14b_addConceptsToModel_OO() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
-        .mergeConcepts()
-        .plus(Concept.forID("outdoors23"))
+        .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
   }
 
@@ -302,8 +302,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void errorsExposedToUser() {
-    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().mergeConcepts()
-        .plus(Concept.forID("concept2"))
+    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
+        .withConcepts(Action.MERGE, Concept.forID("concept2"))
         .executeSync();
     if (response.isSuccessful()) {
       fail("You shouldn't be able to add concepts to the built-in general model");
@@ -373,19 +373,17 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test
   public void testModifyModel() {
-    final String modelName = "modifyingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelName).withOutputInfo(
+    final String modelID = "modifyingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
         ConceptOutputInfo.forConcepts(
             Concept.forID("foo")
         )
     ));
-    assertSuccess(client.modifyModel(modelName).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("bar")
-        )
-    ));
+    assertSuccess(client.modifyModel(modelID)
+        .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
+    );
     final List<Concept> concepts =
-        assertSuccess(client.getModelByID(modelName)).asConceptModel().outputInfo().concepts();
+        assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
     assertEquals(1, concepts.size());
     assertEquals("bar", concepts.get(0).name());
   }

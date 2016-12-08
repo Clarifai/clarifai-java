@@ -175,7 +175,7 @@ public interface ClarifaiRequest<RESULT> {
       build().executeAsync(callback);
     }
 
-    @NotNull public final ClarifaiRequest<T> build() {
+    @NotNull protected ClarifaiRequest<T> build() {
       return new Impl<>(client, request());
     }
 

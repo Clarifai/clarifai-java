@@ -15,6 +15,7 @@ import clarifai2.api.request.input.PatchInputMetadataRequest;
 import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
+import clarifai2.api.request.model.Action;
 import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
@@ -175,15 +176,15 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
   }
 
   @NotNull @Override public PatchModelRequest mergeConceptsForModel(@NotNull String modelID) {
-    return new PatchModelRequest(this, modelID, "merge");
+    return new PatchModelRequest(this, modelID, Action.MERGE);
   }
 
   @NotNull @Override public PatchModelRequest setConceptsForModel(@NotNull String modelID) {
-    return new PatchModelRequest(this, modelID, "overwrite");
+    return new PatchModelRequest(this, modelID, Action.OVERWRITE);
   }
 
   @NotNull @Override public PatchModelRequest removeConceptsForModel(@NotNull String modelID) {
-    return new PatchModelRequest(this, modelID, "remove");
+    return new PatchModelRequest(this, modelID, Action.REMOVE);
   }
 
   @NotNull @Override public ModifyModelRequest modifyModel(@NotNull String modelID) {

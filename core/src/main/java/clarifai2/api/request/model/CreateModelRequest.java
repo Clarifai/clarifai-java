@@ -17,7 +17,7 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
+public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final BaseClarifaiClient helper;
 
