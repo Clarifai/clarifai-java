@@ -1,14 +1,15 @@
 package clarifai2.api.request.model;
 
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONAdapterFactory;
-import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Type;
 
 @JsonAdapter(Action.Adapter.class)
 public enum Action {
@@ -33,39 +34,23 @@ public enum Action {
     this.value = value;
   }
 
-  static class Adapter extends JSONAdapterFactory<Action> {
+  static class Adapter implements JsonSerializer<Action>, JsonDeserializer<Action> {
 
-    @Nullable @Override protected Serializer<Action> serializer() {
-      return new Serializer<Action>() {
-        @NotNull @Override public JsonElement serialize(@Nullable Action value, @NotNull Gson gson) {
-          if (value == null) {
-            value = MERGE;
-          }
-          return new JsonPrimitive(value.value);
+    @Override public Action deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
+      if (json == null || !json.isJsonPrimitive()) {
+        return null;
+      }
+      final String str = json.getAsJsonPrimitive().getAsString();
+      for (final Action action : Action.values()) {
+        if (action.value.equals(str)) {
+          return action;
         }
-      };
+      }
+      throw new IllegalStateException("Unknown Action: " + str);
     }
 
-    @Nullable @Override protected Deserializer<Action> deserializer() {
-      return new Deserializer<Action>() {
-        @Nullable @Override
-        public Action deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<Action> type,
-            @NotNull Gson gson) {
-          final String str = InternalUtil.assertJsonIs(json, JsonPrimitive.class).getAsString();
-          for (final Action action : Action.values()) {
-            if (action.value.equals(str)) {
-              return action;
-            }
-          }
-          throw new IllegalStateException("Unknown Action: " + str);
-        }
-      };
-    }
-
-    @NotNull @Override protected TypeToken<Action> typeToken() {
-      return new TypeToken<Action>() {};
+    @Override public JsonElement serialize(Action src, Type typeOfSrc, JsonSerializationContext context) {
+      return new JsonPrimitive(src.value);
     }
   }
 }

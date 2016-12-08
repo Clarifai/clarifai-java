@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
-
 public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final String modelID;

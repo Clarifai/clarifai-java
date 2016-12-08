@@ -40,8 +40,8 @@ public final class InternalUtil {
     return in;
   }
 
-  @Contract("null -> false") public static boolean isJsonNull(@Nullable JsonElement in) {
-    return in != null && (!in.isJsonNull());
+  @Contract("null -> true") public static boolean isJsonNull(@Nullable JsonElement in) {
+    return in == null || in.isJsonNull();
   }
 
   public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
