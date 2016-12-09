@@ -74,34 +74,6 @@ public final class InternalUtil {
     return out;
   }
 
-  @SuppressWarnings("unchecked") @NotNull public static <E extends JsonElement> E jsonDeepCopy(@NotNull E in) {
-    if (in instanceof JsonObject) {
-      final JsonObject out = new JsonObject();
-      for (final Map.Entry<String, JsonElement> entry : ((JsonObject) in).entrySet()) {
-        out.add(entry.getKey(), jsonDeepCopy(entry.getValue()));
-      }
-      return (E) out;
-    }
-    if (in instanceof JsonArray) {
-      final JsonArray out = new JsonArray();
-      for (final JsonElement element : (JsonArray) in) {
-        out.add(jsonDeepCopy(element));
-      }
-      return (E) out;
-    }
-    if (in instanceof JsonPrimitive || in instanceof JsonNull) {
-      return in;
-    }
-    throw new IllegalArgumentException("Input JSON is of type " + in.getClass() + " and cannot be deep-copied");
-  }
-
-  @NotNull public static JsonObject asGeoPointJson(@NotNull PointF geoPoint) {
-    return new JSONObjectBuilder()
-        .add("latitude", geoPoint.x())
-        .add("longitude", geoPoint.y())
-        .build();
-  }
-
   public static void sleep(long millis) {
     try {
       Thread.sleep(millis);
