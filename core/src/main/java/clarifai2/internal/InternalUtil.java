@@ -71,32 +71,6 @@ public final class InternalUtil {
     return copy;
   }
 
-  @NotNull public static <T> ClarifaiRequest.Callback<T> callback(
-      @Nullable final ClarifaiRequest.OnSuccess<T> onSuccess,
-      @Nullable final ClarifaiRequest.OnFailure onFailure,
-      @Nullable final ClarifaiRequest.OnNetworkError onNetworkError
-  ) {
-    return new ClarifaiRequest.Callback<T>() {
-      @Override public void onClarifaiResponseSuccess(@NotNull T t) {
-        if (onSuccess != null) {
-          onSuccess.onClarifaiResponseSuccess(t);
-        }
-      }
-
-      @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
-        if (onFailure != null) {
-          onFailure.onClarifaiResponseUnsuccessful(errorCode);
-        }
-      }
-
-      @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
-        if (onNetworkError != null) {
-          onNetworkError.onClarifaiResponseNetworkError(e);
-        }
-      }
-    };
-  }
-
   public static void sleep(long millis) {
     try {
       Thread.sleep(millis);

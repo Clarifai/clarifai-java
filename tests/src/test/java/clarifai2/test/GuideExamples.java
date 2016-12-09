@@ -1,6 +1,7 @@
 package clarifai2.test;
 
 import clarifai2.api.request.input.SearchClause;
+import clarifai2.api.request.model.Action;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
@@ -123,26 +124,26 @@ public class GuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void addConceptsToModel() {
-    client.mergeConceptsForModel("{{model_id}}")
-        .plus(Concept.forID("dogs"))
+    client.modifyModel("{{model_id}}")
+        .withConcepts(Action.MERGE, Concept.forID("dogs"))
         .executeSync();
 
     // Or, if you have a ConceptModel object, you can do it in an OO fashion
     final ConceptModel model = client.getModelByID("{{model_id}}").executeSync().get().asConceptModel();
-    model.mergeConcepts()
-        .plus(Concept.forID("dogs"))
+    model.modify()
+        .withConcepts(Action.MERGE, Concept.forID("dogs"))
         .executeSync();
   }
 
   @Test public void removeConceptsFromAModel() {
-    client.removeConceptsForModel("{{model_id}}")
-        .plus(Concept.forID("dogs"))
+    client.modifyModel("{{model_id}}")
+        .withConcepts(Action.REMOVE, Concept.forID("dogs"))
         .executeSync();
 
     // Or, if you have a ConceptModel object, you can do it in an OO fashion
     final ConceptModel model = client.getModelByID("{{model_id}}").executeSync().get().asConceptModel();
-    model.removeConcepts()
-        .plus(Concept.forID("dogs"))
+    model.modify()
+        .withConcepts(Action.REMOVE, Concept.forID("dogs"))
         .executeSync();
   }
 
