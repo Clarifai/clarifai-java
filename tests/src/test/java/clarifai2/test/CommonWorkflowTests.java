@@ -65,11 +65,9 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t00_deleteAllInputs() {
     assertSuccess(client.deleteAllInputs());
-    while (true) {
-      if (assertSuccess(client.getInputs()).isEmpty()) {
-        break;
-      }
-    }
+    retryAndTimeout(1, TimeUnit.MINUTES, () ->
+        client.getInputs().build().getPage(1).executeSync().get().isEmpty()
+    );
   }
 
   @Retry
