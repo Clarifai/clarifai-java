@@ -1,11 +1,13 @@
 package clarifai2.test;
 
+import clarifai2.Func0;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
+import clarifai2.internal.InternalUtil;
 import com.kevinmost.junit_retry_rule.RetryRule;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -91,6 +93,20 @@ public abstract class BaseClarifaiAPITest {
     final ClarifaiResponse<?> response = request.executeSync();
     if (response.isSuccessful()) {
       Assert.fail("Response was not supposed to be successful! Response was " + response.get());
+    }
+  }
+
+  static void retryAndTimeout(long time, @NotNull TimeUnit unit, @NotNull Func0<Boolean> op) {
+    long startTime = System.currentTimeMillis();
+    long timeToRetry = TimeUnit.MILLISECONDS.convert(time, unit);
+    while (true) {
+      if (System.currentTimeMillis() > startTime + timeToRetry) {
+        throw new AssertionError("retried for " + timeToRetry + " milliseconds and still failed");
+      }
+      if (op.call()) {
+        return;
+      }
+      InternalUtil.sleep(1000);
     }
   }
 }

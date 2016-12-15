@@ -18,7 +18,6 @@ import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -59,11 +58,9 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t00_deleteAllInputs() {
     assertSuccess(client.deleteAllInputs());
-    while (true) {
-      if (assertSuccess(client.getInputs()).isEmpty()) {
-        break;
-      }
-    }
+    retryAndTimeout(1, TimeUnit.MINUTES, () ->
+        client.getInputs().build().getPage(1).executeSync().get().isEmpty()
+    );
   }
 
   @Retry
@@ -238,19 +235,19 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .allowDuplicateURLs(true)
     );
     assertSuccess(client.trainModel(getModelID()));
-    while (true) {
+    retryAndTimeout(2, TimeUnit.MINUTES, () -> {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
       assertNotNull(version);
       final ModelTrainingStatus status = version.status();
       if (!status.isTerminalEvent()) {
-        InternalUtil.sleep(200);
-        continue;
+        return false;
       }
       if (status == ModelTrainingStatus.TRAINED) {
-        return;
+        return true;
       }
       fail("Version had error while training: " + version.status());
-    }
+      return false;
+    });
   }
 
   @Retry
@@ -356,9 +353,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Future<ClarifaiClient> futureClient = new ClarifaiBuilder(appID, appSecret)
         .baseURL(baseURL)
         .build();
-    while (!futureClient.isDone()) {
-      InternalUtil.sleep(100);
-    }
+    retryAndTimeout(30, TimeUnit.SECONDS, futureClient::isDone);
     final ClarifaiClient client = futureClient.get();
     logger.info(client.getToken().toString());
   }
