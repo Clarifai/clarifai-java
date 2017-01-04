@@ -23,6 +23,7 @@ import java.util.List;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -138,7 +139,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
 
           return new AutoValue_ClarifaiInput(
-              InternalUtil.<String>nullSafeTraverse(root, "id"),
+              isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,

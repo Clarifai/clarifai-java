@@ -10,7 +10,6 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.Gson;
@@ -28,6 +27,7 @@ import java.util.List;
 
 import static clarifai2.internal.InternalUtil.clientInstance;
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -207,7 +207,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())
               .createdAt(fromJson(gson, root.get("created_at"), Date.class))
-              .appID(InternalUtil.<String>nullSafeTraverse(root, "app_id"))
+              .appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
               .modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
               ._outputInfo(fromJson(gson, root.get("output_info"), OutputInfo.class))
               .client(clientInstance(gson))
