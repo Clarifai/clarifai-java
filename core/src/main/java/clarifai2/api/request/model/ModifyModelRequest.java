@@ -20,6 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static clarifai2.internal.InternalUtil.assertNotNull;
+import static clarifai2.internal.InternalUtil.fromJson;
+
 public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final String modelID;
@@ -132,10 +135,11 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
       @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
         return new JSONUnmarshaler<ConceptModel>() {
           @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return gson.fromJson(
+            return assertNotNull(fromJson(
+                gson,
                 json.getAsJsonObject().getAsJsonArray("models").get(0),
-                new TypeToken<Model<Concept>>() {}.getType()
-            );
+                new TypeToken<Model<?>>() {}
+            )).asConceptModel();
           }
         };
       }

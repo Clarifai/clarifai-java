@@ -1,16 +1,20 @@
 package clarifai2.dto.input.image;
 
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.JsonNull;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import okio.ByteString;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
+
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -29,12 +33,23 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
 
   ClarifaiFileImage() {} // AutoValue instances only
 
-  static class Adapter implements JsonSerializer<ClarifaiFileImage> {
-    @Override public JsonElement serialize(ClarifaiFileImage src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JSONObjectBuilder()
-          .add("base64", ByteString.of(src.bytes()).base64())
-          .add("crop", context.serialize(src.crop()))
-          .build();
+  static class Adapter extends JSONAdapterFactory<ClarifaiFileImage> {
+    @Nullable @Override protected Serializer<ClarifaiFileImage> serializer() {
+      return new Serializer<ClarifaiFileImage>() {
+        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiFileImage value, @NotNull Gson gson) {
+          if (value == null) {
+            return JsonNull.INSTANCE;
+          }
+          return new JSONObjectBuilder()
+              .add("base64", ByteString.of(value.bytes()).base64())
+              .add("crop", toJson(gson, value.crop(), Crop.class))
+              .build();
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ClarifaiFileImage> typeToken() {
+      return new TypeToken<ClarifaiFileImage>() {};
     }
   }
 }

@@ -2,18 +2,21 @@ package clarifai2.dto.input.image;
 
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import clarifai2.internal.JSONAdapterFactory;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
@@ -46,14 +49,38 @@ public abstract class ClarifaiImage {
 
   @NotNull public abstract ClarifaiImage withCrop(@NotNull Crop crop);
 
-  static class Adapter implements JsonDeserializer<ClarifaiImage> {
-    @Override
-    public ClarifaiImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      return fromJson(
-          context,
-          json,
-          json.getAsJsonObject().has("url") ? ClarifaiURLImage.class : ClarifaiFileImage.class
-      );
+  static class Adapter extends JSONAdapterFactory<ClarifaiImage> {
+
+    @Nullable @Override protected Serializer<ClarifaiImage> serializer() {
+      return new Serializer<ClarifaiImage>() {
+        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiImage value, @NotNull Gson gson) {
+          if (value == null) {
+            return JsonNull.INSTANCE;
+          }
+          return gson.toJsonTree(value, value.getClass());
+        }
+      };
+    }
+
+    @Nullable @Override protected Deserializer<ClarifaiImage> deserializer() {
+      return new Deserializer<ClarifaiImage>() {
+        @Nullable @Override
+        public ClarifaiImage deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ClarifaiImage> type,
+            @NotNull Gson gson
+        ) {
+          return fromJson(
+              gson,
+              json,
+              assertJsonIs(json, JsonObject.class).has("url") ? ClarifaiURLImage.class : ClarifaiFileImage.class
+          );
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ClarifaiImage> typeToken() {
+      return new TypeToken<ClarifaiImage>() {};
     }
   }
 }

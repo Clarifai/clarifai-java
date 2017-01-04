@@ -1,14 +1,19 @@
 package clarifai2.dto.model;
 
 import clarifai2.api.ClarifaiClient;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import clarifai2.internal.JSONAdapterFactory;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+
+import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @JsonAdapter(ModelTrainingStatus.Adapter.class)
 public enum ModelTrainingStatus {
@@ -53,8 +58,7 @@ public enum ModelTrainingStatus {
   /**
    * Training threw an unknown error
    */
-  MODEL_TRAINING_UNKNOWN_ERROR(21115),
-  ;
+  MODEL_TRAINING_UNKNOWN_ERROR(21115),;
 
   private final int statusCode;
 
@@ -70,13 +74,13 @@ public enum ModelTrainingStatus {
     return this.isError() || this == TRAINED;
   }
 
-  static class Adapter implements JsonDeserializer<ModelTrainingStatus> {
+  static class Adapter extends JSONAdapterFactory<ModelTrainingStatus> {
 
-    final Map<Integer, ModelTrainingStatus> codeToStatus;
+    static final Map<Integer, ModelTrainingStatus> codeToStatus;
 
-    Adapter() {
+    static {
       final ModelTrainingStatus[] values = ModelTrainingStatus.values();
-      this.codeToStatus = new HashMap<>(values.length);
+      codeToStatus = new HashMap<>(values.length);
       for (ModelTrainingStatus modelTrainingStatus : values) {
         if (codeToStatus.containsKey(modelTrainingStatus.statusCode)) {
           throw new IllegalStateException(
@@ -88,16 +92,28 @@ public enum ModelTrainingStatus {
       }
     }
 
-    @Override
-    public ModelTrainingStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final int statusCode = json.getAsJsonObject().get("code").getAsInt();
-      final ModelTrainingStatus model = codeToStatus.get(statusCode);
-      if (model == null) {
-        throw new IllegalArgumentException(
-            "This version of the API client does not recognize the model training status: " + json
-        );
-      }
-      return model;
+    @Nullable @Override protected Deserializer<ModelTrainingStatus> deserializer() {
+      return new Deserializer<ModelTrainingStatus>() {
+        @Nullable @Override
+        public ModelTrainingStatus deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ModelTrainingStatus> type,
+            @NotNull Gson gson
+        ) {
+          final int statusCode = assertJsonIs(json, JsonObject.class).get("code").getAsInt();
+          final ModelTrainingStatus model = codeToStatus.get(statusCode);
+          if (model == null) {
+            throw new IllegalArgumentException(
+                "This version of the API client does not recognize the model training status: " + json
+            );
+          }
+          return model;
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ModelTrainingStatus> typeToken() {
+      return new TypeToken<ModelTrainingStatus>() {};
     }
   }
 }

@@ -3,7 +3,6 @@ package clarifai2.api.request.input;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
@@ -18,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static clarifai2.internal.InternalUtil.assertNotNull;
+import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.toJson;
 
 public final class AddInputsRequest extends ClarifaiRequest.Builder<List<ClarifaiInput>> {
 
@@ -57,11 +60,8 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
     return new DeserializedRequest<List<ClarifaiInput>>() {
 
       @NotNull @Override public Request httpRequest() {
-        final JsonArray inputs = client.gson.toJsonTree(
-            AddInputsRequest.this.inputs,
-            new TypeToken<List<ClarifaiInput>>() {}.getType()
-        ).getAsJsonArray();
-
+        final TypeToken<List<ClarifaiInput>> type = new TypeToken<List<ClarifaiInput>>() {};
+        final JsonArray inputs = toJson(client.gson, AddInputsRequest.this.inputs, type).getAsJsonArray();
         if (allowDuplicateURLs) {
           for (final JsonElement input : inputs) {
             final JsonObject image = input.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("image");
@@ -80,11 +80,11 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
       @NotNull @Override public JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
         return new JSONUnmarshaler<List<ClarifaiInput>>() {
           @NotNull @Override public List<ClarifaiInput> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return InternalUtil.fromJson(
+            return assertNotNull(fromJson(
                 gson,
                 json.getAsJsonObject().getAsJsonArray("inputs"),
                 new TypeToken<List<ClarifaiInput>>() {}
-            );
+            ));
           }
         };
       }
