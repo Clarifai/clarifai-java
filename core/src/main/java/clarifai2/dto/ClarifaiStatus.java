@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
+import static clarifai2.internal.InternalUtil.isJsonNull;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiStatus.Adapter.class)
