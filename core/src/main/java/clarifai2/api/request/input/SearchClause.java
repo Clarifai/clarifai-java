@@ -19,7 +19,6 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.asGeoPointJson;
 import static clarifai2.internal.InternalUtil.toJson;
 
 public abstract class SearchClause {
@@ -241,75 +240,6 @@ public abstract class SearchClause {
 
       @NotNull @Override protected TypeToken<SearchConcept> typeToken() {
         return new TypeToken<SearchConcept>() {};
-      }
-    }
-  }
-
-  @JsonAdapter(GeoCircle.Adapter.class)
-  static class GeoCircle extends SearchClause {
-    @NotNull private final PointF center;
-    @NotNull private final Radius radius;
-
-    private GeoCircle(@NotNull PointF center, @NotNull Radius radius) {
-      this.center = center;
-      this.radius = radius;
-    }
-
-    static class Adapter extends JSONAdapterFactory<GeoCircle> {
-      @Nullable @Override protected Serializer<GeoCircle> serializer() {
-        return new Serializer<GeoCircle>() {
-          @NotNull @Override public JsonElement serialize(@Nullable GeoCircle value, @NotNull Gson gson) {
-            if (value == null) {
-              return JsonNull.INSTANCE;
-            }
-            return new JSONObjectBuilder()
-                .add("input", new JSONObjectBuilder()
-                    .add("data", new JSONObjectBuilder()
-                        .add("geo", new JSONObjectBuilder()
-                            .add("geo_point", asGeoPointJson(value.center))
-                            .add("geo_limit", new JSONObjectBuilder()
-                                .add("type", value.radius.unit().toString())
-                                .add("value", value.radius.value())))))
-                .build();
-          }
-        };
-      }
-
-      @NotNull @Override protected TypeToken<GeoCircle> typeToken() {
-        return new TypeToken<GeoCircle>() {};
-      }
-    }
-  }
-
-  @JsonAdapter(GeoRect.Adapter.class)
-  static class GeoRect extends SearchClause {
-    @NotNull private final Rectangle box;
-
-    private GeoRect(@NotNull PointF topLeft, @NotNull PointF bottomRight) {
-      this.box = Rectangle.of(topLeft, bottomRight);
-    }
-
-    static class Adapter extends JSONAdapterFactory<GeoRect> {
-      @Nullable @Override protected Serializer<GeoRect> serializer() {
-        return new Serializer<GeoRect>() {
-          @NotNull @Override public JsonElement serialize(@Nullable GeoRect value, @NotNull Gson gson) {
-            if (value == null) {
-              return JsonNull.INSTANCE;
-            }
-            return new JSONObjectBuilder()
-                .add("input", new JSONObjectBuilder()
-                    .add("data", new JSONObjectBuilder()
-                        .add("geo", new JSONObjectBuilder()
-                            .add("geo_box", new JSONArrayBuilder()
-                                .add(new JSONObjectBuilder().add("geo_point", asGeoPointJson(value.box.topLeft())))
-                                .add(new JSONObjectBuilder().add("geo_point", asGeoPointJson(value.box.bottomRight())))))))
-                                .build();
-          }
-        };
-      }
-
-      @NotNull @Override protected TypeToken<GeoRect> typeToken() {
-        return new TypeToken<GeoRect>() {};
       }
     }
   }

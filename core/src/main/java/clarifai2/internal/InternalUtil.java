@@ -1,10 +1,10 @@
 package clarifai2.internal;
 
+import clarifai2.Func1;
 import clarifai2.api.ClarifaiClient;
-import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.Gson;
-import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -33,6 +33,10 @@ public final class InternalUtil {
     throw new UnsupportedOperationException("No instances");
   }
 
+  public static boolean isRawType(@NotNull TypeToken<?> token) {
+    return token.getType() instanceof Class;
+  }
+
   @Contract("null -> fail") @NotNull public static <T> T assertNotNull(@Nullable T in) {
     if (in == null) {
       throw new NullPointerException();
@@ -42,6 +46,36 @@ public final class InternalUtil {
 
   @Contract("null -> false") public static boolean isJsonNull(@Nullable JsonElement in) {
     return in != null && (!in.isJsonNull());
+  }
+
+  @NotNull public static JsonElement coerceJsonNull(@Nullable JsonElement in) {
+    return in == null ? JsonNull.INSTANCE : in;
+  }
+
+  /**
+   * Asserts that the given JSON is of the type expected, and casts it to that type.
+   *
+   * @param json         the JSON in question. If {@code null} is passed, it is coerced to {@link JsonNull#INSTANCE}
+   * @param expectedType the type that we are asserting this JSON is
+   * @param <T>          the type that we are asserting this JSON is
+   * @return this JSON, casted to the asserted type
+   * @throws JsonParseException if the JSON was not of the asserted type
+   */
+  @NotNull
+  public static <T extends JsonElement> T assertJsonIs(
+      @Nullable JsonElement json,
+      @NotNull Class<T> expectedType
+  ) throws JsonParseException {
+    if (json == null) {
+      json = JsonNull.INSTANCE;
+    }
+    if (expectedType.isInstance(json)) {
+      return expectedType.cast(json);
+    }
+    throw new JsonParseException(String.format("This JSON must be a %s, but it was a %s",
+        expectedType.getSimpleName(),
+        json.getClass().getSimpleName()
+    ));
   }
 
   public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
@@ -74,6 +108,14 @@ public final class InternalUtil {
     return out;
   }
 
+  @NotNull public static JsonObject jsonDeepCopy(@NotNull JsonObject source) {
+    final JsonObject copy = new JsonObject();
+    for (final Map.Entry<String, JsonElement> entry : source.entrySet()) {
+      copy.add(entry.getKey(), entry.getValue());
+    }
+    return out;
+  }
+
   public static void sleep(long millis) {
     try {
       Thread.sleep(millis);
@@ -86,32 +128,21 @@ public final class InternalUtil {
     return gson.fromJson(new JsonObject(), ClarifaiClient.class);
   }
 
-  @NotNull public static ClarifaiClient clientInstance(@NotNull JsonDeserializationContext context) {
-    return context.deserialize(new JsonObject(), ClarifaiClient.class);
-  }
-
-  @Nullable public static <T> T fromJson(
-      @NotNull JsonDeserializationContext context,
-      @Nullable JsonElement element,
-      @NotNull Class<T> type
-  ) {
-    return context.deserialize(element, type);
-  }
-
-  @Nullable public static <T> T fromJson(
-      @NotNull JsonDeserializationContext context,
-      @Nullable JsonElement element,
-      @NotNull TypeToken<T> type
-  ) {
-    return context.deserialize(element, type.getType());
-  }
-
   @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<T> type) {
     return gson.fromJson(element, type);
   }
 
-  @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull TypeToken<T> type) {
+  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull Class<T> type) {
+    return coerceJsonNull(gson.toJsonTree(obj, type));
+  }
+
+  @Nullable
+  public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull TypeToken<T> type) {
     return gson.fromJson(element, type.getType());
+  }
+
+  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
+    return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
   }
 
   @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<T> type) {

@@ -1,6 +1,7 @@
 package clarifai2.dto.prediction;
 
 import clarifai2.dto.HasClarifaiID;
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
@@ -15,7 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
+import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -47,11 +51,6 @@ Concept extends Prediction implements HasClarifaiID {
    * @return the probability of this concept being present
    */
   @NotNull public abstract float value();
-
-  /**
-   * @return the language (in ISO-639-1 format)
-   */
-  @Nullable public abstract String language();
 
   /**
    * @param name the name to compose the new Concept with
@@ -90,7 +89,6 @@ Concept extends Prediction implements HasClarifaiID {
               .add("created_at", toJson(gson, value.createdAt(), Date.class))
               .add("app_id", value.appID())
               .add("value", value.value())
-              .add("language", value.language())
               .build();
         }
       };
@@ -109,23 +107,15 @@ Concept extends Prediction implements HasClarifaiID {
               root.get("id").getAsString(),
               root.get("name").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString(),
-              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat(),
-              isJsonNull(root.get("language")) ? null : root.get("language").getAsString()
+              InternalUtil.<String>nullSafeTraverse(root, "app_id"),
+              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat()
           );
         }
       };
     }
 
-    @Override public Concept deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      return new AutoValue_Concept(
-          root.get("id").getAsString(),
-          root.get("name").getAsString(),
-          fromJson(context, root.get("created_at"), Date.class),
-          InternalUtil.<String>nullSafeTraverse(root, "app_id"),
-          root.has("value") && !root.get("value").isJsonNull() ? root.get("value").getAsFloat() : 1.0F
-      );
+    @NotNull @Override protected TypeToken<Concept> typeToken() {
+      return new TypeToken<Concept>() {};
     }
   }
 }

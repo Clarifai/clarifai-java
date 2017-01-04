@@ -12,10 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 
-import static clarifai2.internal.InternalUtil.fromJson;
-
-import static clarifai2.internal.InternalUtil.fromJson;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(SearchHit.Adapter.class)
@@ -26,13 +22,26 @@ public abstract class SearchHit {
 
   SearchHit() {} // AutoValue instances only
 
-  static class Adapter implements JsonDeserializer<SearchHit> {
-    @Override public SearchHit deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      return new AutoValue_SearchHit(
-          root.get("score").getAsFloat(),
-          fromJson(context, root.get("input"), ClarifaiInput.class)
-      );
+  static class Adapter extends JSONAdapterFactory<SearchHit> {
+    @Nullable @Override protected Deserializer<SearchHit> deserializer() {
+      return new Deserializer<SearchHit>() {
+        @Nullable @Override
+        public SearchHit deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<SearchHit> type,
+            @NotNull Gson gson
+        ) {
+          final JsonObject root = assertJsonIs(json, JsonObject.class);
+          return new AutoValue_SearchHit(
+              root.get("score").getAsFloat(),
+              gson.fromJson(root.get("input"), ClarifaiInput.class)
+          );
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<SearchHit> typeToken() {
+      return new TypeToken<SearchHit>() {};
     }
   }
 }
