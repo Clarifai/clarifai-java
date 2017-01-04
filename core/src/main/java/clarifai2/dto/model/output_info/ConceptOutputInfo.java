@@ -21,6 +21,7 @@ import java.util.List;
 
 import static clarifai2.internal.InternalUtil.fromJson;
 import static clarifai2.internal.InternalUtil.isJsonNull;
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -90,23 +91,23 @@ public abstract class ConceptOutputInfo extends OutputInfo {
         ) {
           final JsonObject root = json.getAsJsonObject();
 
-      final List<Concept> concepts;
-      if (isJsonNull(root.getAsJsonObject("data"))) {
-        concepts = Collections.emptyList();
-      } else {
-        concepts = fromJson(
-            context,
-            root.getAsJsonObject("data").getAsJsonArray("concepts"),
-            new TypeToken<List<Concept>>() {}
-        );
-      }
-      boolean areConceptsMutuallyExclusive = false;
-      boolean isEnvironmentClosed = false;
-      {
-        final JsonObject outputConfig = root.getAsJsonObject("output_config");
-        if (outputConfig != null) {
-          areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
-          isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
+          final List<Concept> concepts = isJsonNull(root.getAsJsonObject("data"))
+              ? Collections.<Concept>emptyList()
+              : fromJson(
+                  gson,
+                  root.getAsJsonObject("data").getAsJsonArray("concepts"),
+                  new TypeToken<List<Concept>>() {}
+              );
+          boolean areConceptsMutuallyExclusive = false;
+          boolean isEnvironmentClosed = false;
+          {
+            final JsonObject outputConfig = root.getAsJsonObject("output_config");
+            if (outputConfig != null) {
+              areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
+              isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
+            }
+          }
+          return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed);
         }
       };
     }

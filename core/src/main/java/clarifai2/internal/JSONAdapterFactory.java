@@ -70,7 +70,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
   }
 
   @NotNull private TypeAdapter<T> buildAdapter(@NotNull Gson gson) {
-    return new Adapter<>(gson, typeToken, serializer, deserializer, this);
+    return new Adapter<>(gson, typeToken, serializer, deserializer, passthroughAdapter(gson));
   }
 
   @NotNull private TypeAdapter<T> passthroughAdapter(@NotNull Gson gson) {
@@ -106,59 +106,30 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
 
 
   private static class Adapter<T> extends TypeAdapter<T> {
-
     @NotNull private final Gson gson;
-
-    /**
-     * The type that should be handled by this adapter
-     */
     @NotNull private final TypeToken<T> token;
-
-    /**
-     * The interface that defines how to serialize this type, or {@code null} if this adapter should not handle
-     * serialization of this type.
-     */
     @Nullable private final Serializer<T> serializer;
-
-    /**
-     * The interface that defines how to deserialize this type, or {@code null} if this adapter should not handle
-     * deserialization of this type.
-     */
     @Nullable private final Deserializer<T> deserializer;
-
-    /**
-     * used to build a delegate adapter that is stored into {@link #passthroughAdapter}
-     */
-    @NotNull private final TypeAdapterFactory toBePassedThrough;
-    /**
-     * Should not be used directly; only a lazy backing field that should be grabbed by calling {@link #getPassthroughAdapter()}
-     */
-    @Nullable private TypeAdapter<T> passthroughAdapter;
+    @NotNull private final TypeAdapter<T> passthroughAdapter;
 
     private Adapter(
         @NotNull Gson gson,
         @NotNull TypeToken<T> token,
         @Nullable Serializer<T> serializer,
         @Nullable Deserializer<T> deserializer,
-        @NotNull TypeAdapterFactory toBePassedThrough
+        @NotNull TypeAdapter<T> passthroughAdapter
     ) {
       this.gson = gson;
       this.token = token;
       this.serializer = serializer;
       this.deserializer = deserializer;
-      this.toBePassedThrough = toBePassedThrough;
+      this.passthroughAdapter = passthroughAdapter;
     }
 
-    @NotNull private TypeAdapter<T> getPassthroughAdapter() {
-      if (passthroughAdapter == null) {
-        passthroughAdapter = gson.getDelegateAdapter(toBePassedThrough, token);
-      }
-      return passthroughAdapter;
-    }
 
     @Override public void write(JsonWriter jsonWriter, T value) throws IOException {
       if (serializer == null) {
-        getPassthroughAdapter().write(jsonWriter, value);
+        passthroughAdapter.write(jsonWriter, value);
       } else {
         final JsonElement serialized = serializer.serialize(value, gson);
         Streams.write(serialized, jsonWriter);
@@ -167,7 +138,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
 
     @Override public T read(JsonReader jsonReader) throws IOException {
       if (deserializer == null) {
-        return getPassthroughAdapter().read(jsonReader);
+        return passthroughAdapter.read(jsonReader);
       } else {
         final JsonElement json = Streams.parse(jsonReader);
         return deserializer.deserialize(json, token, gson);

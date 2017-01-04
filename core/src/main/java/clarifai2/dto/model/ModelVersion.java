@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
+import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
@@ -25,14 +26,27 @@ public abstract class ModelVersion implements HasClarifaiIDRequired {
 
   ModelVersion() {} // AutoValue instances only
 
-  static class Adapter implements JsonDeserializer<ModelVersion> {
-    @Override public ModelVersion deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      return new AutoValue_ModelVersion(
-          root.get("id").getAsString(),
-          fromJson(context, root.get("created_at"), Date.class),
-          fromJson(context, root.get("status"), ModelTrainingStatus.class)
-      );
+  static class Adapter extends JSONAdapterFactory<ModelVersion> {
+    @Nullable @Override protected Deserializer<ModelVersion> deserializer() {
+      return new Deserializer<ModelVersion>() {
+        @Nullable @Override
+        public ModelVersion deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ModelVersion> type,
+            @NotNull Gson gson
+        ) {
+          final JsonObject root = assertJsonIs(json, JsonObject.class);
+          return new AutoValue_ModelVersion(
+              root.get("id").getAsString(),
+              fromJson(gson, root.get("created_at"), Date.class),
+              fromJson(gson, root.get("status"), ModelTrainingStatus.class)
+          );
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ModelVersion> typeToken() {
+      return new TypeToken<ModelVersion>() {};
     }
   }
 }
