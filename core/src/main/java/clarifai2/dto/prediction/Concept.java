@@ -1,7 +1,6 @@
 package clarifai2.dto.prediction;
 
 import clarifai2.dto.HasClarifaiID;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
@@ -107,7 +106,7 @@ Concept extends Prediction implements HasClarifaiID {
               root.get("id").getAsString(),
               root.get("name").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              InternalUtil.<String>nullSafeTraverse(root, "app_id"),
+              isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString(),
               isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat()
           );
         }

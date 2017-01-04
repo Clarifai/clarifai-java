@@ -108,12 +108,25 @@ public final class InternalUtil {
     return out;
   }
 
-  @NotNull public static JsonObject jsonDeepCopy(@NotNull JsonObject source) {
-    final JsonObject copy = new JsonObject();
-    for (final Map.Entry<String, JsonElement> entry : source.entrySet()) {
-      copy.add(entry.getKey(), entry.getValue());
+  @SuppressWarnings("unchecked") @NotNull public static <E extends JsonElement> E jsonDeepCopy(@NotNull E in) {
+    if (in instanceof JsonObject) {
+      final JsonObject out = new JsonObject();
+      for (final Map.Entry<String, JsonElement> entry : ((JsonObject) in).entrySet()) {
+        out.add(entry.getKey(), jsonDeepCopy(entry.getValue()));
+      }
+      return (E) out;
     }
-    return out;
+    if (in instanceof JsonArray) {
+      final JsonArray out = new JsonArray();
+      for (final JsonElement element : (JsonArray) in) {
+        out.add(jsonDeepCopy(element));
+      }
+      return (E) out;
+    }
+    if (in instanceof JsonPrimitive || in instanceof JsonNull) {
+      return in;
+    }
+    throw new IllegalArgumentException("Input JSON is of type " + in.getClass() + " and cannot be deep-copied");
   }
 
   public static void sleep(long millis) {
@@ -143,28 +156,6 @@ public final class InternalUtil {
 
   @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
     return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
-  }
-
-  @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<T> type) {
-    return gson.fromJson(element, type);
-  }
-
-  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull Class<T> type) {
-    return coerceJsonNull(gson.toJsonTree(obj, type));
-  }
-
-  @Nullable
-  public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull TypeToken<T> type) {
-    return gson.fromJson(element, type.getType());
-  }
-
-  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
-    return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
-  }
-
-  @Contract("null, null -> true; null, !null -> false; !null, null -> false")
-  public static <T> boolean nullSafeEquals(@Nullable T o1, @Nullable T o2) {
-    return o1 == null ? o2 == null : o1.equals(o2);
   }
 
   @NotNull
