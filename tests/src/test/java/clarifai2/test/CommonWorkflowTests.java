@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.api.request.input.SearchClause.matchMetadata;
+import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -314,6 +315,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("kotlin"),
         ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_FILE)).withID("train")
     ));
+    sleep(5000);
     assertSuccess(client.deleteInputsBatch().plus("kotlin", "train"));
   }
 
