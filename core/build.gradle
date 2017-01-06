@@ -2,19 +2,10 @@ apply plugin: "de.fuerstenau.buildconfig"
 apply plugin: "net.ltgt.apt"
 apply from: rootProject.file("scripts/buildArtifacts.gradle")
 
-group 'com.clarifai.clarifai-api2'
-def details = versionDetails()
-if (details.commitDistance == 0) {
-  version details.lastTag
-} else {
-  version details.lastTag + '-' + details.gitHash
-}
-println("Computed version as: ${getVersion()}")
-
 dependencies {
   compile(
-      "com.squareup.okhttp3:okhttp:[$versions.okhttp, )",
-      "com.google.code.gson:gson:[$versions.gson, )",
+      "com.squareup.okhttp3:okhttp:$versions.okhttp",
+      "com.google.code.gson:gson:$versions.gson",
   )
 
   compileOnly(
