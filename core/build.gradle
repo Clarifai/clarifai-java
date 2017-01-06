@@ -1,30 +1,11 @@
-plugins {
-  id "java"
-  id "maven"
-  id "idea"
-  id "signing"
-
-  id "net.ltgt.apt" version "0.7"
-  id "com.github.ben-manes.versions" version "0.13.0"
-  id "de.fuerstenau.buildconfig" version "1.1.4"
-  id "com.jfrog.bintray" version "1.7.1"
-  id "com.palantir.git-version" version "0.5.2"
-}
+apply plugin: "de.fuerstenau.buildconfig"
+apply plugin: "net.ltgt.apt"
 apply from: rootProject.file("scripts/buildArtifacts.gradle")
-
-group 'com.clarifai.clarifai-api2'
-def details = versionDetails()
-if (details.commitDistance == 0) {
-  version details.lastTag
-} else {
-  version details.lastTag + '-' + details.gitHash
-}
-println("Computed version as: ${getVersion()}")
 
 dependencies {
   compile(
-      "com.squareup.okhttp3:okhttp:[$versions.okhttp, )",
-      "com.google.code.gson:gson:[$versions.gson, )",
+      "com.squareup.okhttp3:okhttp:$versions.okhttp",
+      "com.google.code.gson:gson:$versions.gson",
   )
 
   compileOnly(
@@ -40,95 +21,9 @@ dependencies {
   )
 }
 
-if (project.hasProperty("sonatypeUsernameClarifai")) {
-  // Huge thanks to Cedric Beust for documenting these arcane and confusing options here:
-  // http://beust.com/weblog/2015/07/13/the-long-and-arduous-road-to-jcenter-and-maven-bliss/
-  def clarifai = [
-      orgName: "Clarifai",
-      description: "Clarifai Java API Client",
-      github: "https://github.com/Clarifai/clarifai-java",
-  ]
-
-  // Why do we have to do this? I thought the plugin handled this for us... ¯\_(ツ)_/¯
-  install {
-    repositories.mavenInstaller {
-      pom.project {
-        name clarifai.orgName
-        description clarifai.description
-        url clarifai.github
-        inceptionYear "2016"
-
-        licenses {
-          license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
-          }
-        }
-        scm {
-          url clarifai.github
-          connection "${clarifai.github}.git"
-        }
-        developers {
-          developer {
-            name "${clarifai.orgName}, Inc."
-          }
-        }
-      }
-    }
-  }
-  bintray {
-    user = project.jcenterUsernameClarifai
-    key = project.jcenterApiKeyClarifai
-
-    publish = true
-    configurations = ["archives"]
-
-    pkg {
-      userOrg = clarifai.orgName.toLowerCase()
-      repo = clarifai.orgName
-      name = clarifai.orgName
-      desc = clarifai.description
-
-      licenses = ["Apache-2.0"]
-
-      websiteUrl = clarifai.github
-      issueTrackerUrl = "${clarifai.github}/issues"
-      vcsUrl = "${clarifai.github}.git"
-
-      version {
-        name = project.version
-        released = new Date()
-
-        gpg { sign = true }
-
-        mavenCentralSync {
-          sync = true
-          user = project.sonatypeUsernameClarifai
-          password = project.sonatypePasswordClarifai
-        }
-      }
-    }
-  }
-}
-
-
-signing {
-  required { currentlyDeploying() }
-  sign configurations.archives
-}
-
-//noinspection GroovyUnusedAssignment
-sourceCompatibility = JavaVersion.VERSION_1_7
-//noinspection GroovyUnusedAssignment
-targetCompatibility = JavaVersion.VERSION_1_7
-
+apply from: rootProject.file("scripts/publishToMavenCentral.gradle")
 
 buildConfig {
   packageName = "clarifai2"
   clsName = "BuildConfig"
-}
-
-private boolean currentlyDeploying() {
-  return gradle.taskGraph.hasTask("bintrayUpload")
 }

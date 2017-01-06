@@ -1,0 +1,83 @@
+if (project.hasProperty("sonatypeUsernameClarifai")) {
+  apply plugin: "com.jfrog.bintray"
+
+  // Huge thanks to Cedric Beust for documenting these arcane and confusing options here:
+  // http://beust.com/weblog/2015/07/13/the-long-and-arduous-road-to-jcenter-and-maven-bliss/
+  def clarifai = [
+      orgName: "Clarifai",
+      description: "Clarifai Java API Client",
+      github: "https://github.com/Clarifai/clarifai-java",
+  ]
+
+  // Why do we have to do this? I thought the plugin handled this for us... ¯\_(ツ)_/¯
+  // TODO(KM): check https://github.com/bintray/gradle-bintray-plugin and Ctrl+F for "MavenPublication" for instructions to fix this mess
+  install {
+    repositories.mavenInstaller {
+      pom.project {
+        name clarifai.orgName
+        description clarifai.description
+        url clarifai.github
+        inceptionYear "2016"
+
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+          }
+        }
+        scm {
+          url clarifai.github
+          connection "${clarifai.github}.git"
+        }
+        developers {
+          developer {
+            name "${clarifai.orgName}, Inc."
+          }
+        }
+      }
+    }
+  }
+  bintray {
+    user = project.jcenterUsernameClarifai
+    key = project.jcenterApiKeyClarifai
+
+    publish = true
+    configurations = ["archives"]
+
+    pkg {
+      userOrg = clarifai.orgName.toLowerCase()
+      repo = clarifai.orgName
+      name = clarifai.orgName
+      desc = clarifai.description
+
+      licenses = ["Apache-2.0"]
+
+      websiteUrl = clarifai.github
+      issueTrackerUrl = "${clarifai.github}/issues"
+      vcsUrl = "${clarifai.github}.git"
+
+      version {
+        name = project.version
+        released = new Date()
+
+        gpg { sign = true }
+
+        mavenCentralSync {
+          sync = true
+          user = project.sonatypeUsernameClarifai
+          password = project.sonatypePasswordClarifai
+        }
+      }
+    }
+  }
+
+  signing {
+    required { currentlyDeploying() }
+    sign configurations.archives
+  }
+}
+
+private boolean currentlyDeploying() {
+  return gradle.taskGraph.hasTask("bintrayUpload")
+}

@@ -1,4 +1,37 @@
+buildscript {
+  repositories {
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
+  dependencies {
+    classpath(
+        "gradle.plugin.com.palantir.gradle.gitversion:gradle-git-version:0.5.3",
+        "com.github.ben-manes:gradle-versions-plugin:0.13.0",
+        "gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.7",
+        "net.ltgt.gradle:gradle-apt-plugin:0.9",
+        "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3",
+    )
+  }
+}
 subprojects {
+  apply plugin: "java"
+  apply plugin: "maven"
+  apply plugin: "idea"
+  apply plugin: "signing"
+  apply plugin: "com.palantir.git-version"
+  apply plugin: "com.github.ben-manes.versions"
+
+  sourceCompatibility = JavaVersion.VERSION_1_7
+  targetCompatibility = JavaVersion.VERSION_1_7
+
+  // Set the group and version across all subprojects to ensure consistency
+  group 'com.clarifai.clarifai-api2'
+  def details = versionDetails()
+  if (details.commitDistance == 0) {
+    version details.lastTag
+  } else {
+    version details.lastTag + '-' + details.gitHash
+  }
+  println("Computed version as: ${getVersion()}")
 
   repositories {
     mavenLocal()
@@ -28,5 +61,5 @@ subprojects {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "2.13"
+  gradleVersion = "3.2.1"
 }
