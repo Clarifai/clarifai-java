@@ -1,18 +1,20 @@
 package clarifai2.dto.input.image;
 
+import clarifai2.exception.ClarifaiException;
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -52,31 +54,61 @@ public abstract class Crop {
 
   Crop() {} // AutoValue instances only
 
-  static class Adapter implements JsonSerializer<Crop>, JsonDeserializer<Crop> {
-    @Override public JsonElement serialize(Crop src, Type typeOfSrc, JsonSerializationContext context) {
-      // Keep the bloat in our outgoing request size down by skipping all default crops
-      if (src.equals(Crop.create())) {
-        return JsonNull.INSTANCE;
-      }
-      return new JSONArrayBuilder()
-          .add(src.top())
-          .add(src.left())
-          .add(src.bottom())
-          .add(src.right())
-          .build();
+  static class Adapter extends JSONAdapterFactory<Crop> {
+    @Nullable @Override protected Serializer<Crop> serializer() {
+      return new Serializer<Crop>() {
+        @NotNull @Override public JsonElement serialize(@Nullable Crop value, @NotNull Gson gson) {
+          // Keep the bloat in our outgoing request size down by skipping all default crops
+          if (value == null || value.equals(Crop.create())) {
+            return JsonNull.INSTANCE;
+          }
+          return new JSONArrayBuilder()
+              .add(value.top())
+              .add(value.left())
+              .add(value.bottom())
+              .add(value.right())
+              .build();
+        }
+      };
     }
 
-    @Override public Crop deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      if (json == null || json.isJsonNull()) {
-        return Crop.create();
-      }
-      final JsonArray array = json.getAsJsonArray();
-      return new AutoValue_Crop(
-          array.get(0).getAsFloat(),
-          array.get(1).getAsFloat(),
-          array.get(2).getAsFloat(),
-          array.get(3).getAsFloat()
-      );
+    @Nullable @Override protected Deserializer<Crop> deserializer() {
+      return new Deserializer<Crop>() {
+        @Nullable @Override
+        public Crop deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<Crop> type,
+            @NotNull Gson gson
+        ) {
+          if (isJsonNull(json)) {
+            return Crop.create();
+          }
+          if (json instanceof JsonArray) {
+            final JsonArray array = (JsonArray) json;
+            return new AutoValue_Crop(
+                array.get(0).getAsFloat(),
+                array.get(1).getAsFloat(),
+                array.get(2).getAsFloat(),
+                array.get(3).getAsFloat()
+            );
+          }
+          if (json instanceof JsonObject) {
+            final JsonObject root = (JsonObject) json;
+            if (root.has("top_row")) {
+              return Crop.create()
+                  .top(root.get("top_row").getAsFloat())
+                  .left(root.get("left_col").getAsFloat())
+                  .bottom(root.get("bottom_row").getAsFloat())
+                  .right(root.get("right_col").getAsFloat());
+            }
+          }
+          throw new ClarifaiException(String.format("Can't parse JSON %s as a Crop object", json));
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<Crop> typeToken() {
+      return new TypeToken<Crop>() {};
     }
   }
 }

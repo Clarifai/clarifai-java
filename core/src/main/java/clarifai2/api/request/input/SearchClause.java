@@ -4,16 +4,19 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.ClarifaiURLImage;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
+import static clarifai2.internal.InternalUtil.toJson;
 
 public abstract class SearchClause {
 
@@ -105,15 +108,26 @@ public abstract class SearchClause {
       this.metadata = metadata;
     }
 
-    static class Adapter implements JsonSerializer<Metadata> {
-      @Override public JsonElement serialize(Metadata src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JSONObjectBuilder()
-            .add("input", new JSONObjectBuilder()
-                .add("data", new JSONObjectBuilder()
-                    .add("metadata", src.metadata)
+    static class Adapter extends JSONAdapterFactory<Metadata> {
+      @Nullable @Override protected Serializer<Metadata> serializer() {
+        return new Serializer<Metadata>() {
+          @NotNull @Override public JsonElement serialize(@Nullable Metadata value, @NotNull Gson gson) {
+            if (value == null) {
+              return JsonNull.INSTANCE;
+            }
+            return new JSONObjectBuilder()
+                .add("input", new JSONObjectBuilder()
+                    .add("data", new JSONObjectBuilder()
+                        .add("metadata", value.metadata)
+                    )
                 )
-            )
-            .build();
+                .build();
+          }
+        };
+      }
+
+      @NotNull @Override protected TypeToken<Metadata> typeToken() {
+        return new TypeToken<Metadata>() {};
       }
     }
   }
@@ -127,15 +141,26 @@ public abstract class SearchClause {
       this.image = image;
     }
 
-    static class Adapter implements JsonSerializer<InputImage> {
-      @Override public JsonElement serialize(InputImage src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JSONObjectBuilder()
-            .add("input", new JSONObjectBuilder()
-                .add("data", new JSONObjectBuilder()
-                    .add("image", context.serialize(src.image))
+    static class Adapter extends JSONAdapterFactory<InputImage> {
+      @Nullable @Override protected Serializer<InputImage> serializer() {
+        return new Serializer<InputImage>() {
+          @NotNull @Override public JsonElement serialize(@Nullable InputImage value, @NotNull Gson gson) {
+            if (value == null) {
+              return JsonNull.INSTANCE;
+            }
+            return new JSONObjectBuilder()
+                .add("input", new JSONObjectBuilder()
+                    .add("data", new JSONObjectBuilder()
+                        .add("image", toJson(gson, value.image, ClarifaiImage.class))
+                    )
                 )
-            )
-            .build();
+                .build();
+          }
+        };
+      }
+
+      @NotNull @Override protected TypeToken<InputImage> typeToken() {
+        return new TypeToken<InputImage>() {};
       }
     }
   }
@@ -150,17 +175,25 @@ public abstract class SearchClause {
       this.image = image;
     }
 
-    static class Adapter implements JsonSerializer<OutputImage> {
-      @Override public JsonElement serialize(OutputImage src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JSONObjectBuilder()
-            .add("output", new JSONObjectBuilder()
-                .add("input", new JSONObjectBuilder()
-                    .add("data", new JSONObjectBuilder()
-                        .add("image", context.serialize(src.image))
+    static class Adapter extends JSONAdapterFactory<OutputImage> {
+      @Nullable @Override protected Serializer<OutputImage> serializer() {
+        return new Serializer<OutputImage>() {
+          @NotNull @Override public JsonElement serialize(OutputImage value, @NotNull Gson gson) {
+            return new JSONObjectBuilder()
+                .add("output", new JSONObjectBuilder()
+                    .add("input", new JSONObjectBuilder()
+                        .add("data", new JSONObjectBuilder()
+                            .add("image", toJson(gson, value.image, ClarifaiImage.class))
+                        )
                     )
                 )
-            )
-            .build();
+                .build();
+          }
+        };
+      }
+
+      @NotNull @Override protected TypeToken<OutputImage> typeToken() {
+        return new TypeToken<OutputImage>() {};
       }
     }
   }
@@ -176,16 +209,26 @@ public abstract class SearchClause {
       this.concept = concept;
     }
 
-    static class Adapter implements JsonSerializer<SearchConcept> {
-      @Override
-      public JsonElement serialize(SearchConcept src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JSONObjectBuilder()
-            .add(src.owningObjectName, new JSONObjectBuilder()
-                .add("data", new JSONObjectBuilder()
-                    .add("concepts", new JSONArrayBuilder().add(context.serialize(src.concept)))
+    static class Adapter extends JSONAdapterFactory<SearchConcept> {
+      @Nullable @Override protected Serializer<SearchConcept> serializer() {
+        return new Serializer<SearchConcept>() {
+          @NotNull @Override public JsonElement serialize(@Nullable SearchConcept value, @NotNull Gson gson) {
+            if (value == null) {
+              return JsonNull.INSTANCE;
+            }
+            return new JSONObjectBuilder()
+                .add(value.owningObjectName, new JSONObjectBuilder()
+                    .add("data", new JSONObjectBuilder()
+                        .add("concepts", new JSONArrayBuilder().add(toJson(gson, value.concept, Concept.class)))
+                    )
                 )
-            )
-            .build();
+                .build();
+          }
+        };
+      }
+
+      @NotNull @Override protected TypeToken<SearchConcept> typeToken() {
+        return new TypeToken<SearchConcept>() {};
       }
     }
   }

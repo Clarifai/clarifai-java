@@ -10,22 +10,25 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.kevinmost.auto.value.custom_hashcode_equals.adapter.IgnoreForHashCodeEquals;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
+
+import static clarifai2.internal.InternalUtil.clientInstance;
+import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(Model.Adapter.class)
@@ -102,7 +105,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   @Nullable public abstract ModelVersion modelVersion();
   @NotNull public abstract ModelType modelType();
   @Nullable public abstract OutputInfo outputInfo();
-  @Nullable abstract OutputInfo _outputInfo();
+  @IgnoreForHashCodeEquals @Nullable abstract OutputInfo _outputInfo();
 
   @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
 
@@ -170,32 +173,52 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   }
 
 
-  static class Adapter implements JsonSerializer<Model<?>>, JsonDeserializer<Model<?>> {
-    @Override
-    public Model<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      final ModelType modelType = ModelType.determineFromOutputInfoRoot(root.get("output_info"));
-      return getBuilder(modelType)
-          .id(root.get("id").getAsString())
-          .name(root.get("name").getAsString())
-          .createdAt(context.<Date>deserialize(root.get("created_at"), Date.class))
-          .appID(InternalUtil.<String>nullSafeTraverse(root, "app_id"))
-          .modelVersion(context.<ModelVersion>deserialize(root.get("model_version"), ModelVersion.class))
-          ._outputInfo(context.<OutputInfo>deserialize(root.get("output_info"), OutputInfo.class))
-          .client(context.<ClarifaiClient>deserialize(new JsonObject(), ClarifaiClient.class))
-          .build()
-          ;
+  @SuppressWarnings("rawtypes")
+  static class Adapter extends JSONAdapterFactory<Model> {
+    @Nullable @Override protected Serializer<Model> serializer() {
+      return new Serializer<Model>() {
+        @NotNull @Override public JsonElement serialize(@Nullable Model value, @NotNull Gson gson) {
+          if (value == null) {
+            return JsonNull.INSTANCE;
+          }
+          return new JSONObjectBuilder()
+              .add("id", value.id())
+              .add("name", value.name())
+              .add("app_id", value.appID())
+              .add("created_at", toJson(gson, value.createdAt(), Date.class))
+              .add("model_version", toJson(gson, value.modelVersion(), ModelVersion.class))
+              .add("output_info", toJson(gson, value._outputInfo(), OutputInfo.class))
+              .build();
+        }
+      };
     }
 
-    @Override public JsonElement serialize(Model<?> src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JSONObjectBuilder()
-          .add("id", src.id())
-          .add("name", src.name())
-          .add("app_id", src.appID())
-          .add("created_at", context.serialize(src.createdAt()))
-          .add("model_version", context.serialize(src.modelVersion()))
-          .add("output_info", context.serialize(src._outputInfo()))
-          .build();
+    @Nullable @Override protected Deserializer<Model> deserializer() {
+      return new Deserializer<Model>() {
+        @Nullable @Override
+        public Model deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<Model> type,
+            @NotNull Gson gson
+        ) {
+          final JsonObject root = json.getAsJsonObject();
+          final ModelType modelType = ModelType.determineFromOutputInfoRoot(root.get("output_info"));
+          return getBuilder(modelType)
+              .id(root.get("id").getAsString())
+              .name(root.get("name").getAsString())
+              .createdAt(fromJson(gson, root.get("created_at"), Date.class))
+              .appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
+              .modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
+              ._outputInfo(fromJson(gson, root.get("output_info"), OutputInfo.class))
+              .client(clientInstance(gson))
+              .build()
+              ;
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<Model> typeToken() {
+      return new TypeToken<Model>() {};
     }
   }
 }

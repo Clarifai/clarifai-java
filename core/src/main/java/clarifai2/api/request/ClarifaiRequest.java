@@ -5,7 +5,6 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,6 +22,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
+import static clarifai2.internal.InternalUtil.fromJson;
 
 /**
  * An interface returned by the {@link ClarifaiClient} used to execute an API request.
@@ -135,6 +135,7 @@ public interface ClarifaiRequest<RESULT> {
     @NotNull JSONUnmarshaler<T> unmarshaler();
   }
 
+
   abstract class Adapter<T> implements ClarifaiRequest<T> {
     @NotNull protected final BaseClarifaiClient client;
 
@@ -153,12 +154,33 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @Override
-    public final void executeAsync(@Nullable OnSuccess<T> onSuccess,
-        @Nullable OnFailure onFailure,
-        @Nullable OnNetworkError onNetworkError) {
-      executeAsync(InternalUtil.callback(onSuccess, onFailure, onNetworkError));
+    public final void executeAsync(@Nullable final OnSuccess<T> onSuccess,
+        @Nullable final OnFailure onFailure,
+        @Nullable final OnNetworkError onNetworkError) {
+      executeAsync(new Callback<T>() {
+        @Override public void onClarifaiResponseSuccess(@NotNull T t) {
+          if (onSuccess != null) {
+            onSuccess.onClarifaiResponseSuccess(t);
+          }
+        }
+
+        @Override public void onClarifaiResponseUnsuccessful(int errorCode) {
+          if (onFailure == null) {
+            throw new ClarifaiException("API failure occurred and was not handled. HTTP code: " + errorCode);
+          }
+          onFailure.onClarifaiResponseUnsuccessful(errorCode);
+        }
+
+        @Override public void onClarifaiResponseNetworkError(@NotNull IOException e) {
+          if (onNetworkError == null) {
+            throw new ClarifaiException("Network error occurred while making an API call. Error: " + e.getMessage());
+          }
+          onNetworkError.onClarifaiResponseNetworkError(e);
+        }
+      });
     }
   }
+
 
   abstract class Builder<T> extends Adapter<T> {
 
@@ -174,33 +196,37 @@ public interface ClarifaiRequest<RESULT> {
       build().executeAsync(callback);
     }
 
-    @NotNull public final ClarifaiRequest<T> build() {
+    @NotNull protected ClarifaiRequest<T> build() {
       return new Impl<>(client, request());
     }
 
     @NotNull protected abstract DeserializedRequest<T> request();
 
     @NotNull protected final Request getRequest(@NotNull String endpoint) {
-      return new Request.Builder().url(toHTTPUrl(endpoint)).get().build();
+      return builder(endpoint).get().build();
     }
 
     @NotNull protected final Request deleteRequest(@NotNull String endpoint, @NotNull JsonElement deleteBody) {
-      return new Request.Builder().url(toHTTPUrl(endpoint)).delete(toRequestBody(deleteBody)).build();
+      return builder(endpoint).delete(toRequestBody(deleteBody)).build();
     }
 
     @NotNull protected final Request postRequest(@NotNull String endpoint, @NotNull JsonElement postBody) {
-      return new Request.Builder().url(toHTTPUrl(endpoint)).post(toRequestBody(postBody)).build();
+      return builder(endpoint).post(toRequestBody(postBody)).build();
     }
 
     @NotNull protected final Request patchRequest(@NotNull String endpoint, @NotNull JsonElement patchBody) {
-      return new Request.Builder().url(toHTTPUrl(endpoint)).patch(toRequestBody(patchBody)).build();
+      return builder(endpoint).patch(toRequestBody(patchBody)).build();
     }
 
-    @NotNull private HttpUrl toHTTPUrl(@NotNull String path) {
-      if (path.charAt(0) == '/') {
-        path = path.substring(1);
+    @NotNull private Request.Builder builder(@NotNull String endpoint) {
+      return new Request.Builder().url(toHTTPUrl(endpoint));
+    }
+
+    @NotNull private HttpUrl toHTTPUrl(@NotNull String endpoint) {
+      if (endpoint.charAt(0) == '/') {
+        endpoint = endpoint.substring(1);
       }
-      return client.baseURL.newBuilder().addPathSegments(path).build();
+      return client.baseURL.newBuilder().addPathSegments(endpoint).build();
     }
 
     @NotNull private RequestBody toRequestBody(@NotNull JsonElement json) {
@@ -246,7 +272,7 @@ public interface ClarifaiRequest<RESULT> {
           return new ClarifaiResponse.NetworkError<>(ClarifaiStatus.unknown());
         }
         final JsonObject root = json.getAsJsonObject();
-        final ClarifaiStatus status = client.gson.fromJson(root.getAsJsonObject("status"), ClarifaiStatus.class);
+        final ClarifaiStatus status = fromJson(client.gson, root.getAsJsonObject("status"), ClarifaiStatus.class);
 
         final int code = response.code();
 

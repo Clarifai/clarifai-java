@@ -2,23 +2,26 @@ package clarifai2.dto.model.output_info;
 
 import clarifai2.Func1;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -51,50 +54,66 @@ public abstract class ConceptOutputInfo extends OutputInfo {
 
   ConceptOutputInfo() {} // AutoValue instances only
 
-  static class Adapter implements JsonSerializer<ConceptOutputInfo>, JsonDeserializer<ConceptOutputInfo> {
-    @Override
-    public JsonElement serialize(ConceptOutputInfo src, Type typeOfSrc, final JsonSerializationContext context) {
-      return new JSONObjectBuilder()
-          .add("data", new JSONObjectBuilder()
-              .add("concepts", new JSONArrayBuilder()
-                  .addAll(src.concepts(), new Func1<Concept, JsonElement>() {
-                    @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                      return context.serialize(concept);
-                    }
-                  })
+  static class Adapter extends JSONAdapterFactory<ConceptOutputInfo> {
+    @Nullable @Override protected Serializer<ConceptOutputInfo> serializer() {
+      return new Serializer<ConceptOutputInfo>() {
+        @NotNull @Override public JsonElement serialize(@Nullable ConceptOutputInfo value, @NotNull final Gson gson) {
+          if (value == null) {
+            return JsonNull.INSTANCE;
+          }
+          return new JSONObjectBuilder()
+              .add("data", new JSONObjectBuilder()
+                  .add("concepts", new JSONArrayBuilder()
+                      .addAll(value.concepts(), new Func1<Concept, JsonElement>() {
+                        @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                          return toJson(gson, concept, Concept.class);
+                        }
+                      })
+                  )
               )
-          )
-          .add("output_config", new JSONObjectBuilder()
-              .add("concepts_mutually_exclusive", src.areConceptsMutuallyExclusive())
-              .add("closed_environment", src.isEnvironmentClosed())
-              .build()
-          )
-          .build();
+              .add("output_config", new JSONObjectBuilder()
+                  .add("concepts_mutually_exclusive", value.areConceptsMutuallyExclusive())
+                  .add("closed_environment", value.isEnvironmentClosed())
+                  .build()
+              )
+              .build();
+        }
+      };
     }
 
-    @Override
-    public ConceptOutputInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
+    @Nullable @Override protected Deserializer<ConceptOutputInfo> deserializer() {
+      return new Deserializer<ConceptOutputInfo>() {
+        @Nullable @Override
+        public ConceptOutputInfo deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ConceptOutputInfo> type,
+            @NotNull Gson gson
+        ) {
+          final JsonObject root = json.getAsJsonObject();
 
-      final List<Concept> concepts;
-      if (root.getAsJsonObject("data") == null) {
-        concepts = Collections.emptyList();
-      } else {
-        concepts = context.deserialize(
-            root.getAsJsonObject("data").getAsJsonArray("concepts"),
-            new TypeToken<List<Concept>>() {}.getType()
-        );
-      }
-      boolean areConceptsMutuallyExclusive = false;
-      boolean isEnvironmentClosed = false;
-      {
-        final JsonObject outputConfig = root.getAsJsonObject("output_config");
-        if (outputConfig != null) {
-          areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
-          isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
+          final List<Concept> concepts = isJsonNull(root.getAsJsonObject("data"))
+              ? Collections.<Concept>emptyList()
+              : fromJson(
+                  gson,
+                  root.getAsJsonObject("data").getAsJsonArray("concepts"),
+                  new TypeToken<List<Concept>>() {}
+              );
+          boolean areConceptsMutuallyExclusive = false;
+          boolean isEnvironmentClosed = false;
+          {
+            final JsonObject outputConfig = root.getAsJsonObject("output_config");
+            if (outputConfig != null) {
+              areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
+              isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
+            }
+          }
+          return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed);
         }
-      }
-      return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed);
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ConceptOutputInfo> typeToken() {
+      return new TypeToken<ConceptOutputInfo>() {};
     }
   }
 }

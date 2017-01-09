@@ -40,7 +40,7 @@ public enum ModelType {
   ),
   FACE_DETECTION(
       "facedetect",
-      "detections",
+      "regions",
       FaceDetectionOutputInfo.class,
       FaceDetection.class
   ),

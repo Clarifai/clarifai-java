@@ -14,6 +14,9 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
+import static clarifai2.internal.InternalUtil.assertNotNull;
+import static clarifai2.internal.InternalUtil.fromJson;
+
 public final class PatchInputMetadataRequest extends ClarifaiRequest.Builder<ClarifaiInput> {
 
   @NotNull private final String inputID;
@@ -51,7 +54,7 @@ public final class PatchInputMetadataRequest extends ClarifaiRequest.Builder<Cla
         return new JSONUnmarshaler<ClarifaiInput>() {
           @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
             final JsonElement firstInput = json.getAsJsonObject().getAsJsonArray("inputs").get(0);
-            return InternalUtil.fromJson(gson, firstInput, new TypeToken<ClarifaiInput>() {});
+            return assertNotNull(fromJson(gson, firstInput, new TypeToken<ClarifaiInput>() {}));
           }
         };
       }

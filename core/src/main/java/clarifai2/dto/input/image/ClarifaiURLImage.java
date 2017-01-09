@@ -1,19 +1,21 @@
 package clarifai2.dto.input.image;
 
+import clarifai2.internal.InternalUtil;
+import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.net.URL;
+
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -26,20 +28,38 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
 
   ClarifaiURLImage() {} // AutoValue instances only
 
-  static class Adapter implements JsonSerializer<ClarifaiURLImage>, JsonDeserializer<ClarifaiURLImage> {
-    @Override public JsonElement serialize(ClarifaiURLImage src, Type typeOfSrc, JsonSerializationContext context) {
-      return new JSONObjectBuilder()
-          .add("url", src.url().toString())
-          .add("crop", context.serialize(src.crop()))
-          .build();
+  static class Adapter extends JSONAdapterFactory<ClarifaiURLImage> {
+
+    @Nullable @Override protected Serializer<ClarifaiURLImage> serializer() {
+      return new Serializer<ClarifaiURLImage>() {
+        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiURLImage value, @NotNull Gson gson) {
+          if (value == null) {
+            return JsonNull.INSTANCE;
+          }
+          return new JSONObjectBuilder()
+              .add("url", value.url().toString())
+              .add("crop", toJson(gson, value.crop(), Crop.class))
+              .build();
+        }
+      };
     }
 
-    @Override
-    public ClarifaiURLImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
-        JsonParseException {
-      final JsonObject root = json.getAsJsonObject();
-      return ClarifaiImage.of(root.get("url").getAsString())
-          .withCrop(context.<Crop>deserialize(root.get("crop"), Crop.class));
+    @Nullable @Override protected Deserializer<ClarifaiURLImage> deserializer() {
+      return new Deserializer<ClarifaiURLImage>() {
+        @Nullable @Override
+        public ClarifaiURLImage deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ClarifaiURLImage> type,
+            @NotNull Gson gson) {
+          final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
+          return ClarifaiImage.of(root.get("url").getAsString())
+              .withCrop(gson.fromJson(root.get("crop"), Crop.class));
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ClarifaiURLImage> typeToken() {
+      return new TypeToken<ClarifaiURLImage>() {};
     }
   }
 }

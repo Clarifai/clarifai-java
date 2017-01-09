@@ -1,29 +1,46 @@
 package clarifai2.dto.model.output_info;
 
 import clarifai2.dto.model.ModelType;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import clarifai2.internal.JSONAdapterFactory;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
+import static clarifai2.internal.InternalUtil.assertJsonIs;
+import static clarifai2.internal.InternalUtil.fromJson;
 
 @JsonAdapter(OutputInfo.Adapter.class)
 public abstract class OutputInfo {
 
   OutputInfo() {}
 
-  static class Adapter implements JsonDeserializer<OutputInfo> {
-    @Override public OutputInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      if (root.has("message")) {
-        return null;
-      }
-      if (root.has("type") && root.size() == 1) {
-        return null;
-      }
-      return context.deserialize(json, ModelType.determineFromOutputInfoRoot(root).infoType());
+  static class Adapter extends JSONAdapterFactory<OutputInfo> {
+    @Nullable @Override protected Deserializer<OutputInfo> deserializer() {
+      return new Deserializer<OutputInfo>() {
+        @Nullable @Override
+        public OutputInfo deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<OutputInfo> type,
+            @NotNull Gson gson
+        ) {
+          final JsonObject root = assertJsonIs(json, JsonObject.class);
+          if (root.has("message")) {
+            return null;
+          }
+          if (root.has("type") && root.size() == 1) {
+            return null;
+          }
+          return fromJson(gson, json, ModelType.determineFromOutputInfoRoot(root).infoType());
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<OutputInfo> typeToken() {
+      return new TypeToken<OutputInfo>() {};
     }
   }
 }

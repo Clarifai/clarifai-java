@@ -4,19 +4,20 @@ import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
+import clarifai2.api.request.model.Action;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
@@ -28,6 +29,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -35,6 +38,8 @@ import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.api.request.input.SearchClause.matchMetadata;
+import static clarifai2.internal.InternalUtil.sleep;
+import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -54,6 +59,9 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t00_deleteAllInputs() {
     assertSuccess(client.deleteAllInputs());
+    retryAndTimeout(1, TimeUnit.MINUTES, () ->
+        client.getInputs().build().getPage(1).executeSync().get().isEmpty()
+    );
   }
 
   @Retry
@@ -79,36 +87,43 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Concept outdoors23 = Concept.forID("outdoors23");
     assertSuccess(client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/HEoT5xR.png"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png"))
                 .withConcepts(
                     ferrari23.withValue(true)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/It5JRaj.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23.withValue(false)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/GeMQsiQ.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/eXCE9mf.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/EnrVc0B.jpg"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("http://s7d1.scene7.com/is/image/BedBathandBeyond/56879143899890p"))
+            ClarifaiInput.forImage(ClarifaiImage.of(
+                "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg"))
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -200,41 +215,40 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t14a_addConceptsToModel() {
-    assertSuccess(client.mergeConceptsForModel(getModelID())
-        .plus(Concept.forID("outdoors23"))
+    assertSuccess(client.modifyModel(getModelID())
+        .withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
   }
 
   @Retry
   @Test public void t14b_addConceptsToModel_OO() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
-        .mergeConcepts()
-        .plus(Concept.forID("outdoors23"))
+        .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
   }
 
   @Retry
   @Test public void t15_trainModel() {
     assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of("http://i.imgur.com/9Knw6RS.jpg"))
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/penguin.bmp"))
             .withConcepts(Concept.forID("outdoors23"))
         )
         .allowDuplicateURLs(true)
     );
     assertSuccess(client.trainModel(getModelID()));
-    while (true) {
+    retryAndTimeout(2, TimeUnit.MINUTES, () -> {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
       assertNotNull(version);
       final ModelTrainingStatus status = version.status();
       if (!status.isTerminalEvent()) {
-        InternalUtil.sleep(200);
-        continue;
+        return false;
       }
       if (status == ModelTrainingStatus.TRAINED) {
-        return;
+        return true;
       }
       fail("Version had error while training: " + version.status());
-    }
+      return false;
+    });
   }
 
   @Retry
@@ -286,8 +300,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void errorsExposedToUser() {
-    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().mergeConcepts()
-        .plus(Concept.forID("concept2"))
+    final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
+        .withConcepts(Action.MERGE, Concept.forID("concept2"))
         .executeSync();
     if (response.isSuccessful()) {
       fail("You shouldn't be able to add concepts to the built-in general model");
@@ -301,6 +315,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("kotlin"),
         ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_FILE)).withID("train")
     ));
+    sleep(5000);
     assertSuccess(client.deleteInputsBatch().plus("kotlin", "train"));
   }
 
@@ -340,9 +355,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Future<ClarifaiClient> futureClient = new ClarifaiBuilder(appID, appSecret)
         .baseURL(baseURL)
         .build();
-    while (!futureClient.isDone()) {
-      InternalUtil.sleep(100);
-    }
+    retryAndTimeout(30, TimeUnit.SECONDS, futureClient::isDone);
     final ClarifaiClient client = futureClient.get();
     logger.info(client.getToken().toString());
   }
@@ -357,19 +370,17 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test
   public void testModifyModel() {
-    final String modelName = "modifyingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelName).withOutputInfo(
+    final String modelID = "modifyingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
         ConceptOutputInfo.forConcepts(
             Concept.forID("foo")
         )
     ));
-    assertSuccess(client.modifyModel(modelName).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("bar")
-        )
-    ));
+    assertSuccess(client.modifyModel(modelID)
+        .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
+    );
     final List<Concept> concepts =
-        assertSuccess(client.getModelByID(modelName)).asConceptModel().outputInfo().concepts();
+        assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
     assertEquals(1, concepts.size());
     assertEquals("bar", concepts.get(0).name());
   }
@@ -403,6 +414,19 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
             .withMetadata(new JSONObjectBuilder().add("foo", JsonNull.INSTANCE).build())
         )
         .executeSync();
+  }
+
+  @Test public void testDefaultModels() throws InvocationTargetException, IllegalAccessException {
+    final DefaultModels defaultModels = client.getDefaultModels();
+    // Use reflection just to ensure we don't miss any models when we add new ones
+    for (final Method method : DefaultModels.class.getMethods()) {
+      if (isPublic(method.getModifiers()) && Model.class.isAssignableFrom(method.getReturnType())) {
+        final Model<?> model = (Model<?>) method.invoke(defaultModels);
+        assertSuccess(
+            model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+        );
+      }
+    }
   }
 
   /////////////////

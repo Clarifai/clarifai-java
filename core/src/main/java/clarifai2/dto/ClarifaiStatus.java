@@ -1,17 +1,19 @@
 package clarifai2.dto;
 
 import clarifai2.internal.InternalUtil;
+import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
+
+import static clarifai2.internal.InternalUtil.isJsonNull;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -77,16 +79,27 @@ public abstract class ClarifaiStatus {
 
   ClarifaiStatus() {} // AutoValue instances only
 
-  static class Adapter implements JsonDeserializer<ClarifaiStatus> {
-    @Override
-    public ClarifaiStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-      final JsonObject root = json.getAsJsonObject();
-      return new AutoValue_ClarifaiStatus(
-          false,
-          root.get("code").getAsInt(),
-          root.get("description").getAsString(),
-          InternalUtil.<String>nullSafeTraverse(root, "details")
-      );
+  static class Adapter extends JSONAdapterFactory<ClarifaiStatus> {
+    @Nullable @Override protected Deserializer<ClarifaiStatus> deserializer() {
+      return new Deserializer<ClarifaiStatus>() {
+        @Nullable @Override
+        public ClarifaiStatus deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ClarifaiStatus> type,
+            @NotNull Gson gson) {
+          final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
+          return new AutoValue_ClarifaiStatus(
+              false,
+              root.get("code").getAsInt(),
+              root.get("description").getAsString(),
+              isJsonNull(root.get("details")) ? null : root.get("details").getAsString()
+          );
+        }
+      };
+    }
+
+    @NotNull @Override protected TypeToken<ClarifaiStatus> typeToken() {
+      return new TypeToken<ClarifaiStatus>() {};
     }
   }
 }

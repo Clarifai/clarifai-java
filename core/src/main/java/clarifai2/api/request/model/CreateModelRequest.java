@@ -6,7 +6,6 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
 import com.google.gson.Gson;
@@ -17,7 +16,12 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
+import static clarifai2.internal.InternalUtil.assertJsonIs;
+import static clarifai2.internal.InternalUtil.assertNotNull;
+import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.toJson;
+
+public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final BaseClarifaiClient helper;
 
@@ -52,10 +56,9 @@ public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
       @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
         return new JSONUnmarshaler<ConceptModel>() {
           @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return gson.fromJson(
-                json.getAsJsonObject().get("model"),
-                new TypeToken<Model<Concept>>() {}.getType()
-            );
+            return assertNotNull(
+                fromJson(gson, assertJsonIs(json, JsonObject.class).get("model"), new TypeToken<Model<?>>() {})
+            ).asConceptModel();
           }
         };
       }
@@ -63,7 +66,8 @@ public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
   }
 
   @NotNull protected final JsonElement buildJSONOfModel() {
-    return client.gson.toJsonTree(
+    return toJson(
+        client.gson,
         Model._create(
             ModelType.CONCEPT,
             helper,
@@ -71,7 +75,7 @@ public class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
             name != null ? name : id,
             outputInfo
         ),
-        new TypeToken<Model<Concept>>() {}.getType()
+        new TypeToken<Model<?>>() {}
     );
   }
 }
