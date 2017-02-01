@@ -40,6 +40,11 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
     };
   }
 
+  @NotNull public SearchInputsRequest withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
+  }
+
   /**
    *
    * @param language the language to be used. If none is supplied, the default language for the application will be
