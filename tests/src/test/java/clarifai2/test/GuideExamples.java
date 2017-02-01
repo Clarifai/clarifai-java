@@ -13,6 +13,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 @Ignore // These would all fail because they use strings like "@@sampleTrain" for the sake of the docs
 public class GuideExamples extends BaseClarifaiAPITest {
@@ -42,6 +44,21 @@ public class GuideExamples extends BaseClarifaiAPITest {
             .withConcepts(
                 // To mark a concept as being absent, chain `.withValue(false)`
                 Concept.forID("boscoe")
+            )
+        )
+        .allowDuplicateURLs(true)
+        .executeSync();
+  }
+
+  @Test public void addInputsWithConceptsUnicode() throws UnsupportedEncodingException {
+    // Please note: if the id used for a concept is in Unicode, for example '人', it must be URL escaped. It may be
+    // smarter to use Unicode characters only for naming, and use hashes for concept IDs. The Java Documentation
+    // recommends using UTF-8 for the encoding scheme.
+    client.addInputs()
+        .plus(ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+            .withConcepts(
+                // To mark a concept as being absent, chain `.withValue(false)`
+                Concept.forID(URLEncoder.encode("人", "UTF-8"))
             )
         )
         .allowDuplicateURLs(true)

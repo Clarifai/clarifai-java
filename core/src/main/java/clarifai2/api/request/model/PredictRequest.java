@@ -31,6 +31,7 @@ public final class PredictRequest<PREDICTION extends Prediction>
   @NotNull private final List<ClarifaiInput> inputData = new ArrayList<>();
 
   @Nullable private ModelVersion version = null;
+  @Nullable private String language = null;
 
   public PredictRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
@@ -51,17 +52,28 @@ public final class PredictRequest<PREDICTION extends Prediction>
     return this;
   }
 
+  @NotNull public PredictRequest<PREDICTION> withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<List<ClarifaiOutput<PREDICTION>>> request() {
     return new DeserializedRequest<List<ClarifaiOutput<PREDICTION>>>() {
       @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
+        final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder()
             .add("inputs", new JSONArrayBuilder()
                 .addAll(inputData, new Func1<ClarifaiInput, JsonElement>() {
                   @NotNull @Override public JsonElement call(@NotNull ClarifaiInput model) {
                     return client.gson.toJsonTree(model);
                   }
-                }))
-            .build();
+                }));
+        if (language != null) {
+          bodyBuilder.add("model", new JSONObjectBuilder()
+              .add("output_info", new JSONObjectBuilder()
+                  .add("output_config", new JSONObjectBuilder()
+                      .add("language", language))));
+        }
+        final JsonObject body = bodyBuilder.build();
         if (version == null) {
           return postRequest("/v2/models/" + modelID + "/outputs", body);
         }
