@@ -189,6 +189,11 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t09a_searchConcepts_multi_language() {
+    assertSuccess(client.searchConcepts("狗*").withLanguage("zh")); // "zh" = Chinese
+  }
+
+  @Retry
   @Test public void t10_getAllModels() {
     assertSuccess(client.getModels());
   }
@@ -270,6 +275,14 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t16c_predictWithModel_multi_lang() {
+    assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+        .withLanguage("zh")
+    );
+  }
+
+  @Retry
   @Test public void t17a_searchInputsWithModel() {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
@@ -297,6 +310,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .input();
     assertEquals("inputWithMetadata", hit.id());
     assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
+  }
+
+  @Retry
+  @Test public void t17d_searchInputsWithModel_multi_language() {
+    assertSuccess(client.searchInputs(
+        SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
 
   @Test public void errorsExposedToUser() {

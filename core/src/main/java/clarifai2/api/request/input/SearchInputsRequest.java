@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,8 @@ import java.util.List;
 public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<List<SearchHit>, SearchInputsRequest> {
 
   private final List<SearchClause> andClauses = new ArrayList<>();
+
+  @Nullable private String language = null;
 
   public SearchInputsRequest(@NotNull final BaseClarifaiClient client, List<SearchClause> searchClauses) {
     super(client);
@@ -35,6 +38,11 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
         return InternalUtil.fromJson(gson, json.getAsJsonObject().get("hits"), new TypeToken<List<SearchHit>>() {});
       }
     };
+  }
+
+  @NotNull public SearchInputsRequest withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
   }
 
   /**
@@ -69,19 +77,23 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
     return ands(Arrays.asList(clauses));
   }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("query", new JSONObjectBuilder()
-            .add("ands", new JSONArrayBuilder()
-                .addAll(andClauses, new Func1<SearchClause, JsonElement>() {
-                  @NotNull @Override public JsonElement call(@NotNull SearchClause model) {
-                    return SearchInputsRequest.this.gson.toJsonTree(model);
-                  }
-                })
-            )
-        )
-        .build();
 
+
+  @NotNull @Override protected Request buildRequest(final int page) {
+    final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
+    final JSONObjectBuilder queryBuilder = new JSONObjectBuilder();
+    queryBuilder.add("ands", new JSONArrayBuilder()
+        .addAll(andClauses, new Func1<SearchClause, JsonElement>() {
+          @NotNull @Override public JsonElement call(@NotNull SearchClause model) {
+            return SearchInputsRequest.this.gson.toJsonTree(model);
+          }
+        })
+    );
+    if (language != null) {
+      queryBuilder.add("language", language);
+    }
+    bodyBuilder.add("query", queryBuilder.build());
+    final JsonObject body = bodyBuilder.build();
     return new Request.Builder()
         .url(buildURL("/v2/searches", page))
         .post(toRequestBody(body, page))
