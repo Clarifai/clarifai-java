@@ -27,8 +27,8 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
 
   @Nullable private ConceptOutputInfo outputInfo;
   @NotNull private final String id;
-
-  @Nullable private String name = null;
+  @Nullable private String name;
+  @Nullable private String language;
 
   public CreateModelRequest(@NotNull final BaseClarifaiClient helper, @NotNull final String id) {
     super(helper);
@@ -43,6 +43,11 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
 
   @NotNull public CreateModelRequest withName(@Nullable String name) {
     this.name = name;
+    return this;
+  }
+
+  @NotNull public CreateModelRequest withLanguage(@NotNull String language) {
+    this.language = language;
     return this;
   }
 

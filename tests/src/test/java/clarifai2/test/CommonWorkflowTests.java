@@ -330,7 +330,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
-
+  
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))

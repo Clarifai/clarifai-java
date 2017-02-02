@@ -17,6 +17,7 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
   @NotNull private final String modelID;
   @NotNull private final Action action;
   @NotNull private final List<Concept> concepts = new ArrayList<>();
+  @Nullable private String language;
 
   @Nullable private String language = null;
 
@@ -45,11 +46,7 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
   }
 
   @NotNull @Override protected ClarifaiRequest<ConceptModel> build() {
-    if (language != null) {
-      return new ModifyModelRequest(client, modelID).withConcepts(action, concepts).withLanguage(language);
-    } else {
-      return new ModifyModelRequest(client, modelID).withConcepts(action, concepts);
-    }
+    return new ModifyModelRequest(client, modelID).withConcepts(action, concepts).withLanguage(language);
   }
 
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
