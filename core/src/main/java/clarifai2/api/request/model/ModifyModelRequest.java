@@ -32,6 +32,7 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
   @Nullable private String name = null;
   @Nullable private Boolean conceptsMutuallyExclusive = null;
   @Nullable private Boolean closedEnvironment = null;
+  @Nullable private String language;
 
   public ModifyModelRequest(@NotNull BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
@@ -95,6 +96,11 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
+  @NotNull public ModifyModelRequest withLanguage(String language) {
+    this.language = language;
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
@@ -117,11 +123,14 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
               );
         }
         if (conceptsMutuallyExclusive != null || closedEnvironment != null) {
-          outputInfo
-              .add("output_config", new JSONObjectBuilder()
-                  .add("concepts_mutually_exclusive", conceptsMutuallyExclusive)
-                  .add("closed_environment", closedEnvironment)
-              );
+          final JSONObjectBuilder outputConfig = new JSONObjectBuilder();
+          outputConfig
+              .add("concepts_mutually_exclusive", conceptsMutuallyExclusive)
+              .add("closed_environment", closedEnvironment);
+          if (language != null) {
+            outputConfig.add("language", language);
+          }
+          outputInfo.add("output_config", outputConfig.build());
         }
         model.add("output_info", outputInfo);
 
