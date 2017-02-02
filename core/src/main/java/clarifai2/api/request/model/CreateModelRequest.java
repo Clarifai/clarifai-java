@@ -46,6 +46,11 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
+  @NotNull public CreateModelRequest withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
