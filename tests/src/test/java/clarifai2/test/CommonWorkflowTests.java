@@ -233,6 +233,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t14c_addConceptsToModel_multi_lang() {
+    assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
+        .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23")).withLanguage("zh"));
+  }
+
+  @Retry
   @Test public void t15_trainModel() {
     assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/penguin.bmp"))
@@ -317,7 +323,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
-
+  
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))
