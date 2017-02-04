@@ -17,7 +17,8 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
   @NotNull private final String modelID;
   @NotNull private final Action action;
   @NotNull private final List<Concept> concepts = new ArrayList<>();
-  @Nullable private String language;
+
+  @Nullable private String language = null;
 
   @Nullable private String language = null;
 
