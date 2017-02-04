@@ -394,6 +394,28 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test
+  public void testCreateModel() {
+    final String modelID = "creatingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        )
+    ));
+  }
+
+  @Retry
+  @Test
+  public void testCreateModel_multi_lang() {
+    final String modelID = "creatingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        )
+    ).withLanguage("zh"));
+  }
+
+  @Retry
+  @Test
   public void testModifyModel() {
     final String modelID = "modifyingModel" + System.nanoTime();
     assertSuccess(client.createModel(modelID).withOutputInfo(
@@ -403,6 +425,25 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
     assertSuccess(client.modifyModel(modelID)
         .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
+    );
+    final List<Concept> concepts =
+        assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
+    assertEquals(1, concepts.size());
+    assertEquals("bar", concepts.get(0).name());
+  }
+
+  @Retry
+  @Test
+  public void testModifyModel_multi_lang() {
+    final String modelID = "modifyingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        )
+    ).withLanguage("zh"));
+    assertSuccess(client.modifyModel(modelID)
+        .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
+        .withLanguage("zh")
     );
     final List<Concept> concepts =
         assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
