@@ -22,7 +22,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Concept.Adapter.class)
-public abstract class Concept extends Prediction implements HasClarifaiID {
+public abstract class
+Concept extends Prediction implements HasClarifaiID {
 
   @NotNull public static Concept forID(@NotNull String id) {
     return new AutoValue_Concept(id, null, null, null, 1.0F, null);
