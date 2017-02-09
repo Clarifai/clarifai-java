@@ -52,6 +52,11 @@ Concept extends Prediction implements HasClarifaiID {
   @NotNull public abstract float value();
 
   /**
+   * @return the language (in ISO-639-1 format)
+   */
+  @Nullable public abstract String language();
+
+  /**
    * @param name the name to compose the new Concept with
    * @return a Concept object identical to this one, but with the given name
    */
@@ -88,6 +93,7 @@ Concept extends Prediction implements HasClarifaiID {
               .add("created_at", toJson(gson, value.createdAt(), Date.class))
               .add("app_id", value.appID())
               .add("value", value.value())
+              .add("language", value.language())
               .build();
         }
       };
@@ -107,7 +113,8 @@ Concept extends Prediction implements HasClarifaiID {
               root.get("name").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString(),
-              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat()
+              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat(),
+              isJsonNull(root.get("language")) ? null : root.get("language").getAsString()
           );
         }
       };

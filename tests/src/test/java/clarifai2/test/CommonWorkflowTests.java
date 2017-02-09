@@ -38,19 +38,10 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import static clarifai2.api.request.input.SearchClause.matchConcept;
-import static clarifai2.api.request.input.SearchClause.matchMetadata;
-import static clarifai2.internal.InternalUtil.sleep;
-import static java.lang.reflect.Modifier.isPublic;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -196,7 +187,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t09a_searchConcepts_multi_language() {
+  @Test public void t09b_searchConcepts_multi_language() {
     assertSuccess(client.searchConcepts("狗*").withLanguage("zh")); // "zh" = Chinese
   }
 
@@ -330,7 +321,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
-  
+
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))
@@ -410,7 +401,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
-  @Retry
+  @Ignore
   @Test
   public void testCreateModel_multi_lang() {
     final String modelID = "creatingModel" + System.nanoTime();
