@@ -57,12 +57,6 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
       @NotNull @Override public Request httpRequest() {
         final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
         bodyBuilder.add("model", buildJSONOfModel());
-        if (language != null) {
-          bodyBuilder.add("output_info", new JSONObjectBuilder()
-                        .add("output_config", new JSONObjectBuilder()
-                          .add("language", language)));
-        }
-
         final JsonObject body = bodyBuilder.build();
         return postRequest("/v2/models", body);
       }
