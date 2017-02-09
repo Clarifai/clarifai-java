@@ -593,25 +593,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test
-  public void testModifyModel_multi_lang() {
-    final String modelID = "modifyingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelID).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("foo")
-        )
-    ).withLanguage("zh"));
-    assertSuccess(client.modifyModel(modelID)
-        .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
-        .withLanguage("zh")
-    );
-    final List<Concept> concepts =
-        assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
-    assertEquals(1, concepts.size());
-    assertEquals("bar", concepts.get(0).name());
-  }
-
-  @Retry
-  @Test
   public void testMergeMetadata() {
     final String inputID = assertSuccess(client.addInputs()
         .allowDuplicateURLs(true)
