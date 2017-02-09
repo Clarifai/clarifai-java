@@ -492,7 +492,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
-  @Retry
+  @Ignore
   @Test
   public void testCreateModel_multi_lang() {
     final String modelID = "creatingModel" + System.nanoTime();
