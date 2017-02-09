@@ -30,10 +30,19 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import static clarifai2.api.request.input.SearchClause.matchConcept;
+import static clarifai2.internal.InternalUtil.assertNotNull;
+import static clarifai2.internal.InternalUtil.sleep;
+import static java.lang.reflect.Modifier.isPublic;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -297,7 +306,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t17c_searchInputsWithModel_metadata() {
     final List<SearchHit> hits = assertSuccess(
-        client.searchInputs(matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
+        client.searchInputs(SearchClause.matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
     );
     final ClarifaiInput hit = hits.stream()
         .filter(someHit -> "inputWithMetadata".equals(someHit.input().id()))
@@ -393,17 +402,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
-  @Ignore
-  @Test
-  public void testCreateModel_multi_lang() {
-    final String modelID = "creatingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelID).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("foo")
-        )
-    ).withLanguage("zh"));
-  }
-
   @Retry
   @Test
   public void testModifyModel() {
@@ -415,25 +413,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
     assertSuccess(client.modifyModel(modelID)
         .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
-    );
-    final List<Concept> concepts =
-        assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
-    assertEquals(1, concepts.size());
-    assertEquals("bar", concepts.get(0).name());
-  }
-
-  @Retry
-  @Test
-  public void testModifyModel_multi_lang() {
-    final String modelID = "modifyingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelID).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("foo")
-        )
-    ).withLanguage("zh"));
-    assertSuccess(client.modifyModel(modelID)
-        .withConcepts(Action.OVERWRITE, Concept.forID("bar"))
-        .withLanguage("zh")
     );
     final List<Concept> concepts =
         assertSuccess(client.getModelByID(modelID)).asConceptModel().outputInfo().concepts();
