@@ -29,7 +29,6 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
   @NotNull private final String id;
 
   @Nullable private String name = null;
-  @Nullable private String language = null;
 
   public CreateModelRequest(@NotNull final BaseClarifaiClient helper, @NotNull final String id) {
     super(helper);
@@ -47,22 +46,11 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
-  @NotNull public CreateModelRequest withLanguage(@NotNull String language) {
-    this.language = language;
-    return this;
-  }
-
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
         final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
         bodyBuilder.add("model", buildJSONOfModel());
-        if (language != null) {
-          bodyBuilder.add("output_info", new JSONObjectBuilder()
-                        .add("output_config", new JSONObjectBuilder()
-                          .add("language", language)));
-        }
-
         final JsonObject body = bodyBuilder.build();
         return postRequest("/v2/models", body);
       }
