@@ -33,12 +33,18 @@ public abstract class ConceptOutputInfo extends OutputInfo {
   }
 
   @NotNull public static ConceptOutputInfo forConcepts(@NotNull List<Concept> concepts) {
-    return new AutoValue_ConceptOutputInfo(concepts, false, false);
+    return new AutoValue_ConceptOutputInfo(concepts, false, false, null);
   }
 
   @NotNull public abstract List<Concept> concepts();
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
   @NotNull public abstract boolean isEnvironmentClosed();
+
+  @Nullable public abstract String language();
+
+  @NotNull public final ConceptOutputInfo withLanguage(@NotNull String language) {
+    return new AutoValue_ConceptOutputInfo(concepts(), areConceptsMutuallyExclusive(), isEnvironmentClosed(), language);
+  }
 
   @NotNull public final ConceptOutputInfo areConceptsMutuallyExclusive(boolean areConceptsMutuallyExclusive) {
     return withAreConceptsMutuallyExclusive(areConceptsMutuallyExclusive);
@@ -61,22 +67,24 @@ public abstract class ConceptOutputInfo extends OutputInfo {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
-          return new JSONObjectBuilder()
-              .add("data", new JSONObjectBuilder()
-                  .add("concepts", new JSONArrayBuilder()
-                      .addAll(value.concepts(), new Func1<Concept, JsonElement>() {
-                        @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                          return toJson(gson, concept, Concept.class);
-                        }
-                      })
-                  )
+          JSONObjectBuilder body = new JSONObjectBuilder();
+          body.add("data", new JSONObjectBuilder()
+              .add("concepts", new JSONArrayBuilder()
+                  .addAll(value.concepts(), new Func1<Concept, JsonElement>() {
+                    @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                      return toJson(gson, concept, Concept.class);
+                    }
+                  })
               )
-              .add("output_config", new JSONObjectBuilder()
-                  .add("concepts_mutually_exclusive", value.areConceptsMutuallyExclusive())
-                  .add("closed_environment", value.isEnvironmentClosed())
-                  .build()
-              )
-              .build();
+          );
+          JSONObjectBuilder outputConfig = new JSONObjectBuilder();
+          outputConfig.add("concepts_mutually_exclusive", value.areConceptsMutuallyExclusive());
+          outputConfig.add("closed_environment", value.isEnvironmentClosed());
+          if (value.language() != null) {
+            outputConfig.add("language", value.language());
+          }
+          body.add("output_config", outputConfig.build());
+          return body.build();
         }
       };
     }
@@ -100,14 +108,18 @@ public abstract class ConceptOutputInfo extends OutputInfo {
               );
           boolean areConceptsMutuallyExclusive = false;
           boolean isEnvironmentClosed = false;
+          String language = null;
           {
             final JsonObject outputConfig = root.getAsJsonObject("output_config");
             if (outputConfig != null) {
               areConceptsMutuallyExclusive = outputConfig.get("concepts_mutually_exclusive").getAsBoolean();
               isEnvironmentClosed = outputConfig.get("closed_environment").getAsBoolean();
+              if (outputConfig.get("language") != null) {
+                language = outputConfig.get("language").getAsString();
+              }
             }
           }
-          return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed);
+          return new AutoValue_ConceptOutputInfo(concepts, areConceptsMutuallyExclusive, isEnvironmentClosed, language);
         }
       };
     }
