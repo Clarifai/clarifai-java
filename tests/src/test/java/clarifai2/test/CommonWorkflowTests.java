@@ -37,11 +37,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static clarifai2.api.request.input.SearchClause.matchConcept;
-import static clarifai2.api.request.input.SearchClause.matchMetadata;
+import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -189,6 +188,11 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t09b_searchConcepts_multi_language() {
+    assertSuccess(client.searchConcepts("狗*").withLanguage("zh")); // "zh" = Chinese
+  }
+
+  @Retry
   @Test public void t10_getAllModels() {
     assertSuccess(client.getModels());
   }
@@ -225,6 +229,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
         .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
+  }
+
+  @Retry
+  @Test public void t14c_addConceptsToModel_multi_lang() {
+    assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
+        .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23")).withLanguage("zh"));
   }
 
   @Retry
@@ -270,6 +280,14 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t16c_predictWithModel_multi_lang() {
+    assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+        .withLanguage("zh")
+    );
+  }
+
+  @Retry
   @Test public void t17a_searchInputsWithModel() {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
@@ -288,7 +306,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t17c_searchInputsWithModel_metadata() {
     final List<SearchHit> hits = assertSuccess(
-        client.searchInputs(matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
+        client.searchInputs(SearchClause.matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
     );
     final ClarifaiInput hit = hits.stream()
         .filter(someHit -> "inputWithMetadata".equals(someHit.input().id()))
@@ -297,6 +315,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .input();
     assertEquals("inputWithMetadata", hit.id());
     assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
+  }
+
+  @Retry
+  @Test public void t17d_searchInputsWithModel_multi_language() {
+    assertSuccess(client.searchInputs(
+        SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
 
   @Test public void errorsExposedToUser() {
@@ -365,6 +389,28 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final ClarifaiClient toBeClosed = new ClarifaiBuilder(appID, appSecret).buildSync();
     toBeClosed.close();
     toBeClosed.getModels().getPage(1).executeSync();
+  }
+
+  @Retry
+  @Test
+  public void testCreateModel() {
+    final String modelID = "creatingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        )
+    ));
+  }
+
+  @Retry
+  @Test
+  public void testCreateModel_multi_lang() {
+    final String modelID = "creatingModel" + System.nanoTime();
+    assertSuccess(client.createModel(modelID).withOutputInfo(
+        ConceptOutputInfo.forConcepts(
+            Concept.forID("foo")
+        ).withLanguage("zh")
+    ));
   }
 
   @Retry

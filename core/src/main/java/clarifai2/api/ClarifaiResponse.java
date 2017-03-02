@@ -44,7 +44,6 @@ public abstract class ClarifaiResponse<T> {
     }
   }
 
-
   public static final class Failure<T> extends ClarifaiResponse<T> {
 
     @NotNull private String rawBody;

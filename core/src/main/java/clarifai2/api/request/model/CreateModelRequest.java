@@ -27,7 +27,8 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
 
   @Nullable private ConceptOutputInfo outputInfo;
   @NotNull private final String id;
-  @Nullable private String name;
+
+  @Nullable private String name = null;
 
   public CreateModelRequest(@NotNull final BaseClarifaiClient helper, @NotNull final String id) {
     super(helper);
@@ -48,8 +49,9 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
-            .add("model", buildJSONOfModel()).build();
+        final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
+        bodyBuilder.add("model", buildJSONOfModel());
+        final JsonObject body = bodyBuilder.build();
         return postRequest("/v2/models", body);
       }
 

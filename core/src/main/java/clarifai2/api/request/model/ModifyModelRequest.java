@@ -23,7 +23,7 @@ import java.util.List;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.fromJson;
 
-public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
+public final class  ModifyModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final String modelID;
 
@@ -32,6 +32,7 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
   @Nullable private String name = null;
   @Nullable private Boolean conceptsMutuallyExclusive = null;
   @Nullable private Boolean closedEnvironment = null;
+  @Nullable private String language = null;
 
   public ModifyModelRequest(@NotNull BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
@@ -95,6 +96,11 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
+  @NotNull public ModifyModelRequest withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
       @NotNull @Override public Request httpRequest() {
@@ -116,13 +122,16 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
                   )
               );
         }
-        if (conceptsMutuallyExclusive != null || closedEnvironment != null) {
-          outputInfo
-              .add("output_config", new JSONObjectBuilder()
-                  .add("concepts_mutually_exclusive", conceptsMutuallyExclusive)
-                  .add("closed_environment", closedEnvironment)
-              );
+        final JSONObjectBuilder outputConfig = new JSONObjectBuilder();
+        if (language != null) {
+          outputConfig.add("language", language);
         }
+        if (conceptsMutuallyExclusive != null || closedEnvironment != null) {
+          outputConfig
+              .add("concepts_mutually_exclusive", conceptsMutuallyExclusive)
+              .add("closed_environment", closedEnvironment);
+        }
+        outputInfo.add("output_config", outputConfig.build());
         model.add("output_info", outputInfo);
 
         final JsonObject body = new JSONObjectBuilder()
