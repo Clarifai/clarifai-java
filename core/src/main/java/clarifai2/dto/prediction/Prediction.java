@@ -49,7 +49,7 @@ public abstract class Prediction {
     return this instanceof Detection;
   }
 
-  @NotNull public final Focus asDetection() {
+  @NotNull public final Detection asDetection() {
     return (Detection) this;
   }
 
