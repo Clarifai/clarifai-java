@@ -62,8 +62,8 @@ public enum ModelType {
   FOCUS(
       "focus",
       "focuses",
-      BlurOutputInfo.class,
-      Blur.class
+      FocusOutputInfo.class,
+      Focus.class
   ),
   CLUSTER(
       "cluster",
