@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class VisualModel extends Model<Visual> {
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.Visual; }
+  @NotNull @Override public final ModelType modelType() { return ModelType.VISUAL; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull
