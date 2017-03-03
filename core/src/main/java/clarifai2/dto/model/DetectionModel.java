@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class DetectionModel extends Model<Detection> {
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.Detection; }
+  @NotNull @Override public final ModelType modelType() { return ModelType.DETECTION; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull
