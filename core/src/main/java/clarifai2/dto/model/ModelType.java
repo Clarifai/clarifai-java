@@ -4,22 +4,16 @@ import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.dto.model.output_info.DetectionOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
-import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
-import clarifai2.dto.model.output_info.VisualOutputInfo;
 import clarifai2.dto.prediction.Blur;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.dto.prediction.Visual;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -61,24 +55,6 @@ public enum ModelType {
       "clusters",
       ClusterOutputInfo.class,
       Cluster.class
-  ),
-  FOCUS(
-      "focus",
-      "focus",
-      FocusOutputInfo.class,
-      Focus.class
-  ),
-  DETECTION(
-      "detection",
-      "detections",
-      DetectionOutputInfo.class,
-      Detection.class
-  ),
-  VISUAL(
-      "visual",
-      "visuals",
-      VisualOutputInfo.class,
-      Visual.class
   ),;
 
   @NotNull private final String typeName;
