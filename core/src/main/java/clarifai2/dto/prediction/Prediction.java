@@ -37,6 +37,14 @@ public abstract class Prediction {
     return (Blur) this;
   }
 
+  public final boolean isFocus() {
+    return this instanceof Focus;
+  }
+
+  @NotNull public final Focus asFocus() {
+    return (Focus) this;
+  }
+
   public final boolean isEmbedding() {
     return this instanceof Embedding;
   }

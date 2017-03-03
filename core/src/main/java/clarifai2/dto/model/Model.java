@@ -82,6 +82,14 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((BlurModel) this);
   }
 
+  public final boolean isFocusModel() {
+    return this instanceof FocusModel;
+  }
+
+  @NotNull public final FocusModel asFocusModel() {
+    return ((FocusModel) this);
+  }
+
   public final boolean isEmbeddingModel() {
     return this instanceof EmbeddingModel;
   }
@@ -156,6 +164,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_ConceptModel.Builder();
       case BLUR:
         return new AutoValue_BlurModel.Builder();
+        case FOCUS:
+          return new AutoValue_FocusModel.Builder();
       case CLUSTER:
         return new AutoValue_ClusterModel.Builder();
       case COLOR:
