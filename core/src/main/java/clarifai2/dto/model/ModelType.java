@@ -4,6 +4,7 @@ import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.model.output_info.DetectionOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
 import clarifai2.dto.model.output_info.FocusOutputInfo;
@@ -13,6 +14,7 @@ import clarifai2.dto.prediction.Blur;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.Focus;
@@ -52,12 +54,6 @@ public enum ModelType {
       "blurs",
       BlurOutputInfo.class,
       Blur.class
-  ),
-  FOCUS(
-      "focus",
-      "focuses",
-      FocusOutputInfo.class,
-      Focus.class
   ),
   CLUSTER(
       "cluster",
