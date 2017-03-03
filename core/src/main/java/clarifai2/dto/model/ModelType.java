@@ -51,6 +51,12 @@ public enum ModelType {
       BlurOutputInfo.class,
       Blur.class
   ),
+  FOCUS(
+      "focus",
+      "focuses",
+      BlurOutputInfo.class,
+      Blur.class
+  ),
   CLUSTER(
       "cluster",
       "clusters",
