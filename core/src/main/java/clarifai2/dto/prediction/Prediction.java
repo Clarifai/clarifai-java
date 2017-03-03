@@ -45,6 +45,22 @@ public abstract class Prediction {
     return (Focus) this;
   }
 
+  public final boolean isDetection() {
+    return this instanceof Detection;
+  }
+
+  @NotNull public final Focus asDetection() {
+    return (Detection) this;
+  }
+
+  public final boolean isVisual() {
+    return this instanceof Visual;
+  }
+
+  @NotNull public final Visual asVisual() {
+    return (Visual) this;
+  }
+
   public final boolean isEmbedding() {
     return this instanceof Embedding;
   }

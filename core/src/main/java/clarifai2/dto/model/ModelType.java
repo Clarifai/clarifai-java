@@ -12,6 +12,7 @@ import clarifai2.dto.model.output_info.UnknownOutputInfo;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.Focus;
@@ -50,12 +51,6 @@ public enum ModelType {
   ),
   FOCUS(
       "blur",
-      FocusOutputInfo.class,
-      Focus.class
-  ),
-  FOCUS(
-      "focus",
-      "focuses",
       FocusOutputInfo.class,
       Focus.class
   ),
