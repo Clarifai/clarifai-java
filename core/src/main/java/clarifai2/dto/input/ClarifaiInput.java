@@ -115,6 +115,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
+          final PointF geo = value.geo();
           final JSONObjectBuilder builder = new JSONObjectBuilder()
               .add("id", value.id());
           final JSONObjectBuilder data = new JSONObjectBuilder()
