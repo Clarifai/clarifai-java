@@ -2,6 +2,7 @@ package clarifai2.internal;
 
 import clarifai2.Func1;
 import clarifai2.api.ClarifaiClient;
+import clarifai2.dto.PointF;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -129,6 +130,13 @@ public final class InternalUtil {
     throw new IllegalArgumentException("Input JSON is of type " + in.getClass() + " and cannot be deep-copied");
   }
 
+  @NotNull public static JsonObject asGeoPointJson(@NotNull PointF geoPoint) {
+    return new JSONObjectBuilder()
+        .add("latitude", geoPoint.x())
+        .add("longitude", geoPoint.y())
+        .build();
+  }
+
   public static void sleep(long millis) {
     try {
       Thread.sleep(millis);
@@ -156,6 +164,11 @@ public final class InternalUtil {
 
   @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
     return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
+  }
+
+  @Contract("null, null -> true; null, !null -> false; !null, null -> false")
+  public static <T> boolean nullSafeEquals(@Nullable T o1, @Nullable T o2) {
+    return o1 == null ? o2 == null : o1.equals(o2);
   }
 
   @NotNull

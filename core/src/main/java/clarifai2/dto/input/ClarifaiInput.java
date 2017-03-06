@@ -1,6 +1,7 @@
 package clarifai2.dto.input;
 
 import clarifai2.dto.HasClarifaiID;
+import clarifai2.dto.PointF;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.InternalUtil;
@@ -36,7 +37,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
-    return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList());
+    return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList(), null);
   }
 
   @Nullable public abstract Date createdAt();
@@ -62,6 +63,11 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   @NotNull public abstract List<Concept> concepts();
 
   /**
+   * @return the geo-point that this input is linked to
+   */
+ @Nullable public abstract PointF geo();
+
+  /**
    * @param id the ID to assign to this input
    * @return a copy of this {@link ClarifaiInput} with its ID set to the specified value
    */
@@ -70,12 +76,20 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   }
 
   /**
+   * @param geo a geographic coordinate to assign to this input
+   * @return a copy of this {@link ClarifaiInput} with its geographic coordinate set to the specified value
+   */
+  @NotNull public final ClarifaiInput withGeo(@Nullable PointF geo) {
+    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata(), concepts(), geo);
+  }
+
+  /**
    * @param metadata the metadata to attach to this input
    * @return a copy of this {@link ClarifaiInput} with its metadata set to the specified value
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
     InternalUtil.assertMetadataHasNoNulls(metadata);
-    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts());
+    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts(), geo());
   }
 
   // Hide the ugly casing that auto-value-with requires
@@ -93,7 +107,6 @@ public abstract class ClarifaiInput implements HasClarifaiID {
 
   ClarifaiInput() {} // AutoValue instances only
 
-
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
       return new Serializer<ClarifaiInput>() {
@@ -101,16 +114,23 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
+          final PointF geo = value.geo();
           final JSONObjectBuilder builder = new JSONObjectBuilder()
-              .add("id", value.id())
-              .add("data", new JSONObjectBuilder()
-                  .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-                  .add("image", toJson(gson, value.image(), ClarifaiImage.class))
-                  .add("metadata", value.metadata())
-              );
+              .add("id", value.id());
+          final JSONObjectBuilder data = new JSONObjectBuilder()
+              .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
+              .add("image", toJson(gson, value.image(), ClarifaiImage.class))
+              .add("metadata", value.metadata());
+          if (value.geo() != null) {
+            data.add("geo", new JSONObjectBuilder()
+                      .add("geo_point", new JSONObjectBuilder()
+                      .add("latitude", value.geo().x())
+                      .add("longitude", value.geo().y())));
+          }
           if (value.createdAt() != null) {
             builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
           }
+          builder.add("data", data);
           return builder.build();
         }
       };
@@ -137,13 +157,16 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           }
 
           final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
+          final JsonObject geo = data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
+          final PointF geoPoint = geo.has("latitude") ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat()) : null;
 
           return new AutoValue_ClarifaiInput(
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
-              concepts
+              concepts,
+              geoPoint
           );
         }
       };
