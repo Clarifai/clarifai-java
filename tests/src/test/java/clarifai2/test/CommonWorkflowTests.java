@@ -6,6 +6,8 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.model.Action;
 import clarifai2.dto.ClarifaiStatus;
+import clarifai2.dto.PointF;
+import clarifai2.dto.Radius;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
@@ -102,7 +104,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23
-                ),
+                ).withGeo(PointF.at(30, -24)),
             ClarifaiInput.forImage(ClarifaiImage.of(
                 "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg"))
                 .withConcepts(
@@ -322,6 +324,45 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.searchInputs(
         SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))).withLanguage("zh"));
   }
+
+  @Test public void t17e_searchInputsWithModel_geo() {
+    assertSuccess(client.addInputs().plus(
+        ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+            .withGeo(PointF.at(90F, 23F))
+    ));
+    assertSuccess(
+        client.searchInputs(matchConcept(Concept.forID("outdoors23").withValue(true)))
+            .and(SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+            .and(SearchClause.matchGeo(PointF.at(90F, 23F), Radius.of(5, Radius.Unit.MILE)))
+            .build()
+    );
+  }
+
+  @Retry
+  @Test public void t18_testGeo() {
+    {
+        final List<SearchHit> hitsBeforeAdding = assertSuccess(
+        client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
+            );
+    assertEquals(0, hitsBeforeAdding.size());
+    }
+    assertSuccess(client.addInputs().plus(
+        ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
+            .withGeo(PointF.at(60F, 29.75F))
+        ));
+    {
+        final List<SearchHit> hitsAfterAdding = assertSuccess(
+        client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
+            );
+    assertEquals(1, hitsAfterAdding.size());
+    }
+    {
+        final List<SearchHit> hits = assertSuccess(
+        client.searchInputs(SearchClause.matchGeo(PointF.at(3F, 0F), PointF.at(70, 30F)))
+            );
+    assertEquals(1, hits.size());
+    }
+    }
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
