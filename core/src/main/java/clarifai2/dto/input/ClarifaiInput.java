@@ -107,7 +107,6 @@ public abstract class ClarifaiInput implements HasClarifaiID {
 
   ClarifaiInput() {} // AutoValue instances only
 
-
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
       return new Serializer<ClarifaiInput>() {
@@ -115,16 +114,23 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
+          final PointF geo = value.geo();
           final JSONObjectBuilder builder = new JSONObjectBuilder()
-              .add("id", value.id())
-              .add("data", new JSONObjectBuilder()
-                  .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-                  .add("image", toJson(gson, value.image(), ClarifaiImage.class))
-                  .add("metadata", value.metadata())
-              );
+              .add("id", value.id());
+          final JSONObjectBuilder data = new JSONObjectBuilder()
+              .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
+              .add("image", toJson(gson, value.image(), ClarifaiImage.class))
+              .add("metadata", value.metadata());
+          if (value.geo() != null) {
+            data.add("geo", new JSONObjectBuilder()
+                      .add("geo_point", new JSONObjectBuilder()
+                      .add("latitude", value.geo().x())
+                      .add("longitude", value.geo().y())));
+          }
           if (value.createdAt() != null) {
             builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
           }
+          builder.add("data", data);
           return builder.build();
         }
       };
@@ -151,13 +157,16 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           }
 
           final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
+          final JsonObject geo = data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
+          final PointF geoPoint = geo.has("latitude") ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat()) : null;
 
           return new AutoValue_ClarifaiInput(
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
-              concepts
+              concepts,
+              geoPoint
           );
         }
       };
