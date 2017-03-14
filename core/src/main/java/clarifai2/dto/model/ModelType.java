@@ -6,6 +6,7 @@ import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
+import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Blur;
 import clarifai2.dto.prediction.Cluster;
@@ -13,6 +14,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.JsonElement;
@@ -55,7 +57,16 @@ public enum ModelType {
       "clusters",
       ClusterOutputInfo.class,
       Cluster.class
-  ),;
+  ),
+//  DETECTION(
+//
+//  ),
+  FOCUS(
+      "focus",
+      "focuses", // make sure this is correct
+      FocusOutputInfo.class,
+      Focus.class
+  );
 
   @NotNull private final String typeName;
   @NotNull private final String dataArrayName;

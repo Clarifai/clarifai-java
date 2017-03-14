@@ -299,6 +299,20 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), hit.metadata());
   }
 
+  @Retry
+  @Test public void t18_testEmbedModel() {
+    assertSuccess(client.predict(client.getDefaultModels().embeddingModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+    );
+  }
+
+  @Retry
+  @Test public void t18a_testFocusModel() {
+    assertSuccess(client.predict(client.getDefaultModels().focusModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+    );
+  }
+
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))
