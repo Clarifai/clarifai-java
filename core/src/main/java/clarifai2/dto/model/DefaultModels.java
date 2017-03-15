@@ -18,6 +18,9 @@ public final class DefaultModels {
   @NotNull private AtomicReference<ConceptModel> wedding;
   @NotNull private AtomicReference<ColorModel> color;
   @NotNull private AtomicReference<FaceDetectionModel> faceModel;
+  @NotNull private AtomicReference<BlurModel> logoModel;
+  @NotNull private AtomicReference<BlurModel> focusModel;
+  @NotNull private AtomicReference<EmbeddingModel> embeddingModel;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -27,6 +30,9 @@ public final class DefaultModels {
     wedding = create(ModelType.CONCEPT, client, "c386b7a870114f4a87477c0824499348", "weddings-v1.0");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
     faceModel = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
+    logoModel = create(ModelType.BLUR, client, "c443119bf2ed4da98487520d01a0b1e3", "logo");
+    focusModel = create(ModelType.BLUR, client, "c2cf7cecd8a6427da375b9f35fcd2381", "focus");
+    embeddingModel = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3"); // MAKE SURE THIS IS CORRECT
   }
 
   @NotNull private <M extends Model<?>> AtomicReference<M> create(
@@ -69,4 +75,10 @@ public final class DefaultModels {
   @NotNull public ColorModel colorModel() { return color.get(); }
 
   @NotNull public FaceDetectionModel faceDetectionModel() { return faceModel.get(); }
+
+  @NotNull public BlurModel logoModel() { return logoModel.get(); }
+
+  @NotNull public BlurModel focusModel() { return focusModel.get(); }
+
+  @NotNull public EmbeddingModel embeddingModel() { return embeddingModel.get(); }
 }
