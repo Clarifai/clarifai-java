@@ -48,6 +48,43 @@ public abstract class ClarifaiResponse<T> {
     }
   }
 
+  public static final class MixedSuccess<T> extends ClarifaiResponse<T> {
+
+    @NotNull private final String rawBody;
+    @NotNull private final T deserialized;
+
+    public MixedSuccess(
+        @NotNull ClarifaiStatus status,
+        int httpCode,
+        @NotNull String rawBody,
+        @NotNull T deserialized
+    ) {
+      super(status, httpCode);
+      this.deserialized = deserialized;
+      this.rawBody = rawBody;
+    }
+
+    @NotNull @Override public String rawBody() {
+      return rawBody;
+    }
+
+    @NotNull @Override public <R> ClarifaiResponse<R> map(@NotNull Func1<T, R> mapper) {
+      return new MixedSuccess<>(status, httpCode, rawBody, mapper.call(deserialized));
+    }
+
+    @Nullable @Override public T getOrNull() {
+      return deserialized;
+    }
+
+    @Override public boolean isSuccessful() {
+      return false;
+    }
+
+    @Override public boolean isMixedSuccess() {
+      return true;
+    }
+  }
+
   public static final class Failure<T> extends ClarifaiResponse<T> {
 
     @NotNull private String rawBody;
