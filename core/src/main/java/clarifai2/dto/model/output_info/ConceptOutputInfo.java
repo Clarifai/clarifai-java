@@ -19,9 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
-import static clarifai2.internal.InternalUtil.toJson;
+import static clarifai2.internal.InternalUtil.*;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -36,7 +34,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
     return new AutoValue_ConceptOutputInfo(concepts, false, false, null);
   }
 
-  @NotNull public abstract List<Concept> concepts();
+  @Nullable public abstract List<Concept> concepts();
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
   @NotNull public abstract boolean isEnvironmentClosed();
 

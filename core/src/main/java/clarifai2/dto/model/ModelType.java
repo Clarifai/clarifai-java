@@ -1,19 +1,7 @@
 package clarifai2.dto.model;
 
-import clarifai2.dto.model.output_info.BlurOutputInfo;
-import clarifai2.dto.model.output_info.ClusterOutputInfo;
-import clarifai2.dto.model.output_info.ColorOutputInfo;
-import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
-import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
-import clarifai2.dto.model.output_info.OutputInfo;
-import clarifai2.dto.prediction.Blur;
-import clarifai2.dto.prediction.Cluster;
-import clarifai2.dto.prediction.Color;
-import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.FaceDetection;
-import clarifai2.dto.prediction.Prediction;
+import clarifai2.dto.model.output_info.*;
+import clarifai2.dto.prediction.*;
 import clarifai2.exception.ClarifaiException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

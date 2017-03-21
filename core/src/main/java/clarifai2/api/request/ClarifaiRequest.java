@@ -277,8 +277,16 @@ public interface ClarifaiRequest<RESULT> {
         final int code = response.code();
 
         final boolean successfulHTTPCode = 200 <= code && code < 300;
+        System.out.println("code: " + code + " status: " + status + "\n");
         if (successfulHTTPCode && status.equals(ClarifaiStatus.success())) {
           return new ClarifaiResponse.Successful<>(
+              status,
+              code,
+              rawJSON,
+              request.unmarshaler().fromJSON(client.gson, root)
+          );
+        } else if (successfulHTTPCode && status.equals(ClarifaiStatus.mixedSuccess())) {
+          return new ClarifaiResponse.MixedSuccess<>(
               status,
               code,
               rawJSON,

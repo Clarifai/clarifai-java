@@ -12,11 +12,7 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
-import clarifai2.dto.model.ConceptModel;
-import clarifai2.dto.model.DefaultModels;
-import clarifai2.dto.model.Model;
-import clarifai2.dto.model.ModelTrainingStatus;
-import clarifai2.dto.model.ModelVersion;
+import clarifai2.dto.model.*;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.exception.ClarifaiException;
@@ -42,9 +38,7 @@ import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

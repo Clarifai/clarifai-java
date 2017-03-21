@@ -15,10 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
-import static clarifai2.internal.InternalUtil.toJson;
+import static clarifai2.internal.InternalUtil.*;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
