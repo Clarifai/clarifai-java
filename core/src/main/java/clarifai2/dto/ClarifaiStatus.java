@@ -38,6 +38,20 @@ public abstract class ClarifaiStatus {
     );
   }
 
+  @Nullable private static ClarifaiStatus mixedSuccess;
+
+  @NotNull public static ClarifaiStatus mixedSuccess() {
+    if (mixedSuccess == null) {
+      mixedSuccess = new AutoValue_ClarifaiStatus(
+          false,
+          10010,
+          "Mixed Success",
+          null
+      );
+    }
+    return mixedSuccess;
+  }
+
   @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
     return new AutoValue_ClarifaiStatus(
         true,

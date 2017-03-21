@@ -18,9 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.toJson;
+import static clarifai2.internal.InternalUtil.*;
 
 public final class AddInputsRequest extends ClarifaiRequest.Builder<List<ClarifaiInput>> {
 

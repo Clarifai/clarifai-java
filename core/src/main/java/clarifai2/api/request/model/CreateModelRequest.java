@@ -16,10 +16,7 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.toJson;
+import static clarifai2.internal.InternalUtil.*;
 
 public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
