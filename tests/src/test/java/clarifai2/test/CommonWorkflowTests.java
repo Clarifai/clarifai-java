@@ -13,12 +13,15 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
-import clarifai2.dto.model.*;
+import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.DefaultModels;
+import clarifai2.dto.model.Model;
+import clarifai2.dto.model.ModelTrainingStatus;
+import clarifai2.dto.model.ModelVersion;
+import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Focus;
-import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.Region;
+import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
@@ -34,6 +37,7 @@ import org.junit.runners.MethodSorters;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -42,8 +46,11 @@ import java.util.concurrent.TimeUnit;
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
+import static com.sun.tools.internal.ws.wsdl.parser.Util.fail;
 import static java.lang.reflect.Modifier.isPublic;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -362,6 +369,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(1, hits.size());
     }
     }
+
+  @Retry
+  @Test public void t19_testBatch_partialFailure() {
+    List<ClarifaiInput> batch = new ArrayList<>();
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png")));
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg")));
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://this_should_fail.jpg")));
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(client.getDefaultModels().generalModel().id())
+        .withInputs(batch).executeSync();
+    assertTrue(response.isMixedSuccess());
+    assertNotNull(response.get());
+  }
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
