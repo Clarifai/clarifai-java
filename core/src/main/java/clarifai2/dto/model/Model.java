@@ -9,7 +9,6 @@ import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.Gson;
@@ -25,7 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Date;
 import java.util.List;
 
-import static clarifai2.internal.InternalUtil.*;
+import static clarifai2.internal.InternalUtil.clientInstance;
+import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
+import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(Model.Adapter.class)
