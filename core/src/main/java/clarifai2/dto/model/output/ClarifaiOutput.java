@@ -53,7 +53,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
 
           final List<Prediction> allPredictions = new ArrayList<>();
           for (final Map.Entry<String, JsonElement> data : root.getAsJsonObject("data").entrySet()) {
-            final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+         final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
             for (final JsonElement predictionJSON : array) {
               allPredictions.add(fromJson(gson, predictionJSON, predictionType));
             }
