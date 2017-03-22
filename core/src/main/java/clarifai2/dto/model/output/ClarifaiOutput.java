@@ -67,7 +67,8 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, root.get("model"), new TypeToken<Model<Prediction>>() {}),
               fromJson(gson, root.get("input"), ClarifaiInput.class),
-              allPredictions
+              allPredictions,
+              fromJson(gson, root.get("status"), ClarifaiStatus.class)
           );
         }
       };

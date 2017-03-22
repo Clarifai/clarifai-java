@@ -34,7 +34,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
     return new AutoValue_ConceptOutputInfo(concepts, false, false, null);
   }
 
-  @Nullable public abstract List<Concept> concepts();
+  @NotNull public abstract List<Concept> concepts();
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
   @NotNull public abstract boolean isEnvironmentClosed();
 
