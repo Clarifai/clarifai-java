@@ -45,8 +45,11 @@ import java.util.concurrent.TimeUnit;
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
+import static com.sun.tools.internal.ws.wsdl.parser.Util.fail;
 import static java.lang.reflect.Modifier.isPublic;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
