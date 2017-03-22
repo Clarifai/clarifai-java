@@ -1,5 +1,6 @@
 package clarifai2.dto.model.output;
 
+import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
@@ -33,6 +34,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
   @NotNull public abstract Model<PREDICTION> model();
   @NotNull public abstract ClarifaiInput input();
   @NotNull public abstract List<PREDICTION> data();
+  @NotNull public abstract ClarifaiStatus status();
 
   ClarifaiOutput() {} // AutoValue instances only
 
@@ -63,7 +65,8 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, root.get("model"), new TypeToken<Model<Prediction>>() {}),
               fromJson(gson, root.get("input"), ClarifaiInput.class),
-              allPredictions
+              allPredictions,
+              fromJson(gson, root.get("status"), ClarifaiStatus.class)
           );
         }
       };

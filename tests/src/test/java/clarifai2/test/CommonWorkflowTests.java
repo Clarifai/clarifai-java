@@ -379,6 +379,13 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertNotNull(response.get());
   }
 
+  @Retry
+  @Test public void t20_testDemographicsModel() {
+    assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+    );
+  }
+
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))
