@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -21,9 +22,16 @@ public final class SearchConceptsRequest
 
   @NotNull private final String conceptSearchQuery;
 
+  @Nullable private String language = null;
+
   public SearchConceptsRequest(@NotNull final BaseClarifaiClient client, @NotNull String conceptSearchQuery) {
     super(client);
     this.conceptSearchQuery = conceptSearchQuery;
+  }
+
+  @NotNull public SearchConceptsRequest withLanguage(@NotNull String language) {
+    this.language = language;
+    return this;
   }
 
   @NotNull @Override protected JSONUnmarshaler<List<Concept>> unmarshaler() {
@@ -40,12 +48,14 @@ public final class SearchConceptsRequest
   }
 
   @NotNull @Override protected Request buildRequest(final int page) {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("concept_query", new JSONObjectBuilder()
-            .add("name", conceptSearchQuery)
-            .build()
-        )
-        .build();
+    final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
+    final JSONObjectBuilder conceptQueryBuilder = new JSONObjectBuilder();
+    conceptQueryBuilder.add("name", conceptSearchQuery);
+    if (language != null) {
+      conceptQueryBuilder.add("language", language);
+    }
+    bodyBuilder.add("concept_query", conceptQueryBuilder.build());
+    final JsonObject body = bodyBuilder.build();
 
     return new Request.Builder()
         .post(toRequestBody(body, page))

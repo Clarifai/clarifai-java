@@ -284,6 +284,13 @@ public interface ClarifaiRequest<RESULT> {
               rawJSON,
               request.unmarshaler().fromJSON(client.gson, root)
           );
+        } else if (successfulHTTPCode && status.equals(ClarifaiStatus.mixedSuccess())) {
+          return new ClarifaiResponse.MixedSuccess<>(
+              status,
+              code,
+              rawJSON,
+              request.unmarshaler().fromJSON(client.gson, root)
+          );
         }
         return new ClarifaiResponse.Failure<>(status, code, rawJSON);
       } catch (IOException e) {

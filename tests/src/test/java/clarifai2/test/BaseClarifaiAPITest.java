@@ -12,11 +12,7 @@ import com.kevinmost.junit_retry_rule.RetryRule;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
@@ -48,7 +44,7 @@ public abstract class BaseClarifaiAPITest {
           .connectTimeout(60, TimeUnit.SECONDS)
           .readTimeout(60, TimeUnit.SECONDS)
           .writeTimeout(60, TimeUnit.SECONDS)
-          .addInterceptor(new HttpLoggingInterceptor(logger::warn).setLevel(HttpLoggingInterceptor.Level.BODY))
+          .addInterceptor(new HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC))
           .build()
       )
       .buildSync();
@@ -85,7 +81,7 @@ public abstract class BaseClarifaiAPITest {
 
   <T> T assertSuccess(@NotNull ClarifaiRequest<T> request) {
     final T result = request.executeSync().get();
-    logger.info(result.toString());
+    logger.debug(result.toString());
     return result;
   }
 

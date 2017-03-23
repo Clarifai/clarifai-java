@@ -9,7 +9,6 @@ import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.Gson;
@@ -166,9 +165,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
       case FACE_DETECTION:
         return new AutoValue_FaceDetectionModel.Builder();
       default:
-        throw new ClarifaiException(
-            "This version of the Clarifai API client does not support models of type " + modelType
-        );
+        return new AutoValue_UnknownModel.Builder();
     }
   }
 
