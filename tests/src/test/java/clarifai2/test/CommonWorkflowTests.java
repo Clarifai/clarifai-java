@@ -5,6 +5,7 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.model.Action;
+import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
@@ -17,8 +18,10 @@ import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
+import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
@@ -33,6 +36,7 @@ import org.junit.runners.MethodSorters;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -227,7 +231,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t14b_addConceptsToModel_OO() {
+  @Test public void t14b_addConceptsToModel_00() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
         .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
@@ -271,7 +275,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t16b_predictWithModel_OO() {
+  @Test public void t16b_predictWithModel_00() {
     assertSuccess(client.getDefaultModels().generalModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
             .withCrop(Crop.create()
@@ -282,7 +286,31 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t16c_predictWithModel_multi_lang() {
+  @Test public void t16c_predictBatchWithModel_01() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isSuccessful());
+  }
+
+  @Retry
+  @Test public void t16d_predictBatchBase64WithModel() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isSuccessful());
+  }
+
+  @Retry
+  @Test public void t16f_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
         .withLanguage("zh")
@@ -363,6 +391,27 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(1, hits.size());
     }
     }
+
+  @Retry
+  @Test public void t19_testBatch_partialFailure() {
+    List<ClarifaiInput> batch = new ArrayList<>();
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png")));
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg")));
+    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://this_should_fail.jpg")));
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().generalModel().predict()
+        .withInputs(batch).executeSync();
+    assertTrue(response.isMixedSuccess());
+    assertNotNull(response.get());
+    List<ClarifaiOutput<Concept>> concepts = response.get();
+    assertEquals(concepts.get(2).status().statusCode(), 30002);
+  }
+
+  /*@Retry
+  @Test public void t20_testDemographicsModel() {
+    assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+    );
+  }*/
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
