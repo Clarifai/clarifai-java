@@ -398,11 +398,11 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png")));
     batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg")));
     batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://this_should_fail.jpg")));
-    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(client.getDefaultModels().generalModel().id())
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().generalModel().predict()
         .withInputs(batch).executeSync();
     assertTrue(response.isMixedSuccess());
     assertNotNull(response.get());
-    List<ClarifaiOutput<Concept>> concepts = response.get(0);
+    List<ClarifaiOutput<Concept>> concepts = response.get();
     assertEquals(concepts.get(2).status(), 30002);
   }
 
