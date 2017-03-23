@@ -298,7 +298,33 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t16c_predictWithModel_multi_lang() {
+  @Test public void t16d_predictBatchBase64WithModel() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isSuccessful());
+  }
+
+  @Retry
+  @Test public void t16e_predictBatchWithModelWithBadInput() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of("http://clarifai.com/bad-image-url.jpg")).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isMixedSuccess());
+    List<ClarifaiOutput<Concept>> concepts = response.get(0);
+    assertEquals(concepts.get(1).status(), 30002);
+  }
+
+  @Retry
+  @Test public void t16f_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
         .withLanguage("zh")
