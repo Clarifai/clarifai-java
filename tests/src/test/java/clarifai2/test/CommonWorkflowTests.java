@@ -5,6 +5,7 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.model.Action;
+import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
@@ -230,7 +231,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t14b_addConceptsToModel_OO() {
+  @Test public void t14b_addConceptsToModel_00() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
         .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
@@ -274,7 +275,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t16b_predictWithModel_OO() {
+  @Test public void t16b_predictWithModel_00() {
     assertSuccess(client.getDefaultModels().generalModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
             .withCrop(Crop.create()
@@ -282,6 +283,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
                 .bottom(0.8F)
             )
         )));
+  }
+
+  @Retry
+  @Test public void t16c_predictBatchWithModel_01() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isSuccessful());
   }
 
   @Retry
@@ -379,12 +392,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertNotNull(response.get());
   }
 
-  @Retry
+  /*@Retry
   @Test public void t20_testDemographicsModel() {
     assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
     );
-  }
+  }*/
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()

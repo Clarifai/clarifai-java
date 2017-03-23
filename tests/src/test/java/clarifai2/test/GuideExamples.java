@@ -435,9 +435,9 @@ public class GuideExamples extends BaseClarifaiAPITest {
         .executeSync();
   }
 
-  @Test public void demographicsModel() {
+  /*@Test public void demographicsModel() {
     client.getDefaultModels().demographicsModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
         .executeSync();
-  }
+  }*/
 }
