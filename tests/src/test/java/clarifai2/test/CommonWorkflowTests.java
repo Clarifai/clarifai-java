@@ -287,6 +287,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
+  @Test public void t16c_predictBatchWithModel_01() {
+    List<ClarifaiInput> inputs = new ArrayList<ClarifaiInput>();
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID2"));
+    PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
+        .withInputs(inputs);
+    assertSuccess(request);
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    assertTrue(response.isSuccessful());
+  }
+
+  @Retry
   @Test public void t16c_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
@@ -381,12 +393,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertNotNull(response.get());
   }
 
-  @Retry
+  /*@Retry
   @Test public void t20_testDemographicsModel() {
     assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
     );
-  }
+  }*/
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()

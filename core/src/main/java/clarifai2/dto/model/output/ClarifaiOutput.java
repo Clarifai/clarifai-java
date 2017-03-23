@@ -51,17 +51,22 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
-
-          final Class<? extends Prediction> predictionType =
-              ModelType.determineFromDataRoot(root.getAsJsonObject("data")).predictionType();
+          System.err.println("root: " + root);
 
           final List<Prediction> allPredictions = new ArrayList<>();
-          for (final Map.Entry<String, JsonElement> data : root.getAsJsonObject("data").entrySet()) {
-         final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
-            for (final JsonElement predictionJSON : array) {
-              allPredictions.add(fromJson(gson, predictionJSON, predictionType));
+          if (!root.get("data").isJsonNull()) {
+            JsonObject dataRoot = root.getAsJsonObject("data");
+            final Class<? extends Prediction> predictionType =
+                ModelType.determineFromDataRoot(dataRoot).predictionType();
+
+            for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
+              final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+              for (final JsonElement predictionJSON : array) {
+                allPredictions.add(fromJson(gson, predictionJSON, predictionType));
+              }
             }
           }
+
           return new AutoValue_ClarifaiOutput<>(
               root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),

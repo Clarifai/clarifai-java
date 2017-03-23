@@ -277,7 +277,6 @@ public interface ClarifaiRequest<RESULT> {
         final int code = response.code();
 
         final boolean successfulHTTPCode = 200 <= code && code < 300;
-        System.out.println("code: " + code + " status: " + status + "\n");
         if (successfulHTTPCode && status.equals(ClarifaiStatus.success())) {
           return new ClarifaiResponse.Successful<>(
               status,
