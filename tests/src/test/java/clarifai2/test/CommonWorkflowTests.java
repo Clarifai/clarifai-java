@@ -483,12 +483,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeColorName());
   }
 
-  @Retry
+  /*@Retry
   @Test public void t20_testDemographicsModel() {
     assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
     );
-  }
+  }*/
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
