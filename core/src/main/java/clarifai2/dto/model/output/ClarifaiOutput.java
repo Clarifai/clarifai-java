@@ -50,8 +50,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             @NotNull TypeToken<ClarifaiOutput> type,
             @NotNull Gson gson
         ) {
-          final JsonObject root = assertJsonIs(json, JsonObject.class);
-          System.err.println("root: " + root);
+          final JsonObject root = assertJsonIs(json, JsonObject.class);ß
 
           final List<Prediction> allPredictions = new ArrayList<>();
           if (!root.get("data").isJsonNull()) {
