@@ -1,5 +1,6 @@
 package clarifai2.dto.model.output;
 
+import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
@@ -33,6 +34,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
   @NotNull public abstract Model<PREDICTION> model();
   @NotNull public abstract ClarifaiInput input();
   @NotNull public abstract List<PREDICTION> data();
+  @NotNull public abstract ClarifaiStatus status();
 
   ClarifaiOutput() {} // AutoValue instances only
 
@@ -48,22 +50,27 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
 
-          final Class<? extends Prediction> predictionType =
-              ModelType.determineFromDataRoot(root.getAsJsonObject("data")).predictionType();
-
           final List<Prediction> allPredictions = new ArrayList<>();
-          for (final Map.Entry<String, JsonElement> data : root.getAsJsonObject("data").entrySet()) {
-            final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
-            for (final JsonElement predictionJSON : array) {
-              allPredictions.add(fromJson(gson, predictionJSON, predictionType));
+          if (!root.get("data").isJsonNull()) {
+            JsonObject dataRoot = root.getAsJsonObject("data");
+            final Class<? extends Prediction> predictionType =
+                ModelType.determineFromDataRoot(dataRoot).predictionType();
+
+            for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
+              final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+              for (final JsonElement predictionJSON : array) {
+                allPredictions.add(fromJson(gson, predictionJSON, predictionType));
+              }
             }
           }
+
           return new AutoValue_ClarifaiOutput<>(
               root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, root.get("model"), new TypeToken<Model<Prediction>>() {}),
               fromJson(gson, root.get("input"), ClarifaiInput.class),
-              allPredictions
+              allPredictions,
+              fromJson(gson, root.get("status"), ClarifaiStatus.class)
           );
         }
       };
