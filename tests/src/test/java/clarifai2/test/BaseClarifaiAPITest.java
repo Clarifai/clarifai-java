@@ -44,7 +44,7 @@ public abstract class BaseClarifaiAPITest {
           .connectTimeout(60, TimeUnit.SECONDS)
           .readTimeout(60, TimeUnit.SECONDS)
           .writeTimeout(60, TimeUnit.SECONDS)
-          .addInterceptor(new HttpLoggingInterceptor(logger::warn).setLevel(HttpLoggingInterceptor.Level.BODY))
+          .addInterceptor(new HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC))
           .build()
       )
       .buildSync();
@@ -81,7 +81,7 @@ public abstract class BaseClarifaiAPITest {
 
   <T> T assertSuccess(@NotNull ClarifaiRequest<T> request) {
     final T result = request.executeSync().get();
-    logger.info(result.toString());
+    logger.debug(result.toString());
     return result;
   }
 

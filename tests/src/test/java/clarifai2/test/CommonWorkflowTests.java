@@ -420,7 +420,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     if (response.isSuccessful()) {
       fail("You shouldn't be able to add concepts to the built-in general model");
     }
-    logger.info(response.getStatus().toString());
+    logger.debug(response.getStatus().toString());
   }
 
   @Retry
@@ -462,7 +462,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     }
     final ClarifaiStatus details = badResponse.getStatus();
     assertTrue(details.networkErrorOccurred());
-    logger.info(details.errorDetails());
+    logger.debug(details.errorDetails());
   }
 
   @Test public void testBuildClientAsync() throws InterruptedException, ExecutionException {
@@ -471,7 +471,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         .build();
     retryAndTimeout(30, TimeUnit.SECONDS, futureClient::isDone);
     final ClarifaiClient client = futureClient.get();
-    logger.info(client.getToken().toString());
+    logger.debug(client.getToken().toString());
   }
 
   @Test(expected = ClarifaiException.class)
