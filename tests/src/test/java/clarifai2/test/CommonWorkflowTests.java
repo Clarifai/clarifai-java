@@ -403,7 +403,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertTrue(response.isMixedSuccess());
     assertNotNull(response.get());
     List<ClarifaiOutput<Concept>> concepts = response.get();
-    assertEquals(concepts.get(2).status(), 30002);
+    assertEquals(concepts.get(2).status().statusCode(), 30002);
   }
 
   /*@Retry
