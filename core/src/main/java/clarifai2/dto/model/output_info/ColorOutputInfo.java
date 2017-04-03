@@ -7,4 +7,6 @@ import com.google.auto.value.AutoValue;
 public abstract class ColorOutputInfo extends OutputInfo {
 
   ColorOutputInfo() {} // AutoValue instances only
+
+
 }

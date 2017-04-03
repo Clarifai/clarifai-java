@@ -18,7 +18,7 @@ public final class DefaultModels {
   @NotNull private AtomicReference<ConceptModel> wedding;
   @NotNull private AtomicReference<ColorModel> color;
   @NotNull private AtomicReference<FaceDetectionModel> faceModel;
-  //@NotNull private AtomicReference<ConceptModel> demographicsModel;
+  @NotNull private AtomicReference<FaceDetectionModel> demographicsModel;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -28,7 +28,7 @@ public final class DefaultModels {
     wedding = create(ModelType.CONCEPT, client, "c386b7a870114f4a87477c0824499348", "weddings-v1.0");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
     faceModel = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
-    //demographicsModel = create(ModelType.CONCEPT, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
+    demographicsModel = create(ModelType.FACE_DETECTION, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
   }
 
   @NotNull private <M extends Model<?>> AtomicReference<M> create(
@@ -72,5 +72,5 @@ public final class DefaultModels {
 
   @NotNull public FaceDetectionModel faceDetectionModel() { return faceModel.get(); }
 
-  //@NotNull public ConceptModel demographicsModel() { return demographicsModel.get(); }
+  @NotNull public FaceDetectionModel demographicsModel() { return demographicsModel.get(); }
 }

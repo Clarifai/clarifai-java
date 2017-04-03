@@ -21,6 +21,7 @@ import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -406,12 +407,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(concepts.get(2).status().statusCode(), 30002);
   }
 
-  /*@Retry
+  @Retry
   @Test public void t20_testDemographicsModel() {
-    assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
-    );
-  }*/
+    ClarifaiResponse<List<ClarifaiOutput<FaceDetection>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))).executeSync();
+    assertNotNull(faceDetects.get().get(0).data().get(0)); //  make sure the Object actually exists
+  }
 
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
