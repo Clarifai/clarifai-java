@@ -41,7 +41,7 @@ public enum ModelType {
       ColorOutputInfo.class,
       Color.class
   ),
-  DEMOGRAPHIC_MODEL(
+  DEMOGRAPHIC(
       "facedetect",
       "regions",
       DemographicOutputInfo.class,
@@ -104,6 +104,15 @@ public enum ModelType {
   @NotNull public static ModelType determineFromDataRoot(@NotNull JsonObject dataRoot) {
     for (final ModelType value : values()) {
       if (dataRoot.has(value.dataArrayName)) {
+        if (value.dataArrayName.equalsIgnoreCase("facedetect")) {
+          // fixes ambiguation error between Demographics and FaceDetection model. If confused, see Postman, and notice
+          // that the way the model is determined is ambiguous in this case.
+          if (dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
+            return DEMOGRAPHIC;
+          } else {
+            return FACE_DETECTION;
+          }
+        }
         return value;
       }
     }
