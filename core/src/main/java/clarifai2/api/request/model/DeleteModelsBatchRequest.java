@@ -6,7 +6,11 @@ import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
