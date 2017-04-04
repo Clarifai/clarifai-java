@@ -490,6 +490,13 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }*/
 
+  @Retry
+  @Test public void t21_testApparelModel() {
+    assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/family.jpg")))
+    );
+  }
+
   @Test public void errorsExposedToUser() {
     final ClarifaiResponse<ConceptModel> response = client.getDefaultModels().generalModel().modify()
         .withConcepts(Action.MERGE, Concept.forID("concept2"))
