@@ -11,9 +11,11 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
+import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -37,7 +39,30 @@ public abstract class Region extends Prediction {
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
-          
+          Crop crop = null;
+          List<Concept> ageAppearances = new ArrayList<>();
+          List<Concept> genderAppearances= new ArrayList<>();
+          List<Concept> multiCulturalAppearances = new ArrayList<>();
+          crop = fromJson(gson, root.getAsJsonObject()
+              .getAsJsonObject("region_info")
+              .getAsJsonObject("bounding_box"), Crop.class);
+          JsonObject face = root.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("face");
+          for (JsonElement ageElement : face.getAsJsonObject("age_appearance").getAsJsonArray("concepts")) {
+            ageAppearances.add(fromJson(gson, ageElement, Concept.class));
+          }
+          for (JsonElement ageElement : face.getAsJsonObject("gender_appearance").getAsJsonArray("concepts")) {
+            genderAppearances.add(fromJson(gson, ageElement, Concept.class));
+          }
+          for (JsonElement ageElement : face.getAsJsonObject("multicultural_appearance").getAsJsonArray("concepts")) {
+            multiCulturalAppearances.add(fromJson(gson, ageElement, Concept.class));
+          }
+          if (crop == null) throw new IllegalArgumentException("Crop cannot be null");
+          return new AutoValue_Region(
+              crop,
+              ageAppearances,
+              genderAppearances,
+              multiCulturalAppearances
+          );
         }
       };
     }

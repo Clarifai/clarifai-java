@@ -4,6 +4,7 @@ import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.model.output_info.DemographicOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
@@ -15,6 +16,7 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.dto.prediction.Region;
 import clarifai2.dto.prediction.Unknown;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,6 +40,12 @@ public enum ModelType {
       "colors",
       ColorOutputInfo.class,
       Color.class
+  ),
+  DEMOGRAPHIC(
+      "facedetect",
+      "regions",
+      DemographicOutputInfo.class,
+      Region.class
   ),
   FACE_DETECTION(
       "facedetect",
@@ -96,6 +104,16 @@ public enum ModelType {
   @NotNull public static ModelType determineFromDataRoot(@NotNull JsonObject dataRoot) {
     for (final ModelType value : values()) {
       if (dataRoot.has(value.dataArrayName)) {
+        if (value.dataArrayName.equalsIgnoreCase("regions")) {
+          // fixes ambiguation error between Demographics and FaceDetection model. If confused, see Postman, and notice
+          // that the way the model is determined is ambiguous in this case.
+          if (dataRoot.getAsJsonArray("regions").size() == 0 ||
+              dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
+            return DEMOGRAPHIC;
+          } else {
+            return FACE_DETECTION;
+          }
+        }
         return value;
       }
     }
