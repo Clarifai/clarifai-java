@@ -21,6 +21,8 @@ import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.FaceDetection;
+import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
@@ -28,6 +30,7 @@ import com.google.gson.JsonObject;
 import com.kevinmost.junit_retry_rule.Retry;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -46,6 +49,7 @@ import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -405,12 +409,15 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(concepts.get(2).status().statusCode(), 30002);
   }
 
-  /*@Retry
+  @Retry
   @Test public void t20_testDemographicsModel() {
-    assertSuccess(client.predict(client.getDefaultModels().demographicsModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
-    );
-  }*/
+    ClarifaiResponse<List<ClarifaiOutput<Region>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg"))).executeSync();
+    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).crop());
+    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).ageAppearances());
+    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).genderAppearances());
+    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).multiculturalAppearances());
+  }
 
   @Retry
   @Test public void t21_testApparelModel() {
@@ -570,6 +577,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
       }
     }
   }
+
+
 
   /////////////////
 
