@@ -4,7 +4,7 @@ import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.dto.model.output_info.DemographicOutputInfo;
+import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
@@ -41,10 +41,10 @@ public enum ModelType {
       ColorOutputInfo.class,
       Color.class
   ),
-  DEMOGRAPHIC(
+  DEMOGRAPHICS(
       "facedetect",
       "regions",
-      DemographicOutputInfo.class,
+      DemographicsOutputInfo.class,
       Region.class
   ),
   FACE_DETECTION(
@@ -107,9 +107,11 @@ public enum ModelType {
         if (value.dataArrayName.equalsIgnoreCase("regions")) {
           // fixes ambiguation error between Demographics and FaceDetection model. If confused, see Postman, and notice
           // that the way the model is determined is ambiguous in this case.
-          if (dataRoot.getAsJsonArray("regions").size() == 0 ||
-              dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
-            return DEMOGRAPHIC;
+          if (dataRoot.getAsJsonArray("regions").size() == 0) {
+            return UNKNOWN;
+          }
+          if (dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
+            return DEMOGRAPHICS;
           } else {
             return FACE_DETECTION;
           }
