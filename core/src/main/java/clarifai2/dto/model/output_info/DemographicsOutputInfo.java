@@ -14,33 +14,33 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(ColorOutputInfo.Adapter.class)
-public abstract class ColorOutputInfo extends OutputInfo {
+@JsonAdapter(DemographicsOutputInfo.Adapter.class)
+public abstract class DemographicsOutputInfo extends OutputInfo {
 
   @NotNull public abstract String type();
   @NotNull public abstract String typeExt();
 
-  ColorOutputInfo() {} // AutoValue instances only
+  DemographicsOutputInfo() {} // AutoValue instances only
 
-  static class Adapter extends JSONAdapterFactory<ColorOutputInfo> {
-    @Nullable @Override protected Deserializer<ColorOutputInfo> deserializer() {
-      return new Deserializer<ColorOutputInfo>() {
+  static class Adapter extends JSONAdapterFactory<DemographicsOutputInfo> {
+    @Nullable @Override protected Deserializer<DemographicsOutputInfo> deserializer() {
+      return new Deserializer<DemographicsOutputInfo>() {
         @Nullable @Override
-        public ColorOutputInfo deserialize(
+        public DemographicsOutputInfo deserialize(
             @NotNull JsonElement json,
-            @NotNull TypeToken<ColorOutputInfo> type,
+            @NotNull TypeToken<DemographicsOutputInfo> type,
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
           String modelType = root.getAsJsonPrimitive("type").getAsString();
           String typeExt = root.getAsJsonPrimitive("type_ext").getAsString();
-          return new AutoValue_ColorOutputInfo(modelType, typeExt);
+          return new AutoValue_DemographicsOutputInfo(modelType, typeExt);
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<ColorOutputInfo> typeToken() {
-      return new TypeToken<ColorOutputInfo>() {};
+    @NotNull @Override protected TypeToken<DemographicsOutputInfo> typeToken() {
+      return new TypeToken<DemographicsOutputInfo>() {};
     }
   }
 }
