@@ -52,7 +52,6 @@ import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -499,6 +498,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/family.jpg")))
     );
+  }
+
+  @Retry
+  @Test public void t22_testFocusModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Focus>>> focii = client.getDefaultModels().focusModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg")))
+        .executeSync();
+    Assert.assertNotNull(focii.get());
+    Assert.assertNotNull(focii.get().get(0));
+    Assert.assertNotNull(focii.get().get(0).data());
+    Assert.assertNotNull(focii.get().get(0).data().get(0));
+    Assert.assertNotNull(focii.get().get(0).data().get(0).crop());
   }
 
   @Test public void errorsExposedToUser() {

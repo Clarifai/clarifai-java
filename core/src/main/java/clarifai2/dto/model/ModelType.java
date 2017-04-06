@@ -6,6 +6,7 @@ import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
+import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
 import clarifai2.dto.prediction.Cluster;
