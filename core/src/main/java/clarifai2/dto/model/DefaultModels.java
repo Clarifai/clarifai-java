@@ -18,6 +18,7 @@ public final class DefaultModels {
   @NotNull private AtomicReference<ConceptModel> wedding;
   @NotNull private AtomicReference<ConceptModel> apparel;
   @NotNull private AtomicReference<ColorModel> color;
+  @NotNull private AtomicReference<FocusModel> focus;
   @NotNull private AtomicReference<FaceDetectionModel> faceModel;
   @NotNull private AtomicReference<DemographicsModel> demographicsModel;
 
@@ -29,6 +30,7 @@ public final class DefaultModels {
     wedding = create(ModelType.CONCEPT, client, "c386b7a870114f4a87477c0824499348", "weddings-v1.0");
     apparel = create(ModelType.CONCEPT, client, "e0be3b9d6a454f0493ac3a30784001ff", "apparel");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
+    focus = create(ModelType.FOCUS, client, "c2cf7cecd8a6427da375b9f35fcd2381", "focus");
     faceModel = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
     demographicsModel = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
   }
@@ -73,6 +75,8 @@ public final class DefaultModels {
   @NotNull public ConceptModel apparelModel() { return apparel.get(); }
 
   @NotNull public ColorModel colorModel() { return color.get(); }
+
+  @NotNull public FocusModel focusModel() { return focus.get(); }
 
   @NotNull public FaceDetectionModel faceDetectionModel() { return faceModel.get(); }
 
