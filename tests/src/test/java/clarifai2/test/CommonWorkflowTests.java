@@ -21,7 +21,7 @@ import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.FaceDetection;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -49,7 +49,6 @@ import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
 import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -398,8 +397,10 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t19_testBatch_partialFailure() {
     List<ClarifaiInput> batch = new ArrayList<>();
-    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png")));
-    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg")));
+    batch.add(ClarifaiInput.forImage(
+        ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png")));
+    batch.add(ClarifaiInput.forImage(
+        ClarifaiImage.of("https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg")));
     batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://this_should_fail.jpg")));
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().generalModel().predict()
         .withInputs(batch).executeSync();
@@ -412,7 +413,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t20_testDemographicsModel() {
     ClarifaiResponse<List<ClarifaiOutput<Region>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg"))).executeSync();
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg")))
+        .executeSync();
     Assert.assertNotNull(faceDetects.get().get(0).data().get(0).crop());
     Assert.assertNotNull(faceDetects.get().get(0).data().get(0).ageAppearances());
     Assert.assertNotNull(faceDetects.get().get(0).data().get(0).genderAppearances());
@@ -424,6 +426,18 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/family.jpg")))
     );
+  }
+
+  @Retry
+  @Test public void t22_testFocusModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Focus>>> focii = client.getDefaultModels().focusModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg")))
+        .executeSync();
+    Assert.assertNotNull(focii.get());
+    Assert.assertNotNull(focii.get().get(0));
+    Assert.assertNotNull(focii.get().get(0).data());
+    Assert.assertNotNull(focii.get().get(0).data().get(0));
+    Assert.assertNotNull(focii.get().get(0).data().get(0).crop());
   }
 
   @Test public void errorsExposedToUser() {
@@ -593,7 +607,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   /////////////////
 
-  // Workaround since we can't delete models right now, so we'll make a new model every time that is different every time we run the app
+  // Workaround since we can't delete models right now, so we'll make a new model every time that is different every
+  // time we run the app
   @NotNull private static String getModelID() {
     return "mod1ID" + startTime;
   }
