@@ -1,20 +1,20 @@
 package clarifai2.dto.model;
 
-import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
+import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
-import clarifai2.dto.prediction.Blur;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.dto.prediction.Region;
 import clarifai2.dto.prediction.Unknown;
@@ -53,11 +53,11 @@ public enum ModelType {
       FaceDetectionOutputInfo.class,
       FaceDetection.class
   ),
-  BLUR(
+  FOCUS(
       "blur",
-      "blurs",
-      BlurOutputInfo.class,
-      Blur.class
+      "focus",
+      FocusOutputInfo.class,
+      Focus.class
   ),
   CLUSTER(
       "cluster",
@@ -109,6 +109,10 @@ public enum ModelType {
           // that the way the model is determined is ambiguous in this case.
           if (dataRoot.getAsJsonArray("regions").size() == 0) {
             return UNKNOWN;
+          }
+          // even more amibiguation.
+          if (dataRoot.has("focus")) {
+            return FOCUS;
           }
           if (dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
             return DEMOGRAPHICS;
