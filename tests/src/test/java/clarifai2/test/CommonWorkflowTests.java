@@ -22,6 +22,7 @@ import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -438,6 +439,17 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(focii.get().get(0).data());
     Assert.assertNotNull(focii.get().get(0).data().get(0));
     Assert.assertNotNull(focii.get().get(0).data().get(0).crop());
+  }
+
+  @Retry
+  @Test public void t23_testgeneralEmbedModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Embedding>>> embeddings = client.getDefaultModels().generalEmbeddingModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg"))).executeSync();
+    Assert.assertNotNull(embeddings.get());
+    Assert.assertNotNull(embeddings.get().get(0));
+    Assert.assertNotNull(embeddings.get().get(0).data());
+    Assert.assertNotNull(embeddings.get().get(0).data().get(0));
+    Assert.assertNotNull(embeddings.get().get(0).data().get(0).embedding());
   }
 
   @Test public void errorsExposedToUser() {

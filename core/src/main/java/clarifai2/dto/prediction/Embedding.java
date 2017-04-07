@@ -41,9 +41,9 @@ public abstract class Embedding extends Prediction {
         ) {
           final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
 
-          final float[] embedding = new float[1024];
+          final float[] embedding = new float[root.get("num_dimensions").getAsInt()];
           {
-            final JsonArray embeddingJSON = root.getAsJsonArray("embedding");
+            final JsonArray embeddingJSON = root.getAsJsonArray("vector");
             for (int i = 0; i < embeddingJSON.size(); i++) {
               embedding[i] = embeddingJSON.get(i).getAsFloat();
             }
