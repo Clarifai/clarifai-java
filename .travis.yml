@@ -13,4 +13,3 @@ cache:
     - $HOME/.gradle/native/
     - $HOME/.gradle/daemon/native/
 
-script: ./gradlew clean build 
