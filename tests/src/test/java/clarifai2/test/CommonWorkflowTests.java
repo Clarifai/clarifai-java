@@ -531,17 +531,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
-  @Ignore
-  @Test
-  public void testCreateModel_multi_lang() {
-    final String modelID = "creatingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelID).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("foo")
-        ).withLanguage("zh")
-    ));
-  }
-
   @Retry
   @Test
   public void testCreateModel_multi_lang() {

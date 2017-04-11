@@ -52,17 +52,6 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
   }
 
   /**
-   *
-   * @param language the language to be used. If none is supplied, the default language for the application will be
-   *                 used. Should be in ISO 639 - 1 format eg: "en" = English, "zh" = Chinese, "ja" = Japanese.
-   * @return this request builder
-   */
-  @NotNull public SearchInputsRequest withLanguage(@NotNull String language) {
-    this.language = language;
-    return this;
-  }
-
-  /**
    * Adds the given {@link SearchClause} to the request. It is ANDed with all of the other clauses.
    *
    * @param searchClause the clause to AND with all of your other clauses
