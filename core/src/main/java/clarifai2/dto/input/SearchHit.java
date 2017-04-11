@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 
+import static clarifai2.internal.InternalUtil.fromJson;
+
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(SearchHit.Adapter.class)

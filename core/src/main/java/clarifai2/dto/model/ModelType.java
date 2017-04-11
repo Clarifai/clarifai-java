@@ -1,20 +1,22 @@
 package clarifai2.dto.model;
 
-import clarifai2.dto.model.output_info.BlurOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
+import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
-import clarifai2.dto.prediction.Blur;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.dto.prediction.Region;
 import clarifai2.dto.prediction.Unknown;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -39,17 +41,23 @@ public enum ModelType {
       ColorOutputInfo.class,
       Color.class
   ),
+  DEMOGRAPHICS(
+      "facedetect",
+      "regions",
+      DemographicsOutputInfo.class,
+      Region.class
+  ),
   FACE_DETECTION(
       "facedetect",
       "regions",
       FaceDetectionOutputInfo.class,
       FaceDetection.class
   ),
-  BLUR(
+  FOCUS(
       "blur",
-      "blurs",
-      BlurOutputInfo.class,
-      Blur.class
+      "focus",
+      FocusOutputInfo.class,
+      Focus.class
   ),
   CLUSTER(
       "cluster",
@@ -96,6 +104,22 @@ public enum ModelType {
   @NotNull public static ModelType determineFromDataRoot(@NotNull JsonObject dataRoot) {
     for (final ModelType value : values()) {
       if (dataRoot.has(value.dataArrayName)) {
+        if (value.dataArrayName.equalsIgnoreCase("regions")) {
+          // fixes ambiguation error between Demographics and FaceDetection model. If confused, see Postman, and notice
+          // that the way the model is determined is ambiguous in this case.
+          if (dataRoot.getAsJsonArray("regions").size() == 0) {
+            return UNKNOWN;
+          }
+          // even more amibiguation.
+          if (dataRoot.has("focus")) {
+            return FOCUS;
+          }
+          if (dataRoot.getAsJsonArray("regions").get(0).getAsJsonObject().has("data")) {
+            return DEMOGRAPHICS;
+          } else {
+            return FACE_DETECTION;
+          }
+        }
         return value;
       }
     }

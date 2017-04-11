@@ -5,6 +5,7 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
@@ -12,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
@@ -56,9 +58,23 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             final Class<? extends Prediction> predictionType =
                 ModelType.determineFromDataRoot(dataRoot).predictionType();
 
+//             more hacky solutions. Will refactor this eventually.
+            double value = 0.0;
+            if (predictionType == Focus.class) {
+              value = dataRoot.getAsJsonObject("focus")
+                  .getAsJsonPrimitive("value")
+                  .getAsFloat();
+              dataRoot.remove("focus");
+            }
+
             for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
               final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
-              for (final JsonElement predictionJSON : array) {
+              for (JsonElement predictionJSON : array) {
+                if (predictionType == Focus.class) {
+                  JsonObject addValue = predictionJSON.getAsJsonObject();
+                  addValue.add("value", new JsonPrimitive(value));
+                  predictionJSON = addValue;
+                }
                 allPredictions.add(fromJson(gson, predictionJSON, predictionType));
               }
             }

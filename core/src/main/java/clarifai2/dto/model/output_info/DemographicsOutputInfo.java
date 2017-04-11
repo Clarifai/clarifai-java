@@ -14,33 +14,33 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(EmbeddingOutputInfo.Adapter.class  )
-public abstract class EmbeddingOutputInfo extends OutputInfo {
+@JsonAdapter(DemographicsOutputInfo.Adapter.class)
+public abstract class DemographicsOutputInfo extends OutputInfo {
 
   @NotNull public abstract String type();
   @NotNull public abstract String typeExt();
 
-  EmbeddingOutputInfo() {} // AutoValue instances only
+  DemographicsOutputInfo() {} // AutoValue instances only
 
-  static class Adapter extends JSONAdapterFactory<EmbeddingOutputInfo> {
-    @Nullable @Override protected JSONAdapterFactory.Deserializer<EmbeddingOutputInfo> deserializer() {
-      return new Deserializer<EmbeddingOutputInfo>() {
+  static class Adapter extends JSONAdapterFactory<DemographicsOutputInfo> {
+    @Nullable @Override protected Deserializer<DemographicsOutputInfo> deserializer() {
+      return new Deserializer<DemographicsOutputInfo>() {
         @Nullable @Override
-        public EmbeddingOutputInfo deserialize(
+        public DemographicsOutputInfo deserialize(
             @NotNull JsonElement json,
-            @NotNull TypeToken<EmbeddingOutputInfo> type,
+            @NotNull TypeToken<DemographicsOutputInfo> type,
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
           String modelType = root.getAsJsonPrimitive("type").getAsString();
           String typeExt = root.getAsJsonPrimitive("type_ext").getAsString();
-          return new AutoValue_EmbeddingOutputInfo(modelType, typeExt);
+          return new AutoValue_DemographicsOutputInfo(modelType, typeExt);
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<EmbeddingOutputInfo> typeToken() {
-      return new TypeToken<EmbeddingOutputInfo>() {};
+    @NotNull @Override protected TypeToken<DemographicsOutputInfo> typeToken() {
+      return new TypeToken<DemographicsOutputInfo>() {};
     }
   }
 }

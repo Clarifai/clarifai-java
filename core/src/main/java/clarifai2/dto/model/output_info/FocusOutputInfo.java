@@ -14,33 +14,33 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(EmbeddingOutputInfo.Adapter.class  )
-public abstract class EmbeddingOutputInfo extends OutputInfo {
+@JsonAdapter(FocusOutputInfo.Adapter.class)
+public abstract class FocusOutputInfo extends OutputInfo {
 
   @NotNull public abstract String type();
   @NotNull public abstract String typeExt();
 
-  EmbeddingOutputInfo() {} // AutoValue instances only
+  FocusOutputInfo() {} // AutoValue instances only
 
-  static class Adapter extends JSONAdapterFactory<EmbeddingOutputInfo> {
-    @Nullable @Override protected JSONAdapterFactory.Deserializer<EmbeddingOutputInfo> deserializer() {
-      return new Deserializer<EmbeddingOutputInfo>() {
+  static class Adapter extends JSONAdapterFactory<FocusOutputInfo> {
+    @Nullable @Override protected JSONAdapterFactory.Deserializer<FocusOutputInfo> deserializer() {
+      return new Deserializer<FocusOutputInfo>() {
         @Nullable @Override
-        public EmbeddingOutputInfo deserialize(
+        public FocusOutputInfo deserialize(
             @NotNull JsonElement json,
-            @NotNull TypeToken<EmbeddingOutputInfo> type,
+            @NotNull TypeToken<FocusOutputInfo> type,
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
           String modelType = root.getAsJsonPrimitive("type").getAsString();
           String typeExt = root.getAsJsonPrimitive("type_ext").getAsString();
-          return new AutoValue_EmbeddingOutputInfo(modelType, typeExt);
+          return new AutoValue_FocusOutputInfo(modelType, typeExt);
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<EmbeddingOutputInfo> typeToken() {
-      return new TypeToken<EmbeddingOutputInfo>() {};
+    @NotNull @Override protected TypeToken<FocusOutputInfo> typeToken() {
+      return new TypeToken<FocusOutputInfo>() {};
     }
   }
 }

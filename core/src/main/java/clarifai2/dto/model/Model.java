@@ -74,20 +74,20 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((FaceDetectionModel) this);
   }
 
-  public final boolean isBlurModel() {
-    return this instanceof BlurModel;
-  }
-
-  @NotNull public final BlurModel asBlurModel() {
-    return ((BlurModel) this);
-  }
-
   public final boolean isEmbeddingModel() {
     return this instanceof EmbeddingModel;
   }
 
   @NotNull public final EmbeddingModel asEmbeddingModel() {
     return ((EmbeddingModel) this);
+  }
+
+  public final boolean isFocusModel() {
+    return this instanceof FocusModel;
+  }
+
+  @NotNull public final FocusModel asFocusModel() {
+    return ((FocusModel) this);
   }
 
   public final boolean isClusterModel() {
@@ -154,8 +154,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     switch (modelType) {
       case CONCEPT:
         return new AutoValue_ConceptModel.Builder();
-      case BLUR:
-        return new AutoValue_BlurModel.Builder();
+      case FOCUS:
+        return new AutoValue_FocusModel.Builder();
       case CLUSTER:
         return new AutoValue_ClusterModel.Builder();
       case COLOR:
@@ -164,6 +164,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_EmbeddingModel.Builder();
       case FACE_DETECTION:
         return new AutoValue_FaceDetectionModel.Builder();
+      case DEMOGRAPHICS:
+        return new AutoValue_DemographicsModel.Builder();
       default:
         return new AutoValue_UnknownModel.Builder();
     }
@@ -199,7 +201,15 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
             @NotNull Gson gson
         ) {
           final JsonObject root = json.getAsJsonObject();
-          final ModelType modelType = ModelType.determineFromOutputInfoRoot(root.get("output_info"));
+          ModelType modelType = ModelType.determineFromOutputInfoRoot(root.get("output_info"));
+          // hacky solution needed because of model type ambiguity.
+          if (modelType == ModelType.DEMOGRAPHICS|| modelType == ModelType.FACE_DETECTION) {
+            if (root.getAsJsonPrimitive("name").getAsString().equals("demographics")) {
+              modelType = ModelType.DEMOGRAPHICS;
+            } else {
+              modelType = ModelType.FACE_DETECTION;
+            }
+          }
           return getBuilder(modelType)
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())
