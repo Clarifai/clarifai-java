@@ -34,8 +34,8 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
 
   @NotNull static final String METRO_NORTH_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
-  @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
-  @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
+  @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("./tests/assets/metro-north.jpg");
+  @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("./tests/assets/image.png");
 
   @NotNull final String appID = EnvVar.CLARIFAI_APP_ID.value();
   @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
