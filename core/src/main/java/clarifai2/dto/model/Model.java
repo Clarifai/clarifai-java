@@ -162,6 +162,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_ColorModel.Builder();
       case EMBEDDING:
         return new AutoValue_EmbeddingModel.Builder();
+      case LOGO:
+        return new AutoValue_LogoModel.Builder();
       case FACE_DETECTION:
         return new AutoValue_FaceDetectionModel.Builder();
       case DEMOGRAPHICS:
