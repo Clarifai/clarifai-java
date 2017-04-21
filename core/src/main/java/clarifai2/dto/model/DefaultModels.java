@@ -19,9 +19,9 @@ public final class DefaultModels {
   @NotNull private AtomicReference<ConceptModel> apparel;
   @NotNull private AtomicReference<ColorModel> color;
   @NotNull private AtomicReference<FocusModel> focus;
-  @NotNull private AtomicReference<FaceDetectionModel> faceModel;
-  @NotNull private AtomicReference<DemographicsModel> demographicsModel;
-  @NotNull private AtomicReference<EmbeddingModel> generalEmbedModel;
+  @NotNull private AtomicReference<FaceDetectionModel> face;
+  @NotNull private AtomicReference<DemographicsModel> demographics;
+  @NotNull private AtomicReference<EmbeddingModel> generalEmbed;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -32,9 +32,9 @@ public final class DefaultModels {
     apparel = create(ModelType.CONCEPT, client, "e0be3b9d6a454f0493ac3a30784001ff", "apparel");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
     focus = create(ModelType.FOCUS, client, "c2cf7cecd8a6427da375b9f35fcd2381", "focus");
-    faceModel = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
-    demographicsModel = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
-    generalEmbedModel = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
+    face = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
+    demographics = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
+    generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
   }
 
   @NotNull private <M extends Model<?>> AtomicReference<M> create(
@@ -80,9 +80,9 @@ public final class DefaultModels {
 
   @NotNull public FocusModel focusModel() { return focus.get(); }
 
-  @NotNull public FaceDetectionModel faceDetectionModel() { return faceModel.get(); }
+  @NotNull public FaceDetectionModel faceDetectionModel() { return face.get(); }
 
-  @NotNull public DemographicsModel demographicsModel() { return demographicsModel.get(); }
+  @NotNull public DemographicsModel demographicsModel() { return demographics.get(); }
 
-  @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbedModel.get(); }
+  @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed.get(); }
 }
