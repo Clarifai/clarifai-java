@@ -41,11 +41,6 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
 
-  // Uncomment for DEV
-//  @NotNull final String appID = "47CVyDl4rDh7aexUBsV4OMa9NS0DQyAQlS83hGRg";
-//  @NotNull final String appSecret = "LMkzXzC5JYKC5venR5Ikdbke1vEF53ixOk6vhUTW";
-//  @NotNull final String baseURL = "https://api-dev.clarifai.com";
-
   @NotNull final ClarifaiClient client = new ClarifaiBuilder(appID, appSecret)
       .baseURL(baseURL)
       .client(new OkHttpClient.Builder()
