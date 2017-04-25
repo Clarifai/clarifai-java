@@ -27,3 +27,4 @@ buildConfig {
   packageName = "clarifai2"
   clsName = "BuildConfig"
 }
+apply from: rootProject.file("gradle/pmd.gradle")

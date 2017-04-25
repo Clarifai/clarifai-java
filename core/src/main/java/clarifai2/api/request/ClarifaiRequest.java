@@ -131,7 +131,7 @@ public interface ClarifaiRequest<RESULT> {
    * @param <T> the type to deserialize to
    */
   interface DeserializedRequest<T> {
-    @NotNull okhttp3.Request httpRequest();
+    @NotNull Request httpRequest();
     @NotNull JSONUnmarshaler<T> unmarshaler();
   }
 

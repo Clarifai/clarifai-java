@@ -104,7 +104,7 @@ public enum ModelType {
   @NotNull public static ModelType determineFromDataRoot(@NotNull JsonObject dataRoot) {
     for (final ModelType value : values()) {
       if (dataRoot.has(value.dataArrayName)) {
-        if (value.dataArrayName.equalsIgnoreCase("regions")) {
+        if ("regions".equalsIgnoreCase(value.dataArrayName)) {
           // fixes ambiguation error between Demographics and FaceDetection model. If confused, see Postman, and notice
           // that the way the model is determined is ambiguous in this case.
           if (dataRoot.getAsJsonArray("regions").size() == 0) {

@@ -56,7 +56,9 @@ public abstract class Region extends Prediction {
           for (JsonElement ageElement : face.getAsJsonObject("multicultural_appearance").getAsJsonArray("concepts")) {
             multiCulturalAppearances.add(fromJson(gson, ageElement, Concept.class));
           }
-          if (crop == null) throw new IllegalArgumentException("Crop cannot be null");
+          if (crop == null) {
+            throw new IllegalArgumentException("Crop cannot be null");
+          }
           return new AutoValue_Region(
               crop,
               ageAppearances,

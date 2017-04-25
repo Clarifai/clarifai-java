@@ -65,7 +65,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
     this.httpClient = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
       @Override
-      public okhttp3.Response intercept(Chain chain) throws IOException {
+      public Response intercept(Chain chain) throws IOException {
         final Request.Builder requestBuilder = chain.request().newBuilder()
             .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
         final ClarifaiToken credential = refreshIfNeeded();
@@ -95,14 +95,16 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   }
 
   @Nullable
-  private synchronized ClarifaiToken refreshIfNeeded() {
-    if (closed) {
-      throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
+  private ClarifaiToken refreshIfNeeded() {
+    synchronized (this) {
+      if (closed) {
+        throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
+      }
+      if (!hasValidToken()) {
+        currentClarifaiToken = refresh();
+      }
+      return currentClarifaiToken;
     }
-    if (!hasValidToken()) {
-      currentClarifaiToken = refresh();
-    }
-    return currentClarifaiToken;
   }
 
   @Nullable
