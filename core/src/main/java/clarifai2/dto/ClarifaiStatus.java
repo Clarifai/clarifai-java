@@ -20,32 +20,26 @@ import static clarifai2.internal.InternalUtil.isJsonNull;
 @JsonAdapter(ClarifaiStatus.Adapter.class)
 public abstract class ClarifaiStatus {
 
-  @Nullable private static ClarifaiStatus success;
+//  @Nullable private static ClarifaiStatus success;
+//  @Nullable private static ClarifaiStatus mixedSuccess;
+//  @Nullable private static ClarifaiStatus unknown;
 
   @NotNull public static ClarifaiStatus success() {
-    if (success == null) {
-      success = new AutoValue_ClarifaiStatus(
-          false,
-          10000,
-          "Ok",
-          null
-      );
-    }
-    return success;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        10000,
+        "Ok",
+        null
+    );
   }
 
-  @Nullable private static ClarifaiStatus mixedSuccess;
-
   @NotNull public static ClarifaiStatus mixedSuccess() {
-    if (mixedSuccess == null) {
-      mixedSuccess = new AutoValue_ClarifaiStatus(
-          false,
-          10010,
-          "Mixed Success",
-          null
-      );
-    }
-    return mixedSuccess;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        10010,
+        "Mixed Success",
+        null
+    );
   }
 
   @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
@@ -57,18 +51,13 @@ public abstract class ClarifaiStatus {
     );
   }
 
-  @Nullable private static ClarifaiStatus unknown;
-
   @NotNull public static ClarifaiStatus unknown() {
-    if (unknown == null) {
-      unknown = new AutoValue_ClarifaiStatus(
-          false,
-          0,
-          "Unknown response",
-          null
-      );
-    }
-    return unknown;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        0,
+        "Unknown response",
+        null
+    );
   }
 
   /**

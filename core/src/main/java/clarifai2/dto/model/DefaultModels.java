@@ -11,17 +11,17 @@ public final class DefaultModels {
 
   @NotNull private final ExecutorService updater = Executors.newSingleThreadExecutor();
 
-  @NotNull private AtomicReference<ConceptModel> general;
-  @NotNull private AtomicReference<ConceptModel> food;
-  @NotNull private AtomicReference<ConceptModel> travel;
-  @NotNull private AtomicReference<ConceptModel> nsfw;
-  @NotNull private AtomicReference<ConceptModel> wedding;
-  @NotNull private AtomicReference<ConceptModel> apparel;
-  @NotNull private AtomicReference<ColorModel> color;
-  @NotNull private AtomicReference<FocusModel> focus;
-  @NotNull private AtomicReference<FaceDetectionModel> face;
-  @NotNull private AtomicReference<DemographicsModel> demographics;
-  @NotNull private AtomicReference<EmbeddingModel> generalEmbed;
+  @NotNull private final AtomicReference<ConceptModel> general;
+  @NotNull private final AtomicReference<ConceptModel> food;
+  @NotNull private final AtomicReference<ConceptModel> travel;
+  @NotNull private final AtomicReference<ConceptModel> nsfw;
+  @NotNull private final AtomicReference<ConceptModel> wedding;
+  @NotNull private final AtomicReference<ConceptModel> apparel;
+  @NotNull private final AtomicReference<ColorModel> color;
+  @NotNull private final AtomicReference<FocusModel> focus;
+  @NotNull private final AtomicReference<FaceDetectionModel> face;
+  @NotNull private final AtomicReference<DemographicsModel> demographics;
+  @NotNull private final AtomicReference<EmbeddingModel> generalEmbed;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
