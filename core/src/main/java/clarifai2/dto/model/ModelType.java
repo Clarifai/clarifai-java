@@ -122,7 +122,7 @@ public enum ModelType {
               .getAsJsonArray("regions")
               .get(0)
               .getAsJsonObject();
-          // With the addition of the Logo model, Demographics, Focus and Logo are now all ambiguous with each other.
+          // With the addition of the Logo model, Demographics, Focus and Logo are now all ambiguous.
           // The client needs to be refactored to not determine the model type from the data root, solely from the
           // output info.
           if (object.has("data")) {
