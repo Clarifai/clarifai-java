@@ -55,6 +55,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
     return InternalUtil.jsonDeepCopy(_metadata());
   }
 
+  @SuppressWarnings("PMD.MethodNamingConventions")
   @NotNull abstract JsonObject _metadata();
 
   /**
