@@ -3,7 +3,6 @@ package clarifai2.api;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.util.List;
@@ -32,12 +31,8 @@ public final class ClarifaiBuilder {
   }
 
   @NotNull
-  public ClarifaiBuilder client(@Nullable OkHttpClient client) {
-    if (client == null) {
-      this.client = new OkHttpClient();
-    } else {
-      this.client = client;
-    }
+  public ClarifaiBuilder client(@NotNull OkHttpClient client) {
+    this.client = client;
     return this;
   }
 
