@@ -34,9 +34,10 @@ public final class ClarifaiBuilder {
   @NotNull
   public ClarifaiBuilder client(@Nullable OkHttpClient client) {
     if (client == null) {
-      client = new OkHttpClient();
+      this.client = new OkHttpClient();
+    } else {
+      this.client = client;
     }
-    this.client = client;
     return this;
   }
 

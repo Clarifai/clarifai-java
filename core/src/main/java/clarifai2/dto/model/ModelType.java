@@ -111,7 +111,7 @@ public enum ModelType {
   @NotNull public static ModelType determineFromDataRoot(@NotNull JsonObject dataRoot) {
     for (final ModelType value : values()) {
       if (dataRoot.has(value.dataArrayName)) {
-        if (value.dataArrayName.equalsIgnoreCase("regions")) {
+        if ("regions".equalsIgnoreCase(value.dataArrayName)) {
           if (dataRoot.getAsJsonArray("regions").size() == 0) {
             return UNKNOWN;
           }
@@ -148,7 +148,7 @@ public enum ModelType {
       if (value.typeName().equals(type)) {
         // Logo model is ambiguous.
         if (value == CONCEPT) {
-          return typeExt.equals("detection") ? LOGO : value;
+          return "detection".equals(typeExt) ? LOGO : value;
         }
         return value;
       }

@@ -25,7 +25,9 @@ public abstract class Embedding extends Prediction {
     return Arrays.copyOf(embedding, embedding.length);
   }
 
-  @SuppressWarnings("mutable") @NotNull abstract float[] _embedding();
+  @SuppressWarnings("PMD.MethodNamingConventions")
+  @NotNull abstract float[] _embedding();
+
   @NotNull public abstract int numDimensions();
 
   Embedding() {} // AutoValue instances only
