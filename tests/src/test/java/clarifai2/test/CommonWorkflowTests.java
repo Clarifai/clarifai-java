@@ -20,9 +20,10 @@ import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Embedding;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
@@ -466,6 +467,20 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(logos.get().get(0).data().get(0));
     Assert.assertNotNull(logos.get().get(0).data().get(0).boundingBox());
     Assert.assertNotNull(logos.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t23_testColorModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+        .executeSync();
+    Assert.assertNotNull(colors.get());
+    Assert.assertNotNull(colors.get().get(0));
+    Assert.assertNotNull(colors.get().get(0).data());
+    Assert.assertNotNull(colors.get().get(0).data().get(0));
+    Assert.assertNotNull(colors.get().get(0).data().get(0).hex());
+    Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeHex());
+    Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeColorName());
   }
 
   @Test public void errorsExposedToUser() {
