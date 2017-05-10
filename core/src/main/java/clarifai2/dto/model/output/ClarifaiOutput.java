@@ -53,12 +53,12 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
           final JsonObject root = assertJsonIs(json, JsonObject.class);
 
           final List<Prediction> allPredictions = new ArrayList<>();
+          final Class<? extends Prediction> predictionType =
+              ModelType.determineFromOutputInfoRoot(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
           if (!root.get("data").isJsonNull()) {
             JsonObject dataRoot = root.getAsJsonObject("data");
-            final Class<? extends Prediction> predictionType =
-                ModelType.determineFromDataRoot(dataRoot).predictionType();
 
-//             more hacky solutions. Will refactor this eventually.
+//          more hacky solutions. Will refactor this eventually.
             double value = 0.0;
             if (predictionType == Focus.class) {
               value = dataRoot.getAsJsonObject("focus")
