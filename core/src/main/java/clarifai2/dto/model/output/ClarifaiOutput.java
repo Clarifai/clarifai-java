@@ -54,7 +54,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
 
           final List<Prediction> allPredictions = new ArrayList<>();
           final Class<? extends Prediction> predictionType =
-              ModelType.determineFromOutputInfoRoot(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
+              ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
           if (!root.get("data").isJsonNull()) {
             JsonObject dataRoot = root.getAsJsonObject("data");
 
