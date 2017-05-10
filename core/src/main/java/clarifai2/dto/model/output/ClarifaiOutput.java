@@ -67,7 +67,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               dataRoot.remove("focus");
             }
 
-//             more hacky solutions. Will refactor this eventually.
+//          more hacky solutions. Will refactor this eventually.
             double value = 0.0;
             if (predictionType == Focus.class) {
               value = dataRoot.getAsJsonObject("focus")
