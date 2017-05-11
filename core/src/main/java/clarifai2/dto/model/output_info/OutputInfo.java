@@ -34,7 +34,7 @@ public abstract class OutputInfo {
           if (root.has("type") && root.size() == 1) {
             return null;
           }
-          return fromJson(gson, json, ModelType.determineFromOutputInfoRoot(root).infoType());
+          return fromJson(gson, json, ModelType.determineModelType(root).infoType());
         }
       };
     }
