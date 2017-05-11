@@ -13,16 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-import static clarifai2.internal.InternalUtil.isJsonNull;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiStatus.Adapter.class)
 public abstract class ClarifaiStatus {
-
-//  @Nullable private static ClarifaiStatus success;
-//  @Nullable private static ClarifaiStatus mixedSuccess;
-//  @Nullable private static ClarifaiStatus unknown;
 
   @NotNull public static ClarifaiStatus success() {
     return new AutoValue_ClarifaiStatus(
@@ -95,7 +89,7 @@ public abstract class ClarifaiStatus {
               false,
               root.get("code").getAsInt(),
               root.get("description").getAsString(),
-              isJsonNull(root.get("details")) ? null : root.get("details").getAsString()
+              root.get("details") == null ? null : root.get("details").getAsString()
           );
         }
       };

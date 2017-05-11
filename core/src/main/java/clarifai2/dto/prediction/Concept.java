@@ -17,7 +17,6 @@ import java.util.Date;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -111,9 +110,9 @@ public abstract class Concept extends Prediction implements HasClarifaiID {
               root.get("id").getAsString(),
               root.get("name").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString(),
-              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat(),
-              isJsonNull(root.get("language")) ? null : root.get("language").getAsString()
+              root.get("app_id") == null ? null : root.get("app_id").getAsString(),
+              root.get("value") == null ? 1.0F : root.get("value").getAsFloat(),
+              root.get("language") == null ? null : root.get("language").getAsString()
           );
         }
       };
