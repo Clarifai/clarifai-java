@@ -464,9 +464,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(logos.get());
     Assert.assertNotNull(logos.get().get(0));
     Assert.assertNotNull(logos.get().get(0).data());
-    Assert.assertNotNull(logos.get().get(0).data().get(0));
-    Assert.assertNotNull(logos.get().get(0).data().get(0).boundingBox());
-    Assert.assertNotNull(logos.get().get(0).data().get(0).concepts());
   }
 
   @Retry
