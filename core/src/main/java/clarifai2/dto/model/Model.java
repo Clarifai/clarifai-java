@@ -168,6 +168,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_FaceDetectionModel.Builder();
       case DEMOGRAPHICS:
         return new AutoValue_DemographicsModel.Builder();
+      case VIDEO:
+        return new AutoValue_VideoModel.Builder();
       default:
         return new AutoValue_UnknownModel.Builder();
     }

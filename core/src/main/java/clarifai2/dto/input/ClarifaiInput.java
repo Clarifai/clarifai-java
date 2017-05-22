@@ -119,7 +119,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
               .add("id", value.id());
           final JSONObjectBuilder data = new JSONObjectBuilder()
               .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-              .add("image", toJson(gson, value.image(), ClarifaiImage.class))
+              .add("video", toJson(gson, value.image(), ClarifaiImage.class))
               .add("metadata", value.metadata());
           if (value.geo() != null) {
             data.add("geo", new JSONObjectBuilder()
@@ -163,7 +163,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           return new AutoValue_ClarifaiInput(
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              fromJson(gson, data.get("image"), ClarifaiImage.class),
+              fromJson(gson, data.get("video"), ClarifaiImage.class),
               metadata,
               concepts,
               geoPoint

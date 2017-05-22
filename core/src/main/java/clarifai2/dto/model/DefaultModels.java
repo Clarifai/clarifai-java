@@ -23,6 +23,7 @@ public final class DefaultModels {
   @NotNull private final AtomicReference<FaceDetectionModel> face;
   @NotNull private final AtomicReference<DemographicsModel> demographics;
   @NotNull private final AtomicReference<EmbeddingModel> generalEmbed;
+  @NotNull private final AtomicReference<VideoModel> video;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -37,6 +38,7 @@ public final class DefaultModels {
     face = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
     demographics = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
     generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
+    video = create(ModelType.VIDEO, client, "aaa03c23b3724a16a56b629203edc62c", "video-v1.3");
   }
 
   @NotNull private <M extends Model<?>> AtomicReference<M> create(
@@ -89,4 +91,8 @@ public final class DefaultModels {
   @NotNull public DemographicsModel demographicsModel() { return demographics.get(); }
 
   @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed.get(); }
+
+  @NotNull public VideoModel videoModel() {
+    return video.get();
+  }
 }
