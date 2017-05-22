@@ -24,6 +24,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
@@ -457,7 +458,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t23_testLogoModel() {
+  @Test public void t24_testLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/nike_building.jpg")))
         .executeSync();
@@ -467,7 +468,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t23_testColorModel() {
+  @Test public void t25_testColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
         .executeSync();
