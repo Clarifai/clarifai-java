@@ -62,10 +62,8 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             JsonObject dataRoot = root.getAsJsonObject("data");
 
             // Video model is ambiguous coming out of API.
-            if (predictionType == Concept.class) {
-              if (dataRoot.has("frames")) {
+            if (predictionType == Concept.class && dataRoot.has("frames")) {
                 predictionType = Frame.class;
-              }
             }
 
 //          more hacky solutions. Will refactor this eventually.

@@ -484,7 +484,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t26_testVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().videoModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif")))
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo("https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif")))
         .executeSync();
     Assert.assertNotNull(frames.get());
     Assert.assertNotNull(frames.get().get(0));
