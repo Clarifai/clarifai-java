@@ -34,7 +34,7 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
 
   @NotNull static final String METRO_NORTH_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
-  @NotNull static final String CONAN_GIF_URL = "https://samples.clarifai.com/metro-north.jpg";
+  @NotNull static final String CONAN_GIF_URL = "https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif";
   @NotNull static final String LOGO_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
   @NotNull static final String STREETBAND_IMAGE_URL = "https://samples.clarifai.com/demographics.jpg";
   @NotNull static final String FAMILY_IMAGE_URL = "https://samples.clarifai.com/family.jpg";
