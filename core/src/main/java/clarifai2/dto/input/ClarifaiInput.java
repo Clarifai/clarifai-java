@@ -3,6 +3,7 @@ package clarifai2.dto.input;
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
 import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.input.image.ClarifaiVideo;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
@@ -38,6 +39,14 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    */
   @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
     return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList(), null);
+  }
+
+  /**
+   * @param video the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull ClarifaiVideo video) {
+    return new AutoValue_ClarifaiInput(null, null, video, new JsonObject(), Collections.<Concept>emptyList(), null);
   }
 
   @Nullable public abstract Date createdAt();
@@ -119,8 +128,12 @@ public abstract class ClarifaiInput implements HasClarifaiID {
               .add("id", value.id());
           final JSONObjectBuilder data = new JSONObjectBuilder()
               .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-              .add("image", toJson(gson, value.image(), ClarifaiImage.class))
               .add("metadata", value.metadata());
+          if (value.image() instanceof ClarifaiVideo) {
+            data.add("video", toJson(gson, value.image(), ClarifaiImage.class));
+          } else {
+            data.add("image", toJson(gson, value.image(), ClarifaiImage.class));
+          }
           if (value.geo() != null) {
             data.add("geo", new JSONObjectBuilder()
                       .add("geo_point", new JSONObjectBuilder()
@@ -163,7 +176,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           return new AutoValue_ClarifaiInput(
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              fromJson(gson, data.get("image"), ClarifaiImage.class),
+              data.has("video") ? fromJson(gson, data.get("video"), ClarifaiImage.class) : fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
               concepts,
               geoPoint

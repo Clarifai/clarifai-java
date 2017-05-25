@@ -24,6 +24,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
@@ -457,7 +458,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t23_testLogoModel() {
+  @Test public void t24_testLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/nike_building.jpg")))
         .executeSync();
@@ -467,7 +468,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t23_testColorModel() {
+  @Test public void t25_testColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
         .executeSync();
@@ -478,6 +479,20 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(colors.get().get(0).data().get(0).hex());
     Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeHex());
     Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeColorName());
+  }
+
+  @Retry
+  @Test public void t26_testVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().videoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo("https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif")))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
   }
 
   @Test public void errorsExposedToUser() {

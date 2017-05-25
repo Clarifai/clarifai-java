@@ -9,12 +9,14 @@ import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
 import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
+import clarifai2.dto.model.output_info.VideoOutputInfo;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.dto.prediction.Region;
@@ -62,6 +64,11 @@ public enum ModelType {
       "logo",
       DemographicsOutputInfo.class,
       Logo.class
+  ),
+  VIDEO(
+      "video",
+      VideoOutputInfo.class,
+      Frame.class
   ),
   UNKNOWN(
       "unknown",

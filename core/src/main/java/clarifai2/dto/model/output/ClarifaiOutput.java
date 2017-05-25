@@ -5,7 +5,9 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
+import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
@@ -28,7 +30,7 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
-@AutoValue
+@AutoValue  
 @JsonAdapter(ClarifaiOutput.Adapter.class)
 public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
@@ -53,10 +55,16 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
           final JsonObject root = assertJsonIs(json, JsonObject.class);
 
           final List<Prediction> allPredictions = new ArrayList<>();
-          final Class<? extends Prediction> predictionType =
+          Class<? extends Prediction> predictionType =
               ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
+
           if (!root.get("data").isJsonNull()) {
             JsonObject dataRoot = root.getAsJsonObject("data");
+
+            // Video model is ambiguous coming out of API.
+            if (predictionType == Concept.class && dataRoot.has("frames")) {
+                predictionType = Frame.class;
+            }
 
 //          more hacky solutions. Will refactor this eventually.
             double value = 0.0;
