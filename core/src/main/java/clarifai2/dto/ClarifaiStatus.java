@@ -13,39 +13,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-import static clarifai2.internal.InternalUtil.isJsonNull;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(ClarifaiStatus.Adapter.class)
 public abstract class ClarifaiStatus {
 
-  @Nullable private static ClarifaiStatus success;
-
   @NotNull public static ClarifaiStatus success() {
-    if (success == null) {
-      success = new AutoValue_ClarifaiStatus(
-          false,
-          10000,
-          "Ok",
-          null
-      );
-    }
-    return success;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        10000,
+        "Ok",
+        null
+    );
   }
 
-  @Nullable private static ClarifaiStatus mixedSuccess;
-
   @NotNull public static ClarifaiStatus mixedSuccess() {
-    if (mixedSuccess == null) {
-      mixedSuccess = new AutoValue_ClarifaiStatus(
-          false,
-          10010,
-          "Mixed Success",
-          null
-      );
-    }
-    return mixedSuccess;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        10010,
+        "Mixed Success",
+        null
+    );
   }
 
   @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
@@ -57,18 +45,13 @@ public abstract class ClarifaiStatus {
     );
   }
 
-  @Nullable private static ClarifaiStatus unknown;
-
   @NotNull public static ClarifaiStatus unknown() {
-    if (unknown == null) {
-      unknown = new AutoValue_ClarifaiStatus(
-          false,
-          0,
-          "Unknown response",
-          null
-      );
-    }
-    return unknown;
+    return new AutoValue_ClarifaiStatus(
+        false,
+        0,
+        "Unknown response",
+        null
+    );
   }
 
   /**
@@ -106,7 +89,7 @@ public abstract class ClarifaiStatus {
               false,
               root.get("code").getAsInt(),
               root.get("description").getAsString(),
-              isJsonNull(root.get("details")) ? null : root.get("details").getAsString()
+              root.get("details") == null ? null : root.get("details").getAsString()
           );
         }
       };

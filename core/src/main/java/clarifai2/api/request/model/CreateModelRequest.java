@@ -67,7 +67,7 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     };
   }
 
-  @NotNull protected final JsonElement buildJSONOfModel() {
+  @NotNull protected JsonElement buildJSONOfModel() {
     return toJson(
         client.gson,
         Model._create(

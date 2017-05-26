@@ -26,7 +26,6 @@ import java.util.List;
 
 import static clarifai2.internal.InternalUtil.clientInstance;
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -162,6 +161,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_ColorModel.Builder();
       case EMBEDDING:
         return new AutoValue_EmbeddingModel.Builder();
+      case LOGO:
+        return new AutoValue_LogoModel.Builder();
       case FACE_DETECTION:
         return new AutoValue_FaceDetectionModel.Builder();
       case DEMOGRAPHICS:
@@ -201,7 +202,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
             @NotNull Gson gson
         ) {
           final JsonObject root = json.getAsJsonObject();
-          ModelType modelType = ModelType.determineFromOutputInfoRoot(root.get("output_info"));
+          ModelType modelType = ModelType.determineModelType(root.get("output_info"));
           // hacky solution needed because of model type ambiguity.
           if (modelType == ModelType.DEMOGRAPHICS|| modelType == ModelType.FACE_DETECTION) {
             if (root.getAsJsonPrimitive("name").getAsString().equals("demographics")) {
@@ -214,7 +215,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())
               .createdAt(fromJson(gson, root.get("created_at"), Date.class))
-              .appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
+              .appID(root.get("app_id") == null ? null : root.get("app_id").getAsString())
               .modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
               ._outputInfo(fromJson(gson, root.get("output_info"), OutputInfo.class))
               .client(clientInstance(gson))

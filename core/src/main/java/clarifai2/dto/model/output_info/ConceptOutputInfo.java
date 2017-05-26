@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -99,9 +98,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
         ) {
           final JsonObject root = json.getAsJsonObject();
 
-          final List<Concept> concepts = isJsonNull(root.getAsJsonObject("data"))
-              ? Collections.<Concept>emptyList()
-              : fromJson(
+          final List<Concept> concepts = root.getAsJsonObject("data") == null ? Collections.<Concept>emptyList() : fromJson(
                   gson,
                   root.getAsJsonObject("data").getAsJsonArray("concepts"),
                   new TypeToken<List<Concept>>() {}

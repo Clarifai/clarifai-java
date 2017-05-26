@@ -17,14 +17,12 @@ import java.util.Date;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Concept.Adapter.class)
-public abstract class
-Concept extends Prediction implements HasClarifaiID {
+public abstract class Concept extends Prediction implements HasClarifaiID {
 
   @NotNull public static Concept forID(@NotNull String id) {
     return new AutoValue_Concept(id, null, null, null, 1.0F, null);
@@ -112,9 +110,9 @@ Concept extends Prediction implements HasClarifaiID {
               root.get("id").getAsString(),
               root.get("name").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString(),
-              isJsonNull(root.get("value")) ? 1.0F : root.get("value").getAsFloat(),
-              isJsonNull(root.get("language")) ? null : root.get("language").getAsString()
+              root.get("app_id") == null ? null : root.get("app_id").getAsString(),
+              root.get("value") == null ? 1.0F : root.get("value").getAsFloat(),
+              root.get("language") == null ? null : root.get("language").getAsString()
           );
         }
       };

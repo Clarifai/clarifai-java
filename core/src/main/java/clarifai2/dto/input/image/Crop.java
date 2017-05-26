@@ -14,10 +14,6 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.isJsonNull;
-
-import static clarifai2.internal.InternalUtil.isJsonNull;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Crop.Adapter.class)
@@ -82,7 +78,7 @@ public abstract class Crop {
             @NotNull TypeToken<Crop> type,
             @NotNull Gson gson
         ) {
-          if (isJsonNull(json)) {
+          if (json.isJsonNull()) {
             return Crop.create();
           }
           if (json instanceof JsonArray) {

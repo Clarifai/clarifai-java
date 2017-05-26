@@ -20,9 +20,11 @@ import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Embedding;
+import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -443,13 +445,42 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t23_testgeneralEmbedModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Embedding>>> embeddings = client.getDefaultModels().generalEmbeddingModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg"))).executeSync();
+    ClarifaiResponse<List<ClarifaiOutput<Embedding>>> embeddings = client.getDefaultModels().generalEmbeddingModel()
+        .predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg")))
+        .executeSync();
     Assert.assertNotNull(embeddings.get());
     Assert.assertNotNull(embeddings.get().get(0));
     Assert.assertNotNull(embeddings.get().get(0).data());
     Assert.assertNotNull(embeddings.get().get(0).data().get(0));
     Assert.assertNotNull(embeddings.get().get(0).data().get(0).embedding());
+  }
+
+  @Retry
+  @Test public void t23_testLogoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/nike_building.jpg")))
+        .executeSync();
+    Assert.assertNotNull(logos.get());
+    Assert.assertNotNull(logos.get().get(0));
+    Assert.assertNotNull(logos.get().get(0).data());
+    Assert.assertNotNull(logos.get().get(0).data().get(0));
+    Assert.assertNotNull(logos.get().get(0).data().get(0).boundingBox());
+    Assert.assertNotNull(logos.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t23_testColorModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+        .executeSync();
+    Assert.assertNotNull(colors.get());
+    Assert.assertNotNull(colors.get().get(0));
+    Assert.assertNotNull(colors.get().get(0).data());
+    Assert.assertNotNull(colors.get().get(0).data().get(0));
+    Assert.assertNotNull(colors.get().get(0).data().get(0).hex());
+    Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeHex());
+    Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeColorName());
   }
 
   @Test public void errorsExposedToUser() {

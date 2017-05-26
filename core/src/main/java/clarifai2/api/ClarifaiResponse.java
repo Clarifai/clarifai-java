@@ -11,6 +11,9 @@ import java.util.NoSuchElementException;
 
 public abstract class ClarifaiResponse<T> {
 
+  @NotNull final ClarifaiStatus status;
+  final int httpCode;
+
   public static final class Successful<T> extends ClarifaiResponse<T> {
 
     @NotNull private final String rawBody;
@@ -87,7 +90,7 @@ public abstract class ClarifaiResponse<T> {
 
   public static final class Failure<T> extends ClarifaiResponse<T> {
 
-    @NotNull private String rawBody;
+    @NotNull private final String rawBody;
 
     public Failure(@NotNull ClarifaiStatus status, int httpCode, @NotNull String rawBody) {
       super(status, httpCode);
@@ -143,10 +146,6 @@ public abstract class ClarifaiResponse<T> {
     }
   }
 
-
-  @NotNull final ClarifaiStatus status;
-  final int httpCode;
-
   protected ClarifaiResponse(@NotNull ClarifaiStatus status, int httpCode) {
     this.status = status;
     this.httpCode = httpCode;
@@ -174,7 +173,7 @@ public abstract class ClarifaiResponse<T> {
   @NotNull
   public final T getOr(@NotNull T ifResponseWasNull) {
     final T value = getOrNull();
-    return value != null ? value : ifResponseWasNull;
+    return value == null ? ifResponseWasNull : value;
   }
 
   /**
@@ -183,7 +182,7 @@ public abstract class ClarifaiResponse<T> {
    */
   @NotNull public final T getOr(@NotNull Func0<T> supplier) {
     final T value = getOrNull();
-    return value != null ? value : supplier.call();
+    return value == null ? supplier.call(): value;
   }
 
   /**

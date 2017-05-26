@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
-import static clarifai2.internal.InternalUtil.fromJson;
-
 @JsonAdapter(OutputInfo.Adapter.class)
 public abstract class OutputInfo {
 
@@ -36,7 +34,7 @@ public abstract class OutputInfo {
           if (root.has("type") && root.size() == 1) {
             return null;
           }
-          return fromJson(gson, json, ModelType.determineFromOutputInfoRoot(root).infoType());
+          return fromJson(gson, json, ModelType.determineModelType(root).infoType());
         }
       };
     }
