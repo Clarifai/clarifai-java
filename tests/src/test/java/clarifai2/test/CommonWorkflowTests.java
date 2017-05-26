@@ -482,8 +482,78 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Retry
-  @Test public void t26_testVideoModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().videoModel().predict()
+  @Test public void t26_testGeneralVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().generalVideoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t26_testFoodVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().foodVideoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t26_testTravelVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().travelVideoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t26_testNSFWVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().nsfwVideoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t26_testWeddingVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().weddingVideoModel().predict()
+        .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t26_testApparelVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().apparelVideoModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.ofVideo(CONAN_GIF_URL)))
         .executeSync();
     Assert.assertNotNull(frames.get());
