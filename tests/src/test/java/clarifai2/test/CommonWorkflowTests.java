@@ -14,7 +14,6 @@ import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.input.image.Crop;
 import clarifai2.dto.model.ConceptModel;
-import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
@@ -40,8 +39,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -51,7 +48,6 @@ import java.util.concurrent.TimeUnit;
 import static clarifai2.api.request.input.SearchClause.matchConcept;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.sleep;
-import static java.lang.reflect.Modifier.isPublic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -703,21 +699,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
         )
         .executeSync();
   }
-
-  @Test public void testDefaultModels() throws InvocationTargetException, IllegalAccessException {
-    final DefaultModels defaultModels = client.getDefaultModels();
-    // Use reflection just to ensure we don't miss any models when we add new ones
-    for (final Method method : DefaultModels.class.getMethods()) {
-      if (isPublic(method.getModifiers()) && Model.class.isAssignableFrom(method.getReturnType())) {
-        final Model<?> model = (Model<?>) method.invoke(defaultModels);
-        assertSuccess(
-            model.predict().withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
-        );
-      }
-    }
-  }
-
-
 
   /////////////////
 
