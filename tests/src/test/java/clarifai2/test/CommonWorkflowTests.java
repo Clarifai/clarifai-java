@@ -11,8 +11,8 @@ import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.SearchHit;
-import clarifai2.dto.input.image.ClarifaiImage;
-import clarifai2.dto.input.image.Crop;
+import clarifai2.dto.input.ClarifaiImage;
+import clarifai2.dto.input.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelTrainingStatus;
@@ -94,31 +94,26 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     final Concept outdoors23 = Concept.forID("outdoors23");
     assertSuccess(client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                FERRARI_IMAGE_URL))
+            ClarifaiInput.forImage(FERRARI_IMAGE_URL)
                 .withConcepts(
                     ferrari23.withValue(true)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                FERRARI_IMAGE_URL2))
+            ClarifaiInput.forImage(FERRARI_IMAGE_URL2)
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23.withValue(false)
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                HONDA_IMAGE_URL))
+            ClarifaiInput.forImage(HONDA_IMAGE_URL)
                 .withConcepts(
                     ferrari23.withValue(true),
                     outdoors23
                 ).withGeo(PointF.at(30, -24)),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                HONDA_IMAGE_URL2))
+            ClarifaiInput.forImage(HONDA_IMAGE_URL2)
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                FERRARI_IMAGE_URL3))
+            ClarifaiInput.forImage(FERRARI_IMAGE_URL3)
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -129,8 +124,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                HONDA_IMAGE_URL))
+            ClarifaiInput.forImage(
+                HONDA_IMAGE_URL)
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -141,7 +136,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t01c_addInputWithMetadata() {
-    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
+    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
         .withID("inputWithMetadata")
         .withMetadata(new JSONObjectBuilder()
             .add("foo", "bar")
@@ -248,7 +243,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t15_trainModel() {
     assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of(PENGUIN_IMAGE_URL))
+        .plus(ClarifaiInput.forImage(PENGUIN_IMAGE_URL)
             .withConcepts(Concept.forID("outdoors23"))
         )
         .allowDuplicateURLs(true)
@@ -272,7 +267,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t16a_predictWithModel() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+        .withInputs(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE))
     );
   }
 
@@ -290,8 +285,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t16c_predictBatchWithModel_01() {
     List<ClarifaiInput> inputs = new ArrayList<>();
-    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID1"));
-    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)).withID("myID2"));
+    inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID2"));
     PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
         .withInputs(inputs);
     assertSuccess(request);
@@ -302,8 +297,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t16d_predictBatchBase64WithModel() {
     List<ClarifaiInput> inputs = new ArrayList<>();
-    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID1"));
-    inputs.add(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("myID2"));
+    inputs.add(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("myID1"));
+    inputs.add(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("myID2"));
     PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
         .withInputs(inputs);
     assertSuccess(request);
@@ -314,7 +309,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t16f_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)))
+        .withInputs(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE))
         .withLanguage("zh")
     );
   }
@@ -377,7 +372,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(0, hitsBeforeAdding.size());
     }
     assertSuccess(client.addInputs().plus(
-        ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
+        ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
             .withGeo(PointF.at(60F, 29.75F))
         ));
     {
@@ -398,10 +393,10 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Test public void t19_testBatch_partialFailure() {
     List<ClarifaiInput> batch = new ArrayList<>();
     batch.add(ClarifaiInput.forImage(
-        ClarifaiImage.of(FERRARI_IMAGE_URL)));
+        FERRARI_IMAGE_URL));
     batch.add(ClarifaiInput.forImage(
-        ClarifaiImage.of(FERRARI_IMAGE_URL2)));
-    batch.add(ClarifaiInput.forImage(ClarifaiImage.of("https://this_should_fail.jpg")));
+        FERRARI_IMAGE_URL2));
+    batch.add(ClarifaiInput.forImage("https://this_should_fail.jpg"));
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().generalModel().predict()
         .withInputs(batch).executeSync();
     assertTrue(response.isMixedSuccess());
@@ -413,7 +408,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t20_testDemographicsModel() {
     ClarifaiResponse<List<ClarifaiOutput<Region>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(STREETBAND_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(faceDetects.get().get(0).data().get(0).crop());
     Assert.assertNotNull(faceDetects.get().get(0).data().get(0).ageAppearances());
@@ -424,14 +419,14 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t21_testApparelModel() {
     assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(FAMILY_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL))
     );
   }
 
   @Retry
   @Test public void t22_testFocusModel() {
     ClarifaiResponse<List<ClarifaiOutput<Focus>>> focii = client.getDefaultModels().focusModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(STREETBAND_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(focii.get());
     Assert.assertNotNull(focii.get().get(0));
@@ -444,7 +439,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Test public void t23_testgeneralEmbedModel() {
     ClarifaiResponse<List<ClarifaiOutput<Embedding>>> embeddings = client.getDefaultModels().generalEmbeddingModel()
         .predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(STREETBAND_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(embeddings.get());
     Assert.assertNotNull(embeddings.get().get(0));
@@ -456,7 +451,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t24_testLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(LOGO_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(logos.get());
     Assert.assertNotNull(logos.get().get(0));
@@ -466,7 +461,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t25_testColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
+        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(colors.get());
     Assert.assertNotNull(colors.get().get(0));
@@ -574,8 +569,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void testDeleteBatch() {
     assertSuccess(client.addInputs().plus(
-        ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)).withID("kotlin"),
-        ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_FILE)).withID("train")
+        ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("kotlin"),
+        ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE).withID("train")
     ));
     sleep(5000);
     assertSuccess(client.deleteInputsBatch().plus("kotlin", "train"));
@@ -674,7 +669,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   public void testMergeMetadata() {
     final String inputID = assertSuccess(client.addInputs()
         .allowDuplicateURLs(true)
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+        .plus(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)
         )
     ).get(0).id();
     assertNotNull(inputID);
@@ -693,7 +688,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     thrown.expect(IllegalArgumentException.class);
     client.addInputs()
         .allowDuplicateURLs(true)
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+        .plus(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)
             // Will throw IAE because we have a null value
             .withMetadata(new JSONObjectBuilder().add("foo", JsonNull.INSTANCE).build())
         )
