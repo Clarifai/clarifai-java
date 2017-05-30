@@ -1,6 +1,5 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.dto.input.image.Crop;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
