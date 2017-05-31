@@ -41,7 +41,6 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
   }
 
   /**
-   *
    * @param language the language to be used. If none is supplied, the default language for the application will be
    *                 used. Should be in ISO 639 - 1 format eg: "en" = English, "zh" = Chinese, "ja" = Japanese.
    * @return this request builder
@@ -93,7 +92,6 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
   @NotNull public SearchInputsRequest ands(@NotNull SearchClause... clauses) {
     return ands(Arrays.asList(clauses));
   }
-
 
 
   @NotNull @Override protected Request buildRequest(final int page) {

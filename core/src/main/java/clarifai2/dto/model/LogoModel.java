@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 public abstract class LogoModel extends Model<Logo> {
+  LogoModel() {}
+
   @NotNull @Override public final ModelType modelType() { return ModelType.LOGO; }
 
   @SuppressWarnings("ConstantConditions")
@@ -21,6 +23,4 @@ public abstract class LogoModel extends Model<Logo> {
   public interface Builder extends Model.Builder<LogoModel.Builder> {
     @NotNull @Override LogoModel build();
   }
-
-  LogoModel() {}
 }

@@ -27,6 +27,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(ConceptOutputInfo.Adapter.class)
 public abstract class ConceptOutputInfo extends OutputInfo {
 
+  ConceptOutputInfo() {} // AutoValue instances only
+
   @NotNull public static ConceptOutputInfo forConcepts(@NotNull Concept... concepts) {
     return forConcepts(Arrays.asList(concepts));
   }
@@ -36,7 +38,9 @@ public abstract class ConceptOutputInfo extends OutputInfo {
   }
 
   @NotNull public abstract List<Concept> concepts();
+
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
+
   @NotNull public abstract boolean isEnvironmentClosed();
 
   @Nullable public abstract String language();
@@ -55,9 +59,9 @@ public abstract class ConceptOutputInfo extends OutputInfo {
 
   // These are awful method names, but auto-value-with needs these particular names, so we'll expose better ones publicly
   @NotNull abstract ConceptOutputInfo withAreConceptsMutuallyExclusive(boolean areConceptsMutuallyExclusive);
+
   @NotNull abstract ConceptOutputInfo withIsEnvironmentClosed(boolean isEnvironmentClosed);
 
-  ConceptOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ConceptOutputInfo> {
     @Nullable @Override protected Serializer<ConceptOutputInfo> serializer() {

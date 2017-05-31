@@ -13,11 +13,9 @@ import java.util.concurrent.Future;
 
 public final class ClarifaiBuilder {
 
-  @NotNull
-  final String appID;
+  @NotNull final String appID;
 
-  @NotNull
-  final String appSecret;
+  @NotNull final String appSecret;
 
   @NotNull
   OkHttpClient client = new OkHttpClient();
@@ -40,6 +38,7 @@ public final class ClarifaiBuilder {
   public ClarifaiBuilder baseURL(@NotNull String baseURL) {
     return baseURL(HttpUrl.parse(baseURL));
   }
+
   @NotNull
   public ClarifaiBuilder baseURL(@NotNull URL baseURL) {
     return baseURL(HttpUrl.get(baseURL));

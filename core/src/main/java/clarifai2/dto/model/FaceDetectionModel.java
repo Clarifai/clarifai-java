@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class FaceDetectionModel extends Model<FaceDetection> {
 
+  FaceDetectionModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.FACE_DETECTION; }
 
   @SuppressWarnings("ConstantConditions")
@@ -22,6 +24,4 @@ public abstract class FaceDetectionModel extends Model<FaceDetection> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override FaceDetectionModel build();
   }
-
-  FaceDetectionModel() {} // AutoValue instances only
 }

@@ -19,6 +19,8 @@ import java.util.Arrays;
 @JsonAdapter(Embedding.Adapter.class)
 public abstract class Embedding extends Prediction {
 
+  Embedding() {} // AutoValue instances only
+
   @NotNull public final float[] embedding() {
     // Return a defensive copy so that they can't modify the original byte-array
     final float[] embedding = _embedding();
@@ -30,7 +32,6 @@ public abstract class Embedding extends Prediction {
 
   @NotNull public abstract int numDimensions();
 
-  Embedding() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Embedding> {
     @Nullable @Override protected Deserializer<Embedding> deserializer() {

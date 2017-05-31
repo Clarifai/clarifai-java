@@ -27,27 +27,30 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class BaseClarifaiAPITest {
 
-  @NotNull @Rule public final TestName testName = new TestName();
-  @NotNull @Rule public final RetryRule retryRule = new RetryRule();
-  @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();
-
-  @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
-
   @NotNull static final String METRO_NORTH_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
   @NotNull static final String CONAN_GIF_URL = "https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif";
   @NotNull static final String LOGO_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
   @NotNull static final String STREETBAND_IMAGE_URL = "https://samples.clarifai.com/demographics.jpg";
   @NotNull static final String FAMILY_IMAGE_URL = "https://samples.clarifai.com/family.jpg";
-  @NotNull static final String FERRARI_IMAGE_URL = "https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png";
-  @NotNull static final String FERRARI_IMAGE_URL2 = "https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg";
-  @NotNull static final String FERRARI_IMAGE_URL3 = "https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg";
+  @NotNull static final String FERRARI_IMAGE_URL =
+      "https://s3.amazonaws.com/clarifai-img/5e/00/cb/8476bca5632276903b28701736.png";
+  @NotNull static final String FERRARI_IMAGE_URL2 =
+      "https://s3.amazonaws.com/clarifai-img/00/c3/ad/78d5ae3b3f2a84fe2bfb69dc28.jpg";
+  @NotNull static final String FERRARI_IMAGE_URL3 =
+      "https://s3.amazonaws.com/clarifai-img/a3/05/dc/b142653346b98ed0a4998c157f.jpg";
   @NotNull static final String PENGUIN_IMAGE_URL = "https://samples.clarifai.com/penguin.bmp";
-  @NotNull static final String HONDA_IMAGE_URL = "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg";
-  @NotNull static final String HONDA_IMAGE_URL2 = "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg";
-  @NotNull static final String TOYOTA_IMAGE_URL = "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg";
+  @NotNull static final String HONDA_IMAGE_URL =
+      "https://s3.amazonaws.com/clarifai-img/d4/89/e0/67f7f1622bf586c876875c3fc6.jpg";
+  @NotNull static final String HONDA_IMAGE_URL2 =
+      "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg";
+  @NotNull static final String TOYOTA_IMAGE_URL =
+      "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg";
   @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
   @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
-
+  @NotNull @Rule public final TestName testName = new TestName();
+  @NotNull @Rule public final RetryRule retryRule = new RetryRule();
+  @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();
+  @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
   @NotNull final String appID = EnvVar.CLARIFAI_APP_ID.value();
   @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
@@ -62,6 +65,27 @@ public abstract class BaseClarifaiAPITest {
           .build()
       )
       .buildSync();
+
+  static void assertFailure(@NotNull ClarifaiRequest<?> request) {
+    final ClarifaiResponse<?> response = request.executeSync();
+    if (response.isSuccessful()) {
+      Assert.fail("Response was not supposed to be successful! Response was " + response.get());
+    }
+  }
+
+  static void retryAndTimeout(long time, @NotNull TimeUnit unit, @NotNull Func0<Boolean> op) {
+    long startTime = System.currentTimeMillis();
+    long timeToRetry = TimeUnit.MILLISECONDS.convert(time, unit);
+    while (true) {
+      if (System.currentTimeMillis() > startTime + timeToRetry) {
+        throw new AssertionError("retried for " + timeToRetry + " milliseconds and still failed");
+      }
+      if (op.call()) {
+        return;
+      }
+      InternalUtil.sleep(1000);
+    }
+  }
 
   @Before public void logTestNameBeginning() {
     logTestNameBlock("BEGIN TEST");
@@ -97,26 +121,5 @@ public abstract class BaseClarifaiAPITest {
     final T result = request.executeSync().get();
     logger.debug(result.toString());
     return result;
-  }
-
-  static void assertFailure(@NotNull ClarifaiRequest<?> request) {
-    final ClarifaiResponse<?> response = request.executeSync();
-    if (response.isSuccessful()) {
-      Assert.fail("Response was not supposed to be successful! Response was " + response.get());
-    }
-  }
-
-  static void retryAndTimeout(long time, @NotNull TimeUnit unit, @NotNull Func0<Boolean> op) {
-    long startTime = System.currentTimeMillis();
-    long timeToRetry = TimeUnit.MILLISECONDS.convert(time, unit);
-    while (true) {
-      if (System.currentTimeMillis() > startTime + timeToRetry) {
-        throw new AssertionError("retried for " + timeToRetry + " milliseconds and still failed");
-      }
-      if (op.call()) {
-        return;
-      }
-      InternalUtil.sleep(1000);
-    }
   }
 }

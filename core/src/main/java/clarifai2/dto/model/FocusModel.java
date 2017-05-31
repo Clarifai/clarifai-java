@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 public abstract class FocusModel extends Model<Focus> {
+  FocusModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.FOCUS; }
 
   @SuppressWarnings("ConstantConditions")
@@ -21,6 +23,4 @@ public abstract class FocusModel extends Model<Focus> {
   public interface Builder extends Model.Builder<FocusModel.Builder> {
     @NotNull @Override FocusModel build();
   }
-
-  FocusModel() {} // AutoValue instances only
 }

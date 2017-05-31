@@ -81,6 +81,26 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     refreshIfNeeded();
   }
 
+  @NotNull
+  private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {
+    if (check == null) {
+      throw new IllegalArgumentException(errorMsg);
+    }
+    return check;
+  }
+
+  private static void closeOkHttpClient(@NotNull OkHttpClient client) {
+    client.dispatcher().executorService().shutdown();
+    client.connectionPool().evictAll();
+    final Cache cache = client.cache();
+    if (cache != null) {
+      try {
+        cache.close();
+      } catch (IOException ignored) {
+      }
+    }
+  }
+
   @Override public boolean hasValidToken() {
     return currentClarifaiToken != null && System.currentTimeMillis() <= currentClarifaiToken.getExpiresAt();
   }
@@ -141,15 +161,6 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     }
   }
 
-
-  @NotNull
-  private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {
-    if (check == null) {
-      throw new IllegalArgumentException(errorMsg);
-    }
-    return check;
-  }
-
   @NotNull
   private Gson vendGson() {
     return new GsonBuilder()
@@ -168,17 +179,6 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     closed = true;
     closeOkHttpClient(tokenRefreshHTTPClient);
     closeOkHttpClient(httpClient);
-  }
-
-  private static void closeOkHttpClient(@NotNull OkHttpClient client) {
-    client.dispatcher().executorService().shutdown();
-    client.connectionPool().evictAll();
-    final Cache cache = client.cache();
-    if (cache != null) {
-      try {
-        cache.close();
-      } catch (IOException ignored) {}
-    }
   }
 }
 

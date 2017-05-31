@@ -30,17 +30,22 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
-@AutoValue  
+@AutoValue
 @JsonAdapter(ClarifaiOutput.Adapter.class)
 public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
+  ClarifaiOutput() {} // AutoValue instances only
+
   @NotNull public abstract Date createdAt();
+
   @NotNull public abstract Model<PREDICTION> model();
+
   @NotNull public abstract ClarifaiInput input();
+
   @NotNull public abstract List<PREDICTION> data();
+
   @NotNull public abstract ClarifaiStatus status();
 
-  ClarifaiOutput() {} // AutoValue instances only
 
   @SuppressWarnings("rawtypes")
   static class Adapter extends JSONAdapterFactory<ClarifaiOutput> {
@@ -56,14 +61,15 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
 
           final List<Prediction> allPredictions = new ArrayList<>();
           Class<? extends Prediction> predictionType =
-              ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
+              ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info"))
+                  .predictionType();
 
           if (!root.get("data").isJsonNull()) {
             JsonObject dataRoot = root.getAsJsonObject("data");
 
             // Video model is ambiguous coming out of API.
             if (predictionType == Concept.class && dataRoot.has("frames")) {
-                predictionType = Frame.class;
+              predictionType = Frame.class;
             }
 
 //          more hacky solutions. Will refactor this eventually.
@@ -85,7 +91,8 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             }
 
             for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
-              final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+              final JsonArray array =
+                  data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
               for (JsonElement predictionJSON : array) {
                 if (predictionType == Focus.class) {
                   JsonObject addValue = predictionJSON.getAsJsonObject();

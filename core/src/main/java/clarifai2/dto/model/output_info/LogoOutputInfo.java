@@ -17,10 +17,12 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(LogoOutputInfo.Adapter.class)
 public abstract class LogoOutputInfo extends OutputInfo {
 
+  LogoOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  LogoOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<LogoOutputInfo> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<LogoOutputInfo> deserializer() {

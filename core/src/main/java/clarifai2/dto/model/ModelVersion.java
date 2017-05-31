@@ -21,10 +21,12 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(ModelVersion.Adapter.class)
 public abstract class ModelVersion implements HasClarifaiIDRequired {
 
+  ModelVersion() {} // AutoValue instances only
+
   @NotNull public abstract Date createdAt();
+
   @NotNull public abstract ModelTrainingStatus status();
 
-  ModelVersion() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ModelVersion> {
     @Nullable @Override protected Deserializer<ModelVersion> deserializer() {

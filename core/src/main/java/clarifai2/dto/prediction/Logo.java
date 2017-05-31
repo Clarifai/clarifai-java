@@ -22,10 +22,12 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(Logo.Adapter.class)
 public abstract class Logo extends Prediction {
 
+  Logo() {} // AutoValue instances only
+
   @NotNull public abstract Crop boundingBox();
+
   @NotNull public abstract List<Concept> concepts();
 
-  Logo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Logo> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<Logo> deserializer() {
@@ -49,8 +51,8 @@ public abstract class Logo extends Prediction {
       };
     }
 
-      @NotNull @Override protected TypeToken<Logo> typeToken () {
-        return new TypeToken<Logo>() {};
-      }
+    @NotNull @Override protected TypeToken<Logo> typeToken() {
+      return new TypeToken<Logo>() {};
+    }
   }
 }

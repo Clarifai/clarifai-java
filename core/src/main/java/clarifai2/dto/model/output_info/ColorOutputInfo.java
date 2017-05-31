@@ -17,10 +17,12 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(ColorOutputInfo.Adapter.class)
 public abstract class ColorOutputInfo extends OutputInfo {
 
+  ColorOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  ColorOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ColorOutputInfo> {
     @Nullable @Override protected Deserializer<ColorOutputInfo> deserializer() {
