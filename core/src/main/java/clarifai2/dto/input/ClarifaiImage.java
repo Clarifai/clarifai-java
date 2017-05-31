@@ -1,4 +1,4 @@
-package clarifai2.dto.input.image;
+package clarifai2.dto.input;
 
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;

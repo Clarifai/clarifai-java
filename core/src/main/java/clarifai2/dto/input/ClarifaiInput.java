@@ -2,9 +2,8 @@ package clarifai2.dto.input;
 
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
-import clarifai2.dto.input.image.ClarifaiImage;
-import clarifai2.dto.input.image.ClarifaiVideo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -18,11 +17,15 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static clarifai2.dto.input.ClarifaiImage.of;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 import static clarifai2.internal.InternalUtil.isJsonNull;
@@ -42,11 +45,63 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   }
 
   /**
-   * @param video the video to represent
+   * @param imageBytes the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull byte[] imageBytes) {
+    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes), new JsonObject(), Collections.<Concept>emptyList(), null);
+  }
+
+  /**
+   * @param imageFile the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull File imageFile) {
+    return new AutoValue_ClarifaiInput(null, null, of(InternalUtil.read(imageFile)), new JsonObject(), Collections.<Concept>emptyList(), null);
+  }
+
+  /**
+   * @param imageURL the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull String imageURL) {
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return forImage(result);
+  }
+
+  /**
+   * @param imageURL the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull URL imageURL) {
+    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiURLImage(Crop.create(), imageURL), new JsonObject(), Collections.<Concept>emptyList(), null);
+  }
+
+  /**
+   * @param imageURL the video to represent
    * @return a {@link ClarifaiInput} that represents the given video
    */
-  @NotNull public static ClarifaiInput forVideo(@NotNull ClarifaiVideo video) {
-    return new AutoValue_ClarifaiInput(null, null, video, new JsonObject(), Collections.<Concept>emptyList(), null);
+  @NotNull public static ClarifaiInput forVideo(@NotNull String imageURL) {
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return forVideo(result);
+  }
+
+  /**
+   * @param imageURL the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull URL imageURL) {
+    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiVideo(Crop.create(), imageURL), new JsonObject(), Collections.<Concept>emptyList(), null);
   }
 
   @Nullable public abstract Date createdAt();
