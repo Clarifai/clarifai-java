@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class ColorModel extends Model<Color> {
 
+  ColorModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.COLOR; }
 
   @SuppressWarnings("ConstantConditions")
@@ -22,6 +24,4 @@ public abstract class ColorModel extends Model<Color> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override ColorModel build();
   }
-
-  ColorModel() {} // AutoValue instances only
 }

@@ -24,6 +24,8 @@ public abstract class ClarifaiStatus {
 //  @Nullable private static ClarifaiStatus mixedSuccess;
 //  @Nullable private static ClarifaiStatus unknown;
 
+  ClarifaiStatus() {} // AutoValue instances only
+
   @NotNull public static ClarifaiStatus success() {
     return new AutoValue_ClarifaiStatus(
         false,
@@ -80,7 +82,6 @@ public abstract class ClarifaiStatus {
    */
   @Nullable public abstract String errorDetails();
 
-  ClarifaiStatus() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiStatus> {
     @Nullable @Override protected Deserializer<ClarifaiStatus> deserializer() {

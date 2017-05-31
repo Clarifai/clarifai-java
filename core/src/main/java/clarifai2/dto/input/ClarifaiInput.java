@@ -36,6 +36,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(ClarifaiInput.Adapter.class)
 public abstract class ClarifaiInput implements HasClarifaiID {
 
+  ClarifaiInput() {} // AutoValue instances only
+
   /**
    * @param image the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
@@ -49,7 +51,13 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull byte[] imageBytes) {
-    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes), new JsonObject(), Collections.<Concept>emptyList(), null);
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
   }
 
   /**
@@ -57,7 +65,13 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull File imageFile) {
-    return new AutoValue_ClarifaiInput(null, null, of(InternalUtil.read(imageFile)), new JsonObject(), Collections.<Concept>emptyList(), null);
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        of(InternalUtil.read(imageFile)),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
   }
 
   /**
@@ -79,7 +93,13 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiURLImage(Crop.create(), imageURL), new JsonObject(), Collections.<Concept>emptyList(), null);
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiURLImage(Crop.create(), imageURL),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
   }
 
   /**
@@ -101,7 +121,13 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a {@link ClarifaiInput} that represents the given video
    */
   @NotNull public static ClarifaiInput forVideo(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiInput(null, null, new AutoValue_ClarifaiVideo(Crop.create(), imageURL), new JsonObject(), Collections.<Concept>emptyList(), null);
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiVideo(Crop.create(), imageURL),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
   }
 
   @Nullable public abstract Date createdAt();
@@ -130,7 +156,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   /**
    * @return the geo-point that this input is linked to
    */
- @Nullable public abstract PointF geo();
+  @Nullable public abstract PointF geo();
 
   /**
    * @param id the ID to assign to this input
@@ -170,7 +196,6 @@ public abstract class ClarifaiInput implements HasClarifaiID {
     return withConcepts(Arrays.asList(concepts));
   }
 
-  ClarifaiInput() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
@@ -191,9 +216,9 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           }
           if (value.geo() != null) {
             data.add("geo", new JSONObjectBuilder()
-                      .add("geo_point", new JSONObjectBuilder()
-                      .add("latitude", value.geo().x())
-                      .add("longitude", value.geo().y())));
+                .add("geo_point", new JSONObjectBuilder()
+                    .add("latitude", value.geo().x())
+                    .add("longitude", value.geo().y())));
           }
           if (value.createdAt() != null) {
             builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
@@ -225,13 +250,18 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           }
 
           final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
-          final JsonObject geo = data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
-          final PointF geoPoint = geo.has("latitude") ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat()) : null;
+          final JsonObject geo =
+              data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
+          final PointF geoPoint = geo.has("latitude")
+              ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat())
+              : null;
 
           return new AutoValue_ClarifaiInput(
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              data.has("video") ? fromJson(gson, data.get("video"), ClarifaiImage.class) : fromJson(gson, data.get("image"), ClarifaiImage.class),
+              data.has("video")
+                  ? fromJson(gson, data.get("video"), ClarifaiImage.class)
+                  : fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
               concepts,
               geoPoint

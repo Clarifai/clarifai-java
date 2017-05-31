@@ -25,6 +25,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(Concept.Adapter.class)
 public abstract class Concept extends Prediction implements HasClarifaiID {
 
+  Concept() {} // AutoValue instances only
+
   @NotNull public static Concept forID(@NotNull String id) {
     return new AutoValue_Concept(id, null, null, null, 1.0F, null);
   }
@@ -75,8 +77,6 @@ public abstract class Concept extends Prediction implements HasClarifaiID {
     return withValue(value ? 1.0F : 0.0F);
   }
 
-
-  Concept() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Concept> {
     @Nullable @Override protected Serializer<Concept> serializer() {

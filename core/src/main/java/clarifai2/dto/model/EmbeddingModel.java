@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class EmbeddingModel extends Model<Embedding> {
 
+  EmbeddingModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.EMBEDDING; }
 
   @SuppressWarnings("ConstantConditions")
@@ -22,6 +24,4 @@ public abstract class EmbeddingModel extends Model<Embedding> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override EmbeddingModel build();
   }
-
-  EmbeddingModel() {} // AutoValue instances only
 }

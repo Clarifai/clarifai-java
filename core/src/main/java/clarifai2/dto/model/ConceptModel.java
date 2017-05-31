@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 @JsonAdapter(Model.Adapter.class)
 public abstract class ConceptModel extends Model<Concept> {
 
+  ConceptModel() {} // AutoValue instances only
+
   /**
    * @see ClarifaiClient#mergeConceptsForModel(String)
    * @deprecated use {@link #modify()}
@@ -61,6 +63,4 @@ public abstract class ConceptModel extends Model<Concept> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override ConceptModel build();
   }
-
-  ConceptModel() {} // AutoValue instances only
 }

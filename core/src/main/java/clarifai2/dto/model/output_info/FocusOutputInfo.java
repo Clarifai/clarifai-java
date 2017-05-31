@@ -17,10 +17,12 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(FocusOutputInfo.Adapter.class)
 public abstract class FocusOutputInfo extends OutputInfo {
 
+  FocusOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  FocusOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<FocusOutputInfo> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<FocusOutputInfo> deserializer() {

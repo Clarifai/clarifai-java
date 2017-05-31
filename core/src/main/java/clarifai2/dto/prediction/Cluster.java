@@ -18,9 +18,10 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(Cluster.Adapter.class)
 public abstract class Cluster extends Prediction implements HasClarifaiIDRequired {
 
+  Cluster() {} // AutoValue instances only
+
   @NotNull public abstract int numClusters();
 
-  Cluster() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Cluster> {
     @Nullable @Override protected Deserializer<Cluster> deserializer() {

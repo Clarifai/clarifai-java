@@ -19,9 +19,10 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(FaceDetection.Adapter.class)
 public abstract class FaceDetection extends Prediction {
 
+  FaceDetection() {} // AutoValue instances only
+
   @NotNull public abstract Crop boundingBox();
 
-  FaceDetection() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<FaceDetection> {
     @Nullable @Override protected Deserializer<FaceDetection> deserializer() {

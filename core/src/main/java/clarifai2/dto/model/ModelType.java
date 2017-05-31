@@ -90,18 +90,6 @@ public enum ModelType {
     this.tagType = tagType;
   }
 
-  @NotNull public String typeName() {
-    return typeName;
-  }
-
-  @NotNull public Class<? extends OutputInfo> infoType() {
-    return infoType;
-  }
-
-  @NotNull public Class<? extends Prediction> predictionType() {
-    return tagType;
-  }
-
   @NotNull public static ModelType determineModelType(@NotNull JsonElement outputInfoRoot) {
     final String type = outputInfoRoot.getAsJsonObject().get("type").getAsString();
     final String typeExt = outputInfoRoot.getAsJsonObject().get("type_ext").getAsString();
@@ -115,5 +103,17 @@ public enum ModelType {
       }
     }
     return UNKNOWN;
+  }
+
+  @NotNull public String typeName() {
+    return typeName;
+  }
+
+  @NotNull public Class<? extends OutputInfo> infoType() {
+    return infoType;
+  }
+
+  @NotNull public Class<? extends Prediction> predictionType() {
+    return tagType;
   }
 }

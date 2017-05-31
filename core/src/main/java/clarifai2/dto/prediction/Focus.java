@@ -19,11 +19,14 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(Focus.Adapter.class)
 public abstract class Focus extends Prediction {
 
+  Focus() {} // Autovalue instances only
+
   @NotNull public abstract Crop crop();
+
   @NotNull public abstract double density();
+
   @NotNull public abstract double value();
 
-  Focus() {} // Autovalue instances only
 
   static class Adapter extends JSONAdapterFactory<Focus> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<Focus> deserializer() {

@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class VideoModel extends Model<Frame> {
 
+  VideoModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.VIDEO; }
 
   @SuppressWarnings("ConstantConditions")
@@ -22,6 +24,4 @@ public abstract class VideoModel extends Model<Frame> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override VideoModel build();
   }
-
-  VideoModel() {} // AutoValue instances only
 }

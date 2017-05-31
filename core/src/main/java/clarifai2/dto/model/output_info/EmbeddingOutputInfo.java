@@ -14,13 +14,15 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(EmbeddingOutputInfo.Adapter.class  )
+@JsonAdapter(EmbeddingOutputInfo.Adapter.class)
 public abstract class EmbeddingOutputInfo extends OutputInfo {
 
+  EmbeddingOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  EmbeddingOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<EmbeddingOutputInfo> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<EmbeddingOutputInfo> deserializer() {
