@@ -20,8 +20,6 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
 
   @Nullable private String language = null;
 
-  @Nullable private String language = null;
-
   public PatchModelRequest(
       @NotNull final BaseClarifaiClient helper,
       @NotNull String modelID,

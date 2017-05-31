@@ -81,15 +81,6 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               dataRoot.remove("focus");
             }
 
-//          more hacky solutions. Will refactor this eventually.
-            double value = 0.0;
-            if (predictionType == Focus.class) {
-              value = dataRoot.getAsJsonObject("focus")
-                  .getAsJsonPrimitive("value")
-                  .getAsFloat();
-              dataRoot.remove("focus");
-            }
-
             for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
               final JsonArray array =
                   data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();

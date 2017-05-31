@@ -75,36 +75,6 @@ public final class InternalUtil {
     ));
   }
 
-  @NotNull public static JsonElement coerceJsonNull(@Nullable JsonElement in) {
-    return in == null ? JsonNull.INSTANCE : in;
-  }
-
-  /**
-   * Asserts that the given JSON is of the type expected, and casts it to that type.
-   *
-   * @param json         the JSON in question. If {@code null} is passed, it is coerced to {@link JsonNull#INSTANCE}
-   * @param expectedType the type that we are asserting this JSON is
-   * @param <T>          the type that we are asserting this JSON is
-   * @return this JSON, casted to the asserted type
-   * @throws JsonParseException if the JSON was not of the asserted type
-   */
-  @NotNull
-  public static <T extends JsonElement> T assertJsonIs(
-      @Nullable JsonElement json,
-      @NotNull Class<T> expectedType
-  ) throws JsonParseException {
-    if (json == null) {
-      json = JsonNull.INSTANCE;
-    }
-    if (expectedType.isInstance(json)) {
-      return expectedType.cast(json);
-    }
-    throw new JsonParseException(String.format("This JSON must be a %s, but it was a %s",
-        expectedType.getSimpleName(),
-        json.getClass().getSimpleName()
-    ));
-  }
-
   public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
     if (areNullsPresentInDictionaries(json)) {
       throw new IllegalArgumentException("You cannot use null as an entry's value in your metadata!");

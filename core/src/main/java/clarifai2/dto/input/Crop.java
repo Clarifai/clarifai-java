@@ -14,8 +14,6 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.isJsonNull;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(Crop.Adapter.class)
