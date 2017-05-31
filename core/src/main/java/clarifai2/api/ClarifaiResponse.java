@@ -14,6 +14,102 @@ public abstract class ClarifaiResponse<T> {
   @NotNull final ClarifaiStatus status;
   final int httpCode;
 
+
+  protected ClarifaiResponse(@NotNull ClarifaiStatus status, int httpCode) {
+    this.status = status;
+    this.httpCode = httpCode;
+  }
+
+  /**
+   * @return The value returned by this HTTP request, or throws a {@link NoSuchElementException}
+   * if there is no value. You likely want to guard any invocations create this method with a check against
+   * {@link #isSuccessful()} to ensure that an exception won't be thrown.
+   * @throws NoSuchElementException if {@link #isSuccessful()} is false.
+   */
+  @NotNull
+  public final T get() {
+    final T value = getOrNull();
+    if (value == null) {
+      throw new NoSuchElementException("This API call was not successful. Details about this error: " + getStatus());
+    }
+    return value;
+  }
+
+  /**
+   * @param ifResponseWasNull The default value to return if we got no value from the HTTP request
+   * @return The HTTP response value if it was valid, otherwise {@code ifResponseWasNull}
+   */
+  @NotNull
+  public final T getOr(@NotNull T ifResponseWasNull) {
+    final T value = getOrNull();
+    return value == null ? ifResponseWasNull : value;
+  }
+
+  /**
+   * @param supplier the function to invoke and return a value from if the value from the HTTP request was null
+   * @return The HTTP response value if it was valid, otherwise the return value of {@code supplier.call()}
+   */
+  @NotNull public final T getOr(@NotNull Func0<T> supplier) {
+    final T value = getOrNull();
+    return value == null ? supplier.call() : value;
+  }
+
+  /**
+   * @param mapper the mapping function to apply to the HTTP response (if it was non-null)
+   * @param <R>    the type of the value returned from the mapper
+   * @return a {@link ClarifaiResponse} that represents the object represented by {@code this} object, but with
+   * the mapping function applied.
+   */
+  @NotNull public abstract <R> ClarifaiResponse<R> map(@NotNull Func1<T, R> mapper);
+
+  /**
+   * @return The HTTP response value if it was present, otherwise {@code null}
+   */
+  @Nullable
+  public abstract T getOrNull();
+
+  /**
+   * @param throwable The throwable to throw if there was no valid HTTP response
+   * @return The HTTP response value
+   * @throws ClarifaiException wraps your provided throwable, if no valid value returned via HTTP
+   */
+  @NotNull
+  public T getOrThrow(@NotNull Throwable throwable) throws ClarifaiException {
+    final T value = getOrNull();
+    if (value == null) {
+      throw new ClarifaiException("No value present", throwable);
+    }
+    return value;
+  }
+
+  /**
+   * @return information about the status of this API call, or {@code null} if the API could not return a value
+   * (usually due to network connectivity errors).
+   */
+  @NotNull public final ClarifaiStatus getStatus() {
+    return status;
+  }
+
+  /**
+   * @return true if you can receive a valid value from {@link #get()} or related methods.
+   */
+  public abstract boolean isSuccessful();
+
+  /**
+   * @return true if there are valid and invalid values from {@link #get()} or related methods.
+   */
+  public abstract boolean isMixedSuccess();
+
+  /**
+   * @return The HTTP response code
+   */
+  public final int responseCode() {
+    return httpCode;
+  }
+
+  @NotNull public abstract String rawBody() throws UnsupportedOperationException;
+
+
   public static final class Successful<T> extends ClarifaiResponse<T> {
 
     @NotNull private final String rawBody;
@@ -51,6 +147,7 @@ public abstract class ClarifaiResponse<T> {
     }
   }
 
+
   public static final class MixedSuccess<T> extends ClarifaiResponse<T> {
 
     @NotNull private final String rawBody;
@@ -87,6 +184,7 @@ public abstract class ClarifaiResponse<T> {
       return true;
     }
   }
+
 
   public static final class Failure<T> extends ClarifaiResponse<T> {
 
@@ -145,98 +243,4 @@ public abstract class ClarifaiResponse<T> {
       return false;
     }
   }
-
-  protected ClarifaiResponse(@NotNull ClarifaiStatus status, int httpCode) {
-    this.status = status;
-    this.httpCode = httpCode;
-  }
-
-  /**
-   * @return The value returned by this HTTP request, or throws a {@link NoSuchElementException}
-   * if there is no value. You likely want to guard any invocations create this method with a check against
-   * {@link #isSuccessful()} to ensure that an exception won't be thrown.
-   * @throws NoSuchElementException if {@link #isSuccessful()} is false.
-   */
-  @NotNull
-  public final T get() {
-    final T value = getOrNull();
-    if (value == null) {
-      throw new NoSuchElementException("This API call was not successful. Details about this error: " + getStatus());
-    }
-    return value;
-  }
-
-  /**
-   * @param ifResponseWasNull The default value to return if we got no value from the HTTP request
-   * @return The HTTP response value if it was valid, otherwise {@code ifResponseWasNull}
-   */
-  @NotNull
-  public final T getOr(@NotNull T ifResponseWasNull) {
-    final T value = getOrNull();
-    return value == null ? ifResponseWasNull : value;
-  }
-
-  /**
-   * @param supplier the function to invoke and return a value from if the value from the HTTP request was null
-   * @return The HTTP response value if it was valid, otherwise the return value of {@code supplier.call()}
-   */
-  @NotNull public final T getOr(@NotNull Func0<T> supplier) {
-    final T value = getOrNull();
-    return value == null ? supplier.call(): value;
-  }
-
-  /**
-   * @param mapper the mapping function to apply to the HTTP response (if it was non-null)
-   * @param <R>    the type of the value returned from the mapper
-   * @return a {@link ClarifaiResponse} that represents the object represented by {@code this} object, but with
-   * the mapping function applied.
-   */
-  @NotNull public abstract <R> ClarifaiResponse<R> map(@NotNull Func1<T, R> mapper);
-
-  /**
-   * @return The HTTP response value if it was present, otherwise {@code null}
-   */
-  @Nullable
-  public abstract T getOrNull();
-
-  /**
-   * @param throwable The throwable to throw if there was no valid HTTP response
-   * @return The HTTP response value
-   * @throws ClarifaiException wraps your provided throwable, if no valid value returned via HTTP
-   */
-  @NotNull
-  public T getOrThrow(@NotNull Throwable throwable) throws ClarifaiException {
-    final T value = getOrNull();
-    if (value == null) {
-      throw new ClarifaiException("No value present", throwable);
-    }
-    return value;
-  }
-
-  /**
-   * @return information about the status of this API call, or {@code null} if the API could not return a value
-   * (usually due to network connectivity errors).
-   */
-  @NotNull public final ClarifaiStatus getStatus() {
-    return status;
-  }
-
-  /**
-   * @return true if you can receive a valid value from {@link #get()} or related methods.
-   */
-  public abstract boolean isSuccessful();
-
-  /**
-   * @return true if there are valid and invalid values from {@link #get()} or related methods.
-   */
-  public abstract boolean isMixedSuccess();
-
-  /**
-   * @return The HTTP response code
-   */
-  public final int responseCode() {
-    return httpCode;
-  }
-
-  @NotNull public abstract String rawBody() throws UnsupportedOperationException;
 }

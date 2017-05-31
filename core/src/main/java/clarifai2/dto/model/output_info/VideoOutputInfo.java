@@ -17,10 +17,12 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(VideoOutputInfo.Adapter.class)
 public abstract class VideoOutputInfo extends OutputInfo {
 
+  VideoOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  VideoOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<VideoOutputInfo> {
     @Nullable @Override protected Deserializer<VideoOutputInfo> deserializer() {

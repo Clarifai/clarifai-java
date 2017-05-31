@@ -21,11 +21,14 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(Frame.Adapter.class)
 public abstract class Frame extends Prediction {
 
+  Frame() {} // AutoValue instances only
+
   public abstract int index();
+
   public abstract long time();
+
   @NotNull public abstract List<Concept> concepts();
 
-  Frame() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Frame> {
     @Nullable @Override protected JSONAdapterFactory.Deserializer<Frame> deserializer() {
@@ -45,12 +48,13 @@ public abstract class Frame extends Prediction {
           return new AutoValue_Frame(
               root.getAsJsonObject("frame_info").getAsJsonPrimitive("index").getAsInt(),
               root.getAsJsonObject("frame_info").getAsJsonPrimitive("time").getAsLong(),
-              concepts);
+              concepts
+          );
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<Frame> typeToken () {
+    @NotNull @Override protected TypeToken<Frame> typeToken() {
       return new TypeToken<Frame>() {};
     }
   }

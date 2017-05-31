@@ -9,10 +9,10 @@ import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
-import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.input.ClarifaiImage;
+import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.Crop;
+import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelTrainingStatus;
@@ -61,6 +61,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @BeforeClass
   public static void recordTime() {
     startTime = System.nanoTime();
+  }
+
+  // Workaround since we can't delete models right now, so we'll make a new model every time that is different every
+  // time we run the app
+  @NotNull private static String getModelID() {
+    return "mod1ID" + startTime;
   }
 
   @Retry
@@ -214,7 +220,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     );
   }
 
-
   @Retry
   @Test public void t13_getModelByID() {
     assertSuccess(client.getModelByID(getModelID()));
@@ -366,28 +371,28 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t18_testGeo() {
     {
-        final List<SearchHit> hitsBeforeAdding = assertSuccess(
-        client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
-            );
-    assertEquals(0, hitsBeforeAdding.size());
+      final List<SearchHit> hitsBeforeAdding = assertSuccess(
+          client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
+      );
+      assertEquals(0, hitsBeforeAdding.size());
     }
     assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
             .withGeo(PointF.at(60F, 29.75F))
-        ));
+    ));
     {
-        final List<SearchHit> hitsAfterAdding = assertSuccess(
-        client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
-            );
-    assertEquals(1, hitsAfterAdding.size());
+      final List<SearchHit> hitsAfterAdding = assertSuccess(
+          client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
+      );
+      assertEquals(1, hitsAfterAdding.size());
     }
     {
-        final List<SearchHit> hits = assertSuccess(
-        client.searchInputs(SearchClause.matchGeo(PointF.at(3F, 0F), PointF.at(70, 30F)))
-            );
-    assertEquals(1, hits.size());
+      final List<SearchHit> hits = assertSuccess(
+          client.searchInputs(SearchClause.matchGeo(PointF.at(3F, 0F), PointF.at(70, 30F)))
+      );
+      assertEquals(1, hits.size());
     }
-    }
+  }
 
   @Retry
   @Test public void t19_testBatch_partialFailure() {
@@ -684,6 +689,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     assertEquals(new JSONObjectBuilder().add("foo", "bar").build(), newMetadata);
   }
 
+  /////////////////
+
   @Test public void testMetadataDoesNotAllowNullDictionaryValues() {
     thrown.expect(IllegalArgumentException.class);
     client.addInputs()
@@ -693,13 +700,5 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
             .withMetadata(new JSONObjectBuilder().add("foo", JsonNull.INSTANCE).build())
         )
         .executeSync();
-  }
-
-  /////////////////
-
-  // Workaround since we can't delete models right now, so we'll make a new model every time that is different every
-  // time we run the app
-  @NotNull private static String getModelID() {
-    return "mod1ID" + startTime;
   }
 }

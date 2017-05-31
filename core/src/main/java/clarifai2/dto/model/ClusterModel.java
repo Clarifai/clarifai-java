@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class ClusterModel extends Model<Cluster> {
 
+  ClusterModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.CLUSTER; }
 
   @SuppressWarnings("ConstantConditions")
@@ -22,6 +24,4 @@ public abstract class ClusterModel extends Model<Cluster> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override ClusterModel build();
   }
-
-  ClusterModel() {} // AutoValue instances only
 }

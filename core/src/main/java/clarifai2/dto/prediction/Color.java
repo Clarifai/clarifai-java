@@ -17,12 +17,16 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(Color.Adapter.class)
 public abstract class Color extends Prediction {
 
+  Color() {} // AutoValue instances only
+
   @NotNull public abstract String hex();
+
   @NotNull public abstract String webSafeHex();
+
   @NotNull public abstract String webSafeColorName();
+
   @NotNull public abstract float value();
 
-  Color() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Color> {
     @Nullable @Override protected Deserializer<Color> deserializer() {
