@@ -2,7 +2,7 @@ package clarifai2.dto.prediction;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Prediction {
+public class Prediction {
   Prediction() {}
 
   public final boolean isConcept() {
@@ -27,14 +27,6 @@ public abstract class Prediction {
 
   @NotNull public final FaceDetection asFaceDetection() {
     return (FaceDetection) this;
-  }
-
-  public final boolean isBlur() {
-    return this instanceof Blur;
-  }
-
-  @NotNull public final Blur asBlur() {
-    return (Blur) this;
   }
 
   public final boolean isEmbedding() {

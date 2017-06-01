@@ -223,10 +223,9 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @NotNull private HttpUrl toHTTPUrl(@NotNull String endpoint) {
-      if (endpoint.charAt(0) == '/') {
-        endpoint = endpoint.substring(1);
-      }
-      return client.baseURL.newBuilder().addPathSegments(endpoint).build();
+      return client.baseURL
+          .newBuilder()
+          .addPathSegments(endpoint.charAt(0) == '/' ? endpoint.substring(1) : endpoint).build();
     }
 
     @NotNull private RequestBody toRequestBody(@NotNull JsonElement json) {
@@ -298,6 +297,7 @@ public interface ClarifaiRequest<RESULT> {
       }
     }
 
+    @SuppressWarnings({"PMD.AvoidPrintStackTrace", "PMD.SignatureDeclareThrowsException"})
     @Override public void executeAsync(@Nullable final Callback<T> callback) {
       try {
         client.httpClient.dispatcher().executorService().invokeAny(Collections.singletonList(new Callable<Void>() {

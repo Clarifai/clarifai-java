@@ -62,7 +62,6 @@ public abstract class ConceptOutputInfo extends OutputInfo {
 
   @NotNull abstract ConceptOutputInfo withIsEnvironmentClosed(boolean isEnvironmentClosed);
 
-
   static class Adapter extends JSONAdapterFactory<ConceptOutputInfo> {
     @Nullable @Override protected Serializer<ConceptOutputInfo> serializer() {
       return new Serializer<ConceptOutputInfo>() {
@@ -102,7 +101,8 @@ public abstract class ConceptOutputInfo extends OutputInfo {
         ) {
           final JsonObject root = json.getAsJsonObject();
 
-          final List<Concept> concepts = root.getAsJsonObject("data") == null ? Collections.<Concept>emptyList() : fromJson(
+          final List<Concept> concepts =
+              root.getAsJsonObject("data") == null ? Collections.<Concept>emptyList() : fromJson(
                   gson,
                   root.getAsJsonObject("data").getAsJsonArray("concepts"),
                   new TypeToken<List<Concept>>() {}

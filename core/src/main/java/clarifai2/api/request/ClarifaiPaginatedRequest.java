@@ -33,7 +33,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
    * @param page the page to go to
    * @return the request that, when executed, will return the results at the given page.
    */
-  @NotNull ClarifaiRequest<RESULT> getPage(int page);
+  @NotNull ClarifaiRequest<RESULT> getPage(final int page);
 
   abstract class Builder<T, SELF extends Builder<T, SELF>> implements ClarifaiPaginatedRequest<T> {
 
@@ -42,7 +42,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
 
     private int perPage = 0;
 
-    protected Builder(@NotNull BaseClarifaiClient client) {
+    protected Builder(@NotNull final BaseClarifaiClient client) {
       this.gson = client.gson;
       this.client = client;
     }
@@ -52,7 +52,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull public final SELF perPage(int perPage) {
+    @NotNull public final SELF perPage(final int perPage) {
       this.perPage = perPage;
       return ((SELF) this);
     }
@@ -73,7 +73,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
 
     @NotNull protected abstract Request buildRequest(int page);
 
-    @NotNull protected final RequestBody toRequestBody(@NotNull JsonObject json, int page) {
+    @NotNull protected final RequestBody toRequestBody(@NotNull final JsonObject json, final int page) {
       final JSONObjectBuilder pagination = new JSONObjectBuilder()
           .add("page", page);
       if (perPage > 0) {
@@ -86,12 +86,9 @@ public interface ClarifaiPaginatedRequest<RESULT> {
       return RequestBody.create(MEDIA_TYPE_JSON, gson.toJson(outJSON));
     }
 
-    @NotNull protected final HttpUrl buildURL(@NotNull String path, int page) {
-      if (path.charAt(0) == '/') {
-        path = path.substring(1);
-      }
+    @NotNull protected final HttpUrl buildURL(@NotNull final String path, final int page) {
       final HttpUrl.Builder urlBuilder = client.baseURL.newBuilder()
-          .addPathSegments(path)
+          .addPathSegments(path.charAt(0) == '/' ? path.substring(1) : path)
           .setQueryParameter("page", String.valueOf(page));
       if (perPage > 0) {
         urlBuilder.setQueryParameter("per_page", String.valueOf(perPage));

@@ -15,7 +15,7 @@ public final class JSONArrayBuilder {
     this(Collections.<JsonElement>emptyList());
   }
 
-  public JSONArrayBuilder(@NotNull Iterable<JsonElement> startWith) {
+  public JSONArrayBuilder(@NotNull final Iterable<JsonElement> startWith) {
     for (final JsonElement element : startWith) {
       add(element);
     }
@@ -26,50 +26,50 @@ public final class JSONArrayBuilder {
     return this;
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull JSONArrayBuilder other) {
+  @NotNull public JSONArrayBuilder add(@NotNull final JSONArrayBuilder other) {
     return add(other.build());
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull JSONObjectBuilder json) {
+  @NotNull public JSONArrayBuilder add(@NotNull final JSONObjectBuilder json) {
     return add(json.build());
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull String value) {
+  @NotNull public JSONArrayBuilder add(@NotNull final String value) {
     inner.add(value);
     return this;
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull Boolean value) {
+  @NotNull public JSONArrayBuilder add(@NotNull final Boolean value) {
     inner.add(value);
     return this;
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull Character value) {
+  @NotNull public JSONArrayBuilder add(@NotNull final Character value) {
     inner.add(value);
     return this;
   }
 
-  @NotNull public JSONArrayBuilder add(@NotNull Number value) {
+  @NotNull public JSONArrayBuilder add(@NotNull final Number value) {
     inner.add(value);
     return this;
   }
 
   @NotNull
-  public <T> JSONArrayBuilder addAll(@NotNull Iterable<T> iterable, @NotNull Func1<T, JsonElement> mapper) {
+  public <T> JSONArrayBuilder addAll(@NotNull final Iterable<T> iterable, @NotNull final Func1<T, JsonElement> mapper) {
     for (final T element : iterable) {
       add(mapper.call(element));
     }
     return this;
   }
 
-  @NotNull public JSONArrayBuilder addStrings(@NotNull Iterable<String> values) {
+  @NotNull public JSONArrayBuilder addStrings(@NotNull final Iterable<String> values) {
     for (final String value : values) {
       add(value);
     }
     return this;
   }
 
-  @NotNull public JSONArrayBuilder addBooleans(@NotNull Iterable<Boolean> values) {
+  @NotNull public JSONArrayBuilder addBooleans(@NotNull final Iterable<Boolean> values) {
     for (final Boolean value : values) {
       add(value);
     }
@@ -77,14 +77,14 @@ public final class JSONArrayBuilder {
   }
 
 
-  @NotNull public JSONArrayBuilder addCharacters(@NotNull Iterable<Character> values) {
+  @NotNull public JSONArrayBuilder addCharacters(@NotNull final Iterable<Character> values) {
     for (final Character value : values) {
       add(value);
     }
     return this;
   }
 
-  @NotNull public JSONArrayBuilder addNumbers(@NotNull Iterable<Number> values) {
+  @NotNull public JSONArrayBuilder addNumbers(@NotNull final Iterable<Number> values) {
     for (final Number value : values) {
       add(value);
     }

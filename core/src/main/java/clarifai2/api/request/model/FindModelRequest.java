@@ -53,7 +53,7 @@ public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<Lis
     final JsonObject body = new JSONObjectBuilder()
         .add("model_query", new JSONObjectBuilder()
             .add("name", name)
-            .add("type", modelType != null ? modelType.typeName() : null)
+            .add("type", modelType == null ? null : modelType.typeName())
         )
         .build();
     return new Request.Builder()

@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
-import static clarifai2.internal.InternalUtil.fromJson;
-
 @JsonAdapter(OutputInfo.Adapter.class)
 public abstract class OutputInfo {
 

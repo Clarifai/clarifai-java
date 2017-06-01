@@ -34,7 +34,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
 
   Model() {} // AutoValue instances only
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"unchecked", "PMD.MethodNamingConventions"})
   @NotNull
   public static <T extends Model<?>> T _create(
       @NotNull ModelType modelType,
@@ -136,6 +136,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
 
   @Nullable public abstract OutputInfo outputInfo();
 
+  @SuppressWarnings("PMD.MethodNamingConventions")
   @IgnoreForHashCodeEquals @Nullable abstract OutputInfo _outputInfo();
 
   @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
@@ -175,6 +176,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     @NotNull B createdAt(@Nullable Date createdAt);
     @NotNull B appID(@Nullable String appID);
     @NotNull B modelVersion(@Nullable ModelVersion modelVersion);
+    @SuppressWarnings("PMD.MethodNamingConventions")
     @NotNull B _outputInfo(@Nullable OutputInfo _outputInfo);
     @NotNull B client(@Nullable ClarifaiClient client);
     @NotNull Model<?> build();

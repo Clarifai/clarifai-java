@@ -241,10 +241,10 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           final List<Concept> concepts;
           {
             final JsonElement conceptsJSON = data.get("concepts");
-            if (conceptsJSON != null) {
-              concepts = fromJson(gson, conceptsJSON, new TypeToken<List<Concept>>() {});
-            } else {
+            if (conceptsJSON == null) {
               concepts = Collections.emptyList();
+            } else {
+              concepts = fromJson(gson, conceptsJSON, new TypeToken<List<Concept>>() {});
             }
           }
 

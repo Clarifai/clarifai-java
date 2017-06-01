@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-@SuppressWarnings("NullableProblems")
+@SuppressWarnings({"NullableProblems", "mutable"})
 @AutoValue
 @JsonAdapter(Embedding.Adapter.class)
 public abstract class Embedding extends Prediction {

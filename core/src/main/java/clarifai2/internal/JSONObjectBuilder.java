@@ -17,35 +17,35 @@ public final class JSONObjectBuilder {
     this.inner = startWith;
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @NotNull JSONObjectBuilder json) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @NotNull JSONObjectBuilder json) {
     return add(name, json.build());
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @NotNull JSONArrayBuilder json) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @NotNull JSONArrayBuilder json) {
     return add(name, json.build());
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @Nullable JsonElement json) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @Nullable JsonElement json) {
     inner.add(name, json);
     return this;
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @Nullable String value) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @Nullable final String value) {
     inner.addProperty(name, value);
     return this;
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @Nullable Number value) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @Nullable Number value) {
     inner.addProperty(name, value);
     return this;
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @Nullable Boolean value) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @Nullable Boolean value) {
     inner.addProperty(name, value);
     return this;
   }
 
-  @NotNull public JSONObjectBuilder add(@NotNull String name, @Nullable Character value) {
+  @NotNull public JSONObjectBuilder add(@NotNull final String name, @Nullable Character value) {
     inner.addProperty(name, value);
     return this;
   }

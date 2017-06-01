@@ -27,6 +27,7 @@ public enum Action {
    */
   REMOVE("remove"),;
 
+  @SuppressWarnings("PMD.SingularField")
   @NotNull private String value;
 
   Action(@NotNull String value) {
@@ -37,11 +38,12 @@ public enum Action {
 
     @Nullable @Override protected Serializer<Action> serializer() {
       return new Serializer<Action>() {
-        @NotNull @Override public JsonElement serialize(@Nullable Action value, @NotNull Gson gson) {
-          if (value == null) {
-            value = MERGE;
+        @NotNull @Override public JsonElement serialize(@Nullable Action action, @NotNull Gson gson) {
+          if (action == null) {
+            return new JsonPrimitive(MERGE.value);
+          } else {
+            return new JsonPrimitive(action.value);
           }
-          return new JsonPrimitive(value.value);
         }
       };
     }
