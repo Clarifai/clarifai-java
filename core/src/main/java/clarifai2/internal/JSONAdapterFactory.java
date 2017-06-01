@@ -29,6 +29,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
   @Nullable private final Serializer<T> serializer;
   @Nullable private final Deserializer<T> deserializer;
 
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public JSONAdapterFactory() {
     this.typeToken = typeToken();
     this.serializer = serializer();
@@ -39,6 +40,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
    * @return a {@link Serializer} that defines how to convert this object to a JSON representation, or {@code null}
    * if this factory doesn't want to define how to perform this serialization.
    */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
   @Nullable protected Serializer<T> serializer() {
     return null;
   }
@@ -47,6 +49,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
    * @return a {@link Deserializer} that defines how to reify this object from a JSON representation, or {@code null}
    * if this factory doesn't want to define how to perform this deserialization.
    */
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
   @Nullable protected Deserializer<T> deserializer() {
     return null;
   }
@@ -71,10 +74,6 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
 
   @NotNull private TypeAdapter<T> buildAdapter(@NotNull Gson gson) {
     return new Adapter<>(gson, typeToken, serializer, deserializer, this);
-  }
-
-  @NotNull private TypeAdapter<T> passthroughAdapter(@NotNull Gson gson) {
-    return gson.getDelegateAdapter(this, typeToken);
   }
 
   /**
@@ -135,7 +134,7 @@ public abstract class JSONAdapterFactory<T> implements TypeAdapterFactory {
      */
     @Nullable private TypeAdapter<T> passthroughAdapter;
 
-    private Adapter(
+    Adapter(
         @NotNull Gson gson,
         @NotNull TypeToken<T> token,
         @Nullable Serializer<T> serializer,

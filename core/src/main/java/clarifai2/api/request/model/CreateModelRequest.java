@@ -72,7 +72,7 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
             ModelType.CONCEPT,
             helper,
             id,
-            name != null ? name : id,
+            name == null ? id : name,
             outputInfo
         ),
         new TypeToken<Model<?>>() {}

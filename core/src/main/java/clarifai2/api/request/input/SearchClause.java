@@ -57,7 +57,7 @@ public abstract class SearchClause {
    * @param image the URL of the image to search by
    * @return a {@link SearchClause} to be given to a search endpoint
    */
-  @NotNull public static SearchClause matchImageURL(@NotNull ClarifaiURLImage image) {
+  @NotNull public static SearchClause matchImageURL(@NotNull final ClarifaiURLImage image) {
     return new InputImage(image);
   }
 
@@ -70,7 +70,7 @@ public abstract class SearchClause {
    * @param image the URL of the image to search by
    * @return a {@link SearchClause} to be given to a search endpoint
    */
-  @NotNull public static SearchClause matchImageVisually(@NotNull ClarifaiImage image) {
+  @NotNull public static SearchClause matchImageVisually(@NotNull final ClarifaiImage image) {
     return new OutputImage(image);
   }
 
@@ -117,7 +117,7 @@ public abstract class SearchClause {
   static class Metadata extends SearchClause {
     @NotNull private final JsonObject metadata;
 
-    private Metadata(@NotNull JsonObject metadata) {
+    Metadata(@NotNull JsonObject metadata) {
       this.metadata = metadata;
     }
 
@@ -150,7 +150,7 @@ public abstract class SearchClause {
   static class InputImage extends SearchClause {
     @NotNull private final ClarifaiImage image;
 
-    private InputImage(@NotNull ClarifaiImage image) {
+    InputImage(@NotNull final ClarifaiImage image) {
       this.image = image;
     }
 
@@ -184,7 +184,7 @@ public abstract class SearchClause {
 
     @NotNull private final ClarifaiImage image;
 
-    private OutputImage(@NotNull ClarifaiImage image) {
+    OutputImage(@NotNull final ClarifaiImage image) {
       this.image = image;
     }
 
@@ -217,7 +217,7 @@ public abstract class SearchClause {
     @NotNull private final String owningObjectName;
     @NotNull private final Concept concept;
 
-    private SearchConcept(@NotNull String owningObjectName, @NotNull Concept concept) {
+    SearchConcept(@NotNull String owningObjectName, @NotNull Concept concept) {
       this.owningObjectName = owningObjectName;
       this.concept = concept;
     }
@@ -252,7 +252,7 @@ public abstract class SearchClause {
     @NotNull private final PointF center;
     @NotNull private final Radius radius;
 
-    private GeoCircle(@NotNull PointF center, @NotNull Radius radius) {
+    GeoCircle(@NotNull PointF center, @NotNull Radius radius) {
       this.center = center;
       this.radius = radius;
     }
@@ -288,7 +288,7 @@ public abstract class SearchClause {
   static class GeoRect extends SearchClause {
     @NotNull private final Rectangle box;
 
-    private GeoRect(@NotNull PointF topLeft, @NotNull PointF bottomRight) {
+    GeoRect(@NotNull PointF topLeft, @NotNull PointF bottomRight) {
       this.box = Rectangle.of(topLeft, bottomRight);
     }
 

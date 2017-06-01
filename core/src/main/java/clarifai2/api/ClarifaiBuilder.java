@@ -79,6 +79,7 @@ public final class ClarifaiBuilder {
    * a network request and retrieved an access token
    */
   @NotNull
+  @SuppressWarnings("PMD.SignatureDeclareThrowsException")
   public Future<ClarifaiClient> build() {
     final ExecutorService executor = Executors.newFixedThreadPool(1);
     final Future<ClarifaiClient> future = executor.submit(new Callable<ClarifaiClient>() {

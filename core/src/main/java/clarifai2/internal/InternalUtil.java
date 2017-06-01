@@ -38,6 +38,7 @@ public final class InternalUtil {
     return token.getType() instanceof Class;
   }
 
+  @SuppressWarnings("PMD.AvoidThrowingNullPointerException")
   @Contract("null -> fail") @NotNull public static <T> T assertNotNull(@Nullable T in) {
     if (in == null) {
       throw new NullPointerException();
@@ -45,7 +46,7 @@ public final class InternalUtil {
     return in;
   }
 
-  @NotNull public static JsonElement coerceJsonNull(@Nullable JsonElement in) {
+  @NotNull public static JsonElement coerceJsonNull(@Nullable final JsonElement in) {
     return in == null ? JsonNull.INSTANCE : in;
   }
 
@@ -60,22 +61,19 @@ public final class InternalUtil {
    */
   @NotNull
   public static <T extends JsonElement> T assertJsonIs(
-      @Nullable JsonElement json,
+      @Nullable final JsonElement json,
       @NotNull Class<T> expectedType
   ) throws JsonParseException {
-    if (json == null) {
-      json = JsonNull.INSTANCE;
-    }
-    if (expectedType.isInstance(json)) {
-      return expectedType.cast(json);
+    if (expectedType.isInstance(json == null ? JsonNull.INSTANCE : json)) {
+      return expectedType.cast(json == null ? JsonNull.INSTANCE : json);
     }
     throw new JsonParseException(String.format("This JSON must be a %s, but it was a %s",
         expectedType.getSimpleName(),
-        json.getClass().getSimpleName()
+        json == null ? JsonNull.INSTANCE.getClass().getSimpleName() : json.getClass().getSimpleName()
     ));
   }
 
-  public static void assertMetadataHasNoNulls(@NotNull JsonObject json) {
+  public static void assertMetadataHasNoNulls(@NotNull final JsonObject json) {
     if (areNullsPresentInDictionaries(json)) {
       throw new IllegalArgumentException("You cannot use null as an entry's value in your metadata!");
     }
@@ -85,7 +83,7 @@ public final class InternalUtil {
    * @param json the JSON to check
    * @return {@code true} if this JSON is a {@link JsonNull} or if any of the elements it contains, recursively, are {@link JsonNull}s
    */
-  public static boolean areNullsPresentInDictionaries(@NotNull JsonElement json) {
+  public static boolean areNullsPresentInDictionaries(@NotNull final JsonElement json) {
     if (!json.isJsonObject()) {
       return json.isJsonNull();
     }
@@ -97,7 +95,7 @@ public final class InternalUtil {
     return false;
   }
 
-  @NotNull public static <T> List<T> copyArray(@NotNull JsonArray in, @NotNull Func1<JsonElement, T> mapper) {
+  @NotNull public static <T> List<T> copyArray(@NotNull final JsonArray in, @NotNull final Func1<JsonElement, T> mapper) {
     final List<T> out = new ArrayList<>(in.size());
     for (final JsonElement element : in) {
       out.add(mapper.call(element == null ? JsonNull.INSTANCE : element));
@@ -126,7 +124,7 @@ public final class InternalUtil {
     throw new IllegalArgumentException("Input JSON is of type " + in.getClass() + " and cannot be deep-copied");
   }
 
-  @NotNull public static JsonObject asGeoPointJson(@NotNull PointF geoPoint) {
+  @NotNull public static JsonObject asGeoPointJson(@NotNull final PointF geoPoint) {
     return new JSONObjectBuilder()
         .add("latitude", geoPoint.x())
         .add("longitude", geoPoint.y())
@@ -141,24 +139,24 @@ public final class InternalUtil {
     }
   }
 
-  @NotNull public static ClarifaiClient clientInstance(@NotNull Gson gson) {
+  @NotNull public static ClarifaiClient clientInstance(@NotNull final Gson gson) {
     return gson.fromJson(new JsonObject(), ClarifaiClient.class);
   }
 
-  @Nullable public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull Class<T> type) {
+  @Nullable public static <T> T fromJson(@NotNull final Gson gson, @Nullable final JsonElement element, @NotNull Class<T> type) {
     return gson.fromJson(element, type);
   }
 
-  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull Class<T> type) {
+  @NotNull public static <T> JsonElement toJson(@NotNull final Gson gson, @Nullable T obj, @NotNull Class<T> type) {
     return coerceJsonNull(gson.toJsonTree(obj, type));
   }
 
   @Nullable
-  public static <T> T fromJson(@NotNull Gson gson, @Nullable JsonElement element, @NotNull TypeToken<T> type) {
+  public static <T> T fromJson(@NotNull final Gson gson, @Nullable final JsonElement element, @NotNull TypeToken<T> type) {
     return gson.fromJson(element, type.getType());
   }
 
-  @NotNull public static <T> JsonElement toJson(@NotNull Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
+  @NotNull public static <T> JsonElement toJson(@NotNull final Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
     return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
   }
 
@@ -168,6 +166,7 @@ public final class InternalUtil {
   }
 
   @NotNull
+  @SuppressWarnings("PMD.EmptyCatchBlock")
   public static byte[] read(File file) {
     if (!file.exists()) {
       throw new ClarifaiException("File " + file.getAbsolutePath() + " does not exist!");
@@ -178,9 +177,10 @@ public final class InternalUtil {
       byte[] buffer = new byte[4096];
       ous = new ByteArrayOutputStream();
       ios = new FileInputStream(file);
-      int read;
-      while ((read = ios.read(buffer)) != -1) {
+      int read = ios.read(buffer);
+      while (read != -1) {
         ous.write(buffer, 0, read);
+        read = ios.read(buffer);
       }
     } catch (IOException e) {
       throw new ClarifaiException("Error while reading " + file.getName(), e);

@@ -45,10 +45,10 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
   }
 
   @NotNull @Override protected ClarifaiRequest<ConceptModel> build() {
-    if (language != null) {
-      return new ModifyModelRequest(client, modelID).withConcepts(action, concepts).withLanguage(language);
-    } else {
+    if (language == null) {
       return new ModifyModelRequest(client, modelID).withConcepts(action, concepts);
+    } else {
+      return new ModifyModelRequest(client, modelID).withConcepts(action, concepts).withLanguage(language);
     }
   }
 

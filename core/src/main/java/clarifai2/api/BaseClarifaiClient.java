@@ -89,6 +89,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     return check;
   }
 
+  @SuppressWarnings("PMD.EmptyCatchBlock")
   private static void closeOkHttpClient(@NotNull OkHttpClient client) {
     client.dispatcher().executorService().shutdown();
     client.connectionPool().evictAll();
@@ -101,7 +102,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     }
   }
 
-  @Override public boolean hasValidToken() {
+  @Override public final boolean hasValidToken() {
     return currentClarifaiToken != null && System.currentTimeMillis() <= currentClarifaiToken.getExpiresAt();
   }
 
@@ -127,6 +128,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     }
   }
 
+  @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "PMD.PreserveStackTrace"})
   @Nullable
   private ClarifaiToken refresh() {
     try {
