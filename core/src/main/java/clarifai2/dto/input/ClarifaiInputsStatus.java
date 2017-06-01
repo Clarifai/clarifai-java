@@ -18,8 +18,12 @@ import org.jetbrains.annotations.Nullable;
 @JsonAdapter(ClarifaiInputsStatus.Adapter.class)
 public abstract class ClarifaiInputsStatus {
 
+  ClarifaiInputsStatus() {} // AutoValue instances only
+
   @NotNull public abstract int processed();
+
   @NotNull public abstract int toProcess();
+
   @NotNull public abstract int errors();
 
   @AutoValue.Builder
@@ -30,7 +34,6 @@ public abstract class ClarifaiInputsStatus {
     @NotNull ClarifaiInputsStatus build();
   }
 
-  ClarifaiInputsStatus() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiInputsStatus> {
     @Nullable @Override protected Serializer<ClarifaiInputsStatus> serializer() {

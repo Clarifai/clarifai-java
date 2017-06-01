@@ -3,9 +3,9 @@ package clarifai2.api.request.input;
 import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
 import clarifai2.dto.Rectangle;
+import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.image.ClarifaiImage;
-import clarifai2.dto.input.image.ClarifaiURLImage;
+import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
@@ -23,6 +23,8 @@ import static clarifai2.internal.InternalUtil.asGeoPointJson;
 import static clarifai2.internal.InternalUtil.toJson;
 
 public abstract class SearchClause {
+
+  private SearchClause() {}
 
   /**
    * A search clause that will match inputs that had metadata that matches the metadata on the given
@@ -110,7 +112,6 @@ public abstract class SearchClause {
     return new GeoRect(topLeft, bottomRight);
   }
 
-  private SearchClause() {}
 
   @JsonAdapter(Metadata.Adapter.class)
   static class Metadata extends SearchClause {
@@ -245,6 +246,7 @@ public abstract class SearchClause {
     }
   }
 
+
   @JsonAdapter(GeoCircle.Adapter.class)
   static class GeoCircle extends SearchClause {
     @NotNull private final PointF center;
@@ -281,6 +283,7 @@ public abstract class SearchClause {
     }
   }
 
+
   @JsonAdapter(GeoRect.Adapter.class)
   static class GeoRect extends SearchClause {
     @NotNull private final Rectangle box;
@@ -302,8 +305,10 @@ public abstract class SearchClause {
                         .add("geo", new JSONObjectBuilder()
                             .add("geo_box", new JSONArrayBuilder()
                                 .add(new JSONObjectBuilder().add("geo_point", asGeoPointJson(value.box.topLeft())))
-                                .add(new JSONObjectBuilder().add("geo_point", asGeoPointJson(value.box.bottomRight())))))))
-                                .build();
+                                .add(new JSONObjectBuilder().add("geo_point",
+                                    asGeoPointJson(value.box.bottomRight())
+                                ))))))
+                .build();
           }
         };
       }

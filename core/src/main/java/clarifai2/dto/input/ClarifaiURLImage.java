@@ -1,4 +1,4 @@
-package clarifai2.dto.input.image;
+package clarifai2.dto.input;
 
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
@@ -22,11 +22,12 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(ClarifaiURLImage.Adapter.class)
 public abstract class ClarifaiURLImage extends ClarifaiImage {
 
+  ClarifaiURLImage() {} // AutoValue instances only
+
   @NotNull public abstract URL url();
 
   @NotNull @Override public abstract ClarifaiURLImage withCrop(@NotNull Crop crop);
 
-  ClarifaiURLImage() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiURLImage> {
 

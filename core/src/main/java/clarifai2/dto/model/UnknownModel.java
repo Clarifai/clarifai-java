@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class UnknownModel extends Model<Unknown> {
 
+  UnknownModel() {} // AutoValue instances only
+
   @NotNull @Override public final ModelType modelType() { return ModelType.UNKNOWN; }
 
   @SuppressWarnings("ConstantConditions")
@@ -23,6 +25,4 @@ public abstract class UnknownModel extends Model<Unknown> {
   public interface Builder extends Model.Builder<Builder> {
     @NotNull @Override UnknownModel build();
   }
-
-  UnknownModel() {} // AutoValue instances only
 }

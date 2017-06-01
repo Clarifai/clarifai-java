@@ -7,11 +7,14 @@ import org.jetbrains.annotations.NotNull;
 @AutoValue
 public abstract class Rectangle {
 
+  Rectangle() {} // AutoValue instances only
+
   @NotNull public static Rectangle of(@NotNull PointF topLeft, @NotNull PointF bottomRight) {
     return new AutoValue_Rectangle(topLeft, bottomRight);
   }
 
   @NotNull public abstract PointF topLeft();
+
   @NotNull public abstract PointF bottomRight();
 
   @NotNull public final PointF topRight() {
@@ -45,6 +48,4 @@ public abstract class Rectangle {
   public final float bottom() {
     return bottomRight().y();
   }
-
-  Rectangle() {} // AutoValue instances only
 }

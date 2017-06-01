@@ -1,4 +1,4 @@
-package clarifai2.dto.input.image;
+package clarifai2.dto.input;
 
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
@@ -43,6 +43,20 @@ public abstract class ClarifaiImage {
 
   @NotNull public static ClarifaiURLImage of(@NotNull URL imageURL) {
     return new AutoValue_ClarifaiURLImage(Crop.create(), imageURL);
+  }
+
+  @NotNull public static ClarifaiVideo ofVideo(@NotNull String imageURL) {
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return ofVideo(result);
+  }
+
+  @NotNull public static ClarifaiVideo ofVideo(@NotNull URL imageURL) {
+    return new AutoValue_ClarifaiVideo(Crop.create(), imageURL);
   }
 
   @Nullable public abstract Crop crop();

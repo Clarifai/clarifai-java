@@ -1,6 +1,5 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.dto.input.Crop;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
@@ -19,40 +18,44 @@ import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(Logo.Adapter.class)
-public abstract class Logo extends Prediction {
+@JsonAdapter(Frame.Adapter.class)
+public abstract class Frame extends Prediction {
 
-  Logo() {} // AutoValue instances only
+  Frame() {} // AutoValue instances only
 
-  @NotNull public abstract Crop boundingBox();
+  public abstract int index();
+
+  public abstract long time();
 
   @NotNull public abstract List<Concept> concepts();
 
 
-  static class Adapter extends JSONAdapterFactory<Logo> {
-    @Nullable @Override protected JSONAdapterFactory.Deserializer<Logo> deserializer() {
-      return new Deserializer<Logo>() {
+  static class Adapter extends JSONAdapterFactory<Frame> {
+    @Nullable @Override protected JSONAdapterFactory.Deserializer<Frame> deserializer() {
+      return new Deserializer<Frame>() {
         @Nullable @Override
-        public Logo deserialize(
+        public Frame deserialize(
             @NotNull JsonElement json,
-            @NotNull TypeToken<Logo> type,
+            @NotNull TypeToken<Frame> type,
             @NotNull Gson gson
         ) {
           final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
+
           List<Concept> concepts = new ArrayList<>();
-          Crop crop = fromJson(gson, root.getAsJsonObject()
-              .getAsJsonObject("region_info")
-              .getAsJsonObject("bounding_box"), Crop.class);
           for (JsonElement element : root.getAsJsonObject("data").getAsJsonArray("concepts")) {
             concepts.add(fromJson(gson, element, Concept.class));
           }
-          return new AutoValue_Logo(crop, concepts);
+          return new AutoValue_Frame(
+              root.getAsJsonObject("frame_info").getAsJsonPrimitive("index").getAsInt(),
+              root.getAsJsonObject("frame_info").getAsJsonPrimitive("time").getAsLong(),
+              concepts
+          );
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<Logo> typeToken() {
-      return new TypeToken<Logo>() {};
+    @NotNull @Override protected TypeToken<Frame> typeToken() {
+      return new TypeToken<Frame>() {};
     }
   }
 }

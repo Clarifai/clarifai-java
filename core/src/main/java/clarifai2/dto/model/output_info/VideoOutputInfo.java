@@ -14,35 +14,35 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(DemographicsOutputInfo.Adapter.class)
-public abstract class DemographicsOutputInfo extends OutputInfo {
+@JsonAdapter(VideoOutputInfo.Adapter.class)
+public abstract class VideoOutputInfo extends OutputInfo {
 
-  DemographicsOutputInfo() {} // AutoValue instances only
+  VideoOutputInfo() {} // AutoValue instances only
 
   @NotNull public abstract String type();
 
   @NotNull public abstract String typeExt();
 
 
-  static class Adapter extends JSONAdapterFactory<DemographicsOutputInfo> {
-    @Nullable @Override protected Deserializer<DemographicsOutputInfo> deserializer() {
-      return new Deserializer<DemographicsOutputInfo>() {
+  static class Adapter extends JSONAdapterFactory<VideoOutputInfo> {
+    @Nullable @Override protected Deserializer<VideoOutputInfo> deserializer() {
+      return new Deserializer<VideoOutputInfo>() {
         @Nullable @Override
-        public DemographicsOutputInfo deserialize(
+        public VideoOutputInfo deserialize(
             @NotNull JsonElement json,
-            @NotNull TypeToken<DemographicsOutputInfo> type,
+            @NotNull TypeToken<VideoOutputInfo> type,
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
           String modelType = root.getAsJsonPrimitive("type").getAsString();
           String typeExt = root.getAsJsonPrimitive("type_ext").getAsString();
-          return new AutoValue_DemographicsOutputInfo(modelType, typeExt);
+          return new AutoValue_VideoOutputInfo(modelType, typeExt);
         }
       };
     }
 
-    @NotNull @Override protected TypeToken<DemographicsOutputInfo> typeToken() {
-      return new TypeToken<DemographicsOutputInfo>() {};
+    @NotNull @Override protected TypeToken<VideoOutputInfo> typeToken() {
+      return new TypeToken<VideoOutputInfo>() {};
     }
   }
 }

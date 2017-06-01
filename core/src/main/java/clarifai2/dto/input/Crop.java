@@ -1,4 +1,4 @@
-package clarifai2.dto.input.image;
+package clarifai2.dto.input;
 
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONAdapterFactory;
@@ -19,13 +19,18 @@ import org.jetbrains.annotations.Nullable;
 @JsonAdapter(Crop.Adapter.class)
 public abstract class Crop {
 
+  Crop() {} // AutoValue instances only
+
   @NotNull public static Crop create() {
     return new AutoValue_Crop(0.0F, 0.0F, 1.0F, 1.0F);
   }
 
   @NotNull public abstract float top();
+
   @NotNull public abstract float left();
+
   @NotNull public abstract float bottom();
+
   @NotNull public abstract float right();
 
   @NotNull public final Crop top(@NotNull float top) {
@@ -46,11 +51,13 @@ public abstract class Crop {
 
   // These are not great method names, so we'll alias them above
   @NotNull abstract Crop withTop(@NotNull float top);
+
   @NotNull abstract Crop withLeft(@NotNull float left);
+
   @NotNull abstract Crop withBottom(@NotNull float bottom);
+
   @NotNull abstract Crop withRight(@NotNull float right);
 
-  Crop() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Crop> {
     @Nullable @Override protected Serializer<Crop> serializer() {

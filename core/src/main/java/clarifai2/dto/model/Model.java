@@ -32,6 +32,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(Model.Adapter.class)
 public abstract class Model<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
+  Model() {} // AutoValue instances only
+
   @SuppressWarnings("unchecked")
   @NotNull
   public static <T extends Model<?>> T _create(
@@ -47,6 +49,31 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         .name(name)
         ._outputInfo(outputInfo)
         .build());
+  }
+
+  @NotNull private static Builder<?> getBuilder(@NotNull ModelType modelType) {
+    switch (modelType) {
+      case CONCEPT:
+        return new AutoValue_ConceptModel.Builder();
+      case FOCUS:
+        return new AutoValue_FocusModel.Builder();
+      case CLUSTER:
+        return new AutoValue_ClusterModel.Builder();
+      case COLOR:
+        return new AutoValue_ColorModel.Builder();
+      case EMBEDDING:
+        return new AutoValue_EmbeddingModel.Builder();
+      case LOGO:
+        return new AutoValue_LogoModel.Builder();
+      case FACE_DETECTION:
+        return new AutoValue_FaceDetectionModel.Builder();
+      case DEMOGRAPHICS:
+        return new AutoValue_DemographicsModel.Builder();
+      case VIDEO:
+        return new AutoValue_VideoModel.Builder();
+      default:
+        return new AutoValue_UnknownModel.Builder();
+    }
   }
 
   public final boolean isConceptModel() {
@@ -98,11 +125,17 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   }
 
   @Nullable public abstract String name();
+
   @Nullable public abstract Date createdAt();
+
   @Nullable public abstract String appID();
+
   @Nullable public abstract ModelVersion modelVersion();
+
   @NotNull public abstract ModelType modelType();
+
   @Nullable public abstract OutputInfo outputInfo();
+
   @IgnoreForHashCodeEquals @Nullable abstract OutputInfo _outputInfo();
 
   @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
@@ -136,8 +169,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return client().trainModel(id());
   }
 
-  Model() {} // AutoValue instances only
-
   protected interface Builder<B extends Builder<B>> {
     @NotNull B id(@NotNull String id);
     @NotNull B name(@NotNull String name);
@@ -147,29 +178,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     @NotNull B _outputInfo(@Nullable OutputInfo _outputInfo);
     @NotNull B client(@Nullable ClarifaiClient client);
     @NotNull Model<?> build();
-  }
-
-  @NotNull private static Builder<?> getBuilder(@NotNull ModelType modelType) {
-    switch (modelType) {
-      case CONCEPT:
-        return new AutoValue_ConceptModel.Builder();
-      case FOCUS:
-        return new AutoValue_FocusModel.Builder();
-      case CLUSTER:
-        return new AutoValue_ClusterModel.Builder();
-      case COLOR:
-        return new AutoValue_ColorModel.Builder();
-      case EMBEDDING:
-        return new AutoValue_EmbeddingModel.Builder();
-      case LOGO:
-        return new AutoValue_LogoModel.Builder();
-      case FACE_DETECTION:
-        return new AutoValue_FaceDetectionModel.Builder();
-      case DEMOGRAPHICS:
-        return new AutoValue_DemographicsModel.Builder();
-      default:
-        return new AutoValue_UnknownModel.Builder();
-    }
   }
 
 
@@ -204,7 +212,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
           final JsonObject root = json.getAsJsonObject();
           ModelType modelType = ModelType.determineModelType(root.get("output_info"));
           // hacky solution needed because of model type ambiguity.
-          if (modelType == ModelType.DEMOGRAPHICS|| modelType == ModelType.FACE_DETECTION) {
+          if (modelType == ModelType.DEMOGRAPHICS || modelType == ModelType.FACE_DETECTION) {
             if (root.getAsJsonPrimitive("name").getAsString().equals("demographics")) {
               modelType = ModelType.DEMOGRAPHICS;
             } else {

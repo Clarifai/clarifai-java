@@ -1,6 +1,6 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.dto.input.image.Crop;
+import clarifai2.dto.input.Crop;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -22,12 +22,16 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(Region.Adapter.class)
 public abstract class Region extends Prediction {
 
+  Region() {} // AutoValue instances only
+
   @NotNull public abstract Crop crop();
+
   @NotNull public abstract List<Concept> ageAppearances();
+
   @NotNull public abstract List<Concept> genderAppearances();
+
   @NotNull public abstract List<Concept> multiculturalAppearances();
 
-  Region() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Region> {
     @Nullable @Override protected Deserializer<Region> deserializer() {
@@ -41,7 +45,7 @@ public abstract class Region extends Prediction {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
           Crop crop = null;
           List<Concept> ageAppearances = new ArrayList<>();
-          List<Concept> genderAppearances= new ArrayList<>();
+          List<Concept> genderAppearances = new ArrayList<>();
           List<Concept> multiCulturalAppearances = new ArrayList<>();
           crop = fromJson(gson, root.getAsJsonObject()
               .getAsJsonObject("region_info")

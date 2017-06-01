@@ -17,6 +17,7 @@ public final class GetConceptByIDRequest extends ClarifaiRequest.Builder<Concept
     super(helper);
     this.conceptID = conceptID;
   }
+
   @NotNull @Override protected DeserializedRequest<Concept> request() {
     return new DeserializedRequest<Concept>() {
       @NotNull @Override public Request httpRequest() {

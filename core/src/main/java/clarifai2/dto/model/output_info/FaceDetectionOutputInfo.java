@@ -17,10 +17,12 @@ import static clarifai2.internal.InternalUtil.assertJsonIs;
 @JsonAdapter(FaceDetectionOutputInfo.Adapter.class)
 public abstract class FaceDetectionOutputInfo extends OutputInfo {
 
+  FaceDetectionOutputInfo() {} // AutoValue instances only
+
   @NotNull public abstract String type();
+
   @NotNull public abstract String typeExt();
 
-  FaceDetectionOutputInfo() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<FaceDetectionOutputInfo> {
     @Nullable @Override protected Deserializer<FaceDetectionOutputInfo> deserializer() {

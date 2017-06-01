@@ -24,10 +24,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final BaseClarifaiClient helper;
-
-  @Nullable private ConceptOutputInfo outputInfo;
   @NotNull private final String id;
-
+  @Nullable private ConceptOutputInfo outputInfo;
   @Nullable private String name = null;
 
   public CreateModelRequest(@NotNull final BaseClarifaiClient helper, @NotNull final String id) {

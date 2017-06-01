@@ -5,7 +5,9 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
+import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Focus;
+import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
@@ -32,13 +34,18 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(ClarifaiOutput.Adapter.class)
 public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
+  ClarifaiOutput() {} // AutoValue instances only
+
   @NotNull public abstract Date createdAt();
+
   @NotNull public abstract Model<PREDICTION> model();
+
   @NotNull public abstract ClarifaiInput input();
+
   @NotNull public abstract List<PREDICTION> data();
+
   @NotNull public abstract ClarifaiStatus status();
 
-  ClarifaiOutput() {} // AutoValue instances only
 
   @SuppressWarnings("rawtypes")
   static class Adapter extends JSONAdapterFactory<ClarifaiOutput> {
@@ -53,10 +60,17 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
           final JsonObject root = assertJsonIs(json, JsonObject.class);
 
           final List<Prediction> allPredictions = new ArrayList<>();
-          final Class<? extends Prediction> predictionType =
-              ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info")).predictionType();
+          Class<? extends Prediction> predictionType =
+              ModelType.determineModelType(root.getAsJsonObject("model").getAsJsonObject("output_info"))
+                  .predictionType();
+
           if (!root.get("data").isJsonNull()) {
             JsonObject dataRoot = root.getAsJsonObject("data");
+
+            // Video model is ambiguous coming out of API.
+            if (predictionType == Concept.class && dataRoot.has("frames")) {
+              predictionType = Frame.class;
+            }
 
 //          more hacky solutions. Will refactor this eventually.
             double value = 0.0;
@@ -68,7 +82,8 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
             }
 
             for (final Map.Entry<String, JsonElement> data : dataRoot.entrySet()) {
-              final JsonArray array = data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
+              final JsonArray array =
+                  data.getValue().isJsonArray() ? data.getValue().getAsJsonArray() : new JsonArray();
               for (JsonElement predictionJSON : array) {
                 if (predictionType == Focus.class) {
                   JsonObject addValue = predictionJSON.getAsJsonObject();

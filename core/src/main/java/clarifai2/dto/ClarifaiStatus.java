@@ -74,7 +74,6 @@ public abstract class ClarifaiStatus {
    */
   @Nullable public abstract String errorDetails();
 
-  ClarifaiStatus() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiStatus> {
     @Nullable @Override protected Deserializer<ClarifaiStatus> deserializer() {

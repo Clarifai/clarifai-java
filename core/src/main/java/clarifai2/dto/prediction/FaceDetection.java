@@ -1,6 +1,6 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.dto.input.image.Crop;
+import clarifai2.dto.input.Crop;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -19,9 +19,10 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @JsonAdapter(FaceDetection.Adapter.class)
 public abstract class FaceDetection extends Prediction {
 
+  FaceDetection() {} // AutoValue instances only
+
   @NotNull public abstract Crop boundingBox();
 
-  FaceDetection() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<FaceDetection> {
     @Nullable @Override protected Deserializer<FaceDetection> deserializer() {

@@ -2,8 +2,8 @@ package clarifai2.dto.input;
 
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
-import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -17,11 +17,15 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static clarifai2.dto.input.ClarifaiImage.of;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 import static clarifai2.internal.InternalUtil.toJson;
@@ -31,12 +35,98 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(ClarifaiInput.Adapter.class)
 public abstract class ClarifaiInput implements HasClarifaiID {
 
+  ClarifaiInput() {} // AutoValue instances only
+
   /**
    * @param image the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
     return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList(), null);
+  }
+
+  /**
+   * @param imageBytes the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull byte[] imageBytes) {
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
+  }
+
+  /**
+   * @param imageFile the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull File imageFile) {
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        of(InternalUtil.read(imageFile)),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
+  }
+
+  /**
+   * @param imageURL the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull String imageURL) {
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return forImage(result);
+  }
+
+  /**
+   * @param imageURL the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @NotNull public static ClarifaiInput forImage(@NotNull URL imageURL) {
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiURLImage(Crop.create(), imageURL),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
+  }
+
+  /**
+   * @param imageURL the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull String imageURL) {
+    final URL result;
+    try {
+      result = new URL(imageURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + imageURL, e);
+    }
+    return forVideo(result);
+  }
+
+  /**
+   * @param imageURL the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull URL imageURL) {
+    return new AutoValue_ClarifaiInput(null,
+        null,
+        new AutoValue_ClarifaiVideo(Crop.create(), imageURL),
+        new JsonObject(),
+        Collections.<Concept>emptyList(),
+        null
+    );
   }
 
   @Nullable public abstract Date createdAt();
@@ -65,7 +155,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   /**
    * @return the geo-point that this input is linked to
    */
- @Nullable public abstract PointF geo();
+  @Nullable public abstract PointF geo();
 
   /**
    * @param id the ID to assign to this input
@@ -105,7 +195,6 @@ public abstract class ClarifaiInput implements HasClarifaiID {
     return withConcepts(Arrays.asList(concepts));
   }
 
-  ClarifaiInput() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
@@ -118,13 +207,17 @@ public abstract class ClarifaiInput implements HasClarifaiID {
               .add("id", value.id());
           final JSONObjectBuilder data = new JSONObjectBuilder()
               .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
-              .add("image", toJson(gson, value.image(), ClarifaiImage.class))
               .add("metadata", value.metadata());
+          if (value.image() instanceof ClarifaiVideo) {
+            data.add("video", toJson(gson, value.image(), ClarifaiImage.class));
+          } else {
+            data.add("image", toJson(gson, value.image(), ClarifaiImage.class));
+          }
           if (value.geo() != null) {
             data.add("geo", new JSONObjectBuilder()
-                      .add("geo_point", new JSONObjectBuilder()
-                      .add("latitude", value.geo().x())
-                      .add("longitude", value.geo().y())));
+                .add("geo_point", new JSONObjectBuilder()
+                    .add("latitude", value.geo().x())
+                    .add("longitude", value.geo().y())));
           }
           if (value.createdAt() != null) {
             builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
@@ -156,13 +249,18 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           }
 
           final JsonObject metadata = data.has("metadata") ? data.getAsJsonObject("metadata") : new JsonObject();
-          final JsonObject geo = data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
-          final PointF geoPoint = geo.has("latitude") ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat()) : null;
+          final JsonObject geo =
+              data.has("geo") ? data.getAsJsonObject("geo").getAsJsonObject("geo_point") : new JsonObject();
+          final PointF geoPoint = geo.has("latitude")
+              ? PointF.at(geo.get("latitude").getAsFloat(), geo.get("longitude").getAsFloat())
+              : null;
 
           return new AutoValue_ClarifaiInput(
               root.get("id") == null ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
-              fromJson(gson, data.get("image"), ClarifaiImage.class),
+              data.has("video")
+                  ? fromJson(gson, data.get("video"), ClarifaiImage.class)
+                  : fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
               concepts,
               geoPoint

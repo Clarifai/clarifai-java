@@ -16,12 +16,20 @@ import org.jetbrains.annotations.Nullable;
 @AutoValue
 public abstract class Radius {
 
+  Radius() {} // AutoValue instances only
+
+  @NotNull public static Radius of(float value, @NotNull Unit unit) {
+    return new AutoValue_Radius(value, unit);
+  }
+
+  public abstract float value();
+  @NotNull public abstract Unit unit();
+
   public enum Unit {
     MILE("withinMiles"),
     KILOMETER("withinKilometers"),
     DEGREE("withinDegrees"),
-    RADIAN("withinRadians"),
-    ;
+    RADIAN("withinRadians"),;
 
     @NotNull private final String str;
 
@@ -34,14 +42,6 @@ public abstract class Radius {
     }
   }
 
-  @NotNull public static Radius of(float value, @NotNull Unit unit) {
-    return new AutoValue_Radius(value, unit);
-  }
-
-  public abstract float value();
-  @NotNull public abstract Unit unit();
-
-  Radius() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<Radius> {
     @Nullable @Override protected Serializer<Radius> serializer() {

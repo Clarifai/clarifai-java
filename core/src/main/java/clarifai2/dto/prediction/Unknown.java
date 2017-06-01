@@ -6,5 +6,7 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Unknown extends Prediction {
 
-  Unknown() {}; // make sure this is actually right (won't let anyone access this)
+  Unknown() {}
+
+  ; // make sure this is actually right (won't let anyone access this)
 }

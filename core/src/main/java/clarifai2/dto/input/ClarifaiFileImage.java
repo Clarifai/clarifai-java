@@ -1,4 +1,4 @@
-package clarifai2.dto.input.image;
+package clarifai2.dto.input;
 
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -21,6 +21,8 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(ClarifaiFileImage.Adapter.class)
 public abstract class ClarifaiFileImage extends ClarifaiImage {
 
+  ClarifaiFileImage() {} // AutoValue instances only
+
   @NotNull public final byte[] imageBytes() {
     // Return a defensive copy so that the underlying data can't be modified
     final byte[] bytes = bytes();
@@ -31,7 +33,6 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
 
   @SuppressWarnings("mutable") @NotNull abstract byte[] bytes();
 
-  ClarifaiFileImage() {} // AutoValue instances only
 
   static class Adapter extends JSONAdapterFactory<ClarifaiFileImage> {
     @Nullable @Override protected Serializer<ClarifaiFileImage> serializer() {

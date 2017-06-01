@@ -2,9 +2,9 @@ package clarifai2.test;
 
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.model.Action;
+import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.image.ClarifaiImage;
-import clarifai2.dto.input.image.Crop;
+import clarifai2.dto.input.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.ModelType;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
