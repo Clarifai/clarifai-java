@@ -477,33 +477,88 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     Assert.assertNotNull(colors.get().get(0).data().get(0).webSafeColorName());
   }
 
-  /*@Retry
-  @Test public void t20_testDemographicsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Region>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg"))).executeSync();
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).crop());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).ageAppearances());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).genderAppearances());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).multiculturalAppearances());
-  }
-
   @Retry
-  @Test public void t21_testApparelModel() {
-    assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/family.jpg")))
-    );
-  }
-
-  @Retry
-  @Test public void t22_testFocusModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Focus>>> focii = client.getDefaultModels().focusModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("https://samples.clarifai.com/demographics.jpg")))
+  @Test public void t26_testGeneralVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().generalVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
-    Assert.assertNotNull(focii.get());
-    Assert.assertNotNull(focii.get().get(0));
-    Assert.assertNotNull(focii.get().get(0).data());
-    Assert.assertNotNull(focii.get().get(0).data().get(0));
-    Assert.assertNotNull(focii.get().get(0).data().get(0).crop());
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t27_testFoodVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().foodVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t28_testTravelVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().travelVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t29_testNSFWVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().nsfwVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t30_testWeddingVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().weddingVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
+  }
+
+  @Retry
+  @Test public void t31_testApparelVideoModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().apparelVideoModel().predict()
+        .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
+        .executeSync();
+    Assert.assertNotNull(frames.get());
+    Assert.assertNotNull(frames.get().get(0));
+    Assert.assertNotNull(frames.get().get(0).data());
+    Assert.assertNotNull(frames.get().get(0).data().get(0));
+    Assert.assertNotNull(frames.get().get(0).data().get(0).index());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).time());
+    Assert.assertNotNull(frames.get().get(0).data().get(0).concepts());
   }
 
   @Test public void errorsExposedToUser() {
@@ -585,18 +640,6 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
-  @Ignore
-  @Test
-  public void testCreateModel_multi_lang() {
-    final String modelID = "creatingModel" + System.nanoTime();
-    assertSuccess(client.createModel(modelID).withOutputInfo(
-        ConceptOutputInfo.forConcepts(
-            Concept.forID("foo")
-        ).withLanguage("zh")
-    ));
-  }
-
-  @Retry
   @Test
   public void testCreateModel_multi_lang() {
     final String modelID = "creatingModel" + System.nanoTime();

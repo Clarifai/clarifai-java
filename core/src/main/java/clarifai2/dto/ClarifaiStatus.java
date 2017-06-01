@@ -36,15 +36,6 @@ public abstract class ClarifaiStatus {
     );
   }
 
-  @NotNull public static ClarifaiStatus mixedSuccess() {
-    return new AutoValue_ClarifaiStatus(
-        false,
-        10010,
-        "Mixed Success",
-        null
-    );
-  }
-
   @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
     return new AutoValue_ClarifaiStatus(
         true,
