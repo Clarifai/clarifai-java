@@ -142,7 +142,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t01c_addInputWithMetadata() {
-    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
+    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(PENGUIN_IMAGE_URL)
         .withID("inputWithMetadata")
         .withMetadata(new JSONObjectBuilder()
             .add("foo", "bar")

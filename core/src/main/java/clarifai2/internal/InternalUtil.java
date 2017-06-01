@@ -1,6 +1,5 @@
 package clarifai2.internal;
 
-import clarifai2.Func1;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.dto.PointF;
 import clarifai2.exception.ClarifaiException;
@@ -22,8 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public final class InternalUtil {
@@ -95,14 +92,6 @@ public final class InternalUtil {
     return false;
   }
 
-  @NotNull public static <T> List<T> copyArray(@NotNull final JsonArray in, @NotNull final Func1<JsonElement, T> mapper) {
-    final List<T> out = new ArrayList<>(in.size());
-    for (final JsonElement element : in) {
-      out.add(mapper.call(element == null ? JsonNull.INSTANCE : element));
-    }
-    return out;
-  }
-
   @SuppressWarnings("unchecked") @NotNull public static <E extends JsonElement> E jsonDeepCopy(@NotNull E in) {
     if (in instanceof JsonObject) {
       final JsonObject out = new JsonObject();
@@ -158,11 +147,6 @@ public final class InternalUtil {
 
   @NotNull public static <T> JsonElement toJson(@NotNull final Gson gson, @Nullable T obj, @NotNull TypeToken<T> type) {
     return coerceJsonNull(gson.toJsonTree(obj, type.getType()));
-  }
-
-  @Contract("null, null -> true; null, !null -> false; !null, null -> false")
-  public static <T> boolean nullSafeEquals(@Nullable T o1, @Nullable T o2) {
-    return o1 == null ? o2 == null : o1.equals(o2);
   }
 
   @NotNull
