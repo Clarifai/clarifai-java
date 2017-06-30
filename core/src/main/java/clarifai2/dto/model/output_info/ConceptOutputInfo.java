@@ -38,7 +38,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
     return new AutoValue_ConceptOutputInfo(concepts, false, false, null);
   }
 
-  @NotNull public abstract List<Concept> concepts();
+  @Nullable public abstract List<Concept> concepts();
 
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
 
@@ -103,13 +103,19 @@ public abstract class ConceptOutputInfo extends OutputInfo {
         ) {
           final JsonObject root = json.getAsJsonObject();
 
-          final List<Concept> concepts = isJsonNull(root.getAsJsonObject("data"))
+          JsonObject data = root.getAsJsonObject("data");
+
+          List<Concept> concepts = isJsonNull(data)
               ? Collections.<Concept>emptyList()
               : fromJson(
                   gson,
-                  root.getAsJsonObject("data").getAsJsonArray("concepts"),
+                  data.getAsJsonArray("concepts"),
                   new TypeToken<List<Concept>>() {}
               );
+          if (concepts == null) {
+            concepts = Collections.<Concept>emptyList();
+          }
+
           boolean areConceptsMutuallyExclusive = false;
           boolean isEnvironmentClosed = false;
           String language = null;

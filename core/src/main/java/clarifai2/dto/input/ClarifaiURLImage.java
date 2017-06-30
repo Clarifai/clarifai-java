@@ -21,12 +21,29 @@ import static clarifai2.internal.InternalUtil.toJson;
 @AutoValue
 @JsonAdapter(ClarifaiURLImage.Adapter.class)
 public abstract class ClarifaiURLImage extends ClarifaiImage {
+  @Nullable private Boolean allowDuplicateUrl = null;
 
   ClarifaiURLImage() {} // AutoValue instances only
 
   @NotNull public abstract URL url();
 
   @NotNull @Override public abstract ClarifaiURLImage withCrop(@NotNull Crop crop);
+
+  /**
+   * @param allowDuplicateUrl should allow duplicate url
+   * @return a {@link ClarifaiInput}
+   */
+  @NotNull public final ClarifaiURLImage withAllowDuplicateUrl(@NotNull boolean allowDuplicateUrl) {
+    this.allowDuplicateUrl = allowDuplicateUrl;
+    return this;
+  }
+
+  /**
+   * @return should allow duplicate url
+   */
+  @Nullable public Boolean allowDuplicateUrl() {
+    return allowDuplicateUrl;
+  }
 
 
   static class Adapter extends JSONAdapterFactory<ClarifaiURLImage> {
@@ -39,8 +56,8 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
           }
           return new JSONObjectBuilder()
               .add("url", value.url().toString())
-              .add("crop", toJson(gson, value.crop(), Crop.class))
-              .build();
+              .addIfNotNull("crop", toJson(gson, value.crop(), Crop.class))
+              .addIfNotNull("allow_duplicate_url", value.allowDuplicateUrl()).build();
         }
       };
     }

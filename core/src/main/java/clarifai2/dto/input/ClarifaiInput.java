@@ -196,7 +196,6 @@ public abstract class ClarifaiInput implements HasClarifaiID {
     return withConcepts(Arrays.asList(concepts));
   }
 
-
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
       return new Serializer<ClarifaiInput>() {
@@ -221,7 +220,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
                     .add("longitude", value.geo().y())));
           }
           if (value.createdAt() != null) {
-            builder.add("created_at", toJson(gson, value.createdAt(), Date.class));
+            builder.addIfNotNull("created_at", toJson(gson, value.createdAt(), Date.class));
           }
           builder.add("data", data);
           return builder.build();
