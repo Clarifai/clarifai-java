@@ -3,9 +3,10 @@ package clarifai2.api.request.model;
 import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
@@ -24,49 +25,44 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public final class PredictRequest<PREDICTION extends Prediction>
+/*
+ * NOTE: This class is a part of a future api.  Details of both the interface and
+ * implementation may change!
+ */
+
+public final class SelectConceptsRequest<PREDICTION extends Prediction>
     extends ClarifaiRequest.Builder<List<ClarifaiOutput<PREDICTION>>> {
 
   @NotNull private final String modelID;
-  @NotNull private final List<ClarifaiInput> inputData = new ArrayList<>();
-
+  @NotNull private final List<ClarifaiURLImage> images = new ArrayList<>();
+  @NotNull private final List<Concept> concepts = new ArrayList<>();
   @Nullable private ModelVersion version = null;
-  @Nullable private String language = null;
 
-  @Nullable private Double minValue = null;
-  @Nullable private Integer maxConcepts = null;
-
-  public PredictRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
+  public SelectConceptsRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
     this.modelID = modelID;
   }
 
-  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull ClarifaiInput... inputData) {
-    return withInputs(Arrays.asList(inputData));
+  @NotNull public SelectConceptsRequest withImages(@NotNull ClarifaiURLImage... images) {
+    return withImages(Arrays.asList(images));
   }
 
-  @NotNull public PredictRequest<PREDICTION> withInputs(@NotNull Collection<ClarifaiInput> inputData) {
-    this.inputData.addAll(inputData);
+  @NotNull public SelectConceptsRequest withImages(@NotNull Collection<ClarifaiURLImage> images) {
+    this.images.addAll(images);
     return this;
   }
 
-  @NotNull public PredictRequest<PREDICTION> withVersion(@NotNull ModelVersion version) {
+  @NotNull public SelectConceptsRequest withConcepts(@NotNull Concept... concepts) {
+    return withConcepts(Arrays.asList(concepts));
+  }
+
+  @NotNull public SelectConceptsRequest withConcepts(@NotNull Collection<Concept> concepts) {
+    this.concepts.addAll(concepts);
+    return this;
+  }
+
+  @NotNull public SelectConceptsRequest withVersion(@NotNull ModelVersion version) {
     this.version = version;
-    return this;
-  }
-
-  @NotNull public PredictRequest<PREDICTION> withLanguage(@NotNull String language) {
-    this.language = language;
-    return this;
-  }
-
-  @NotNull public final PredictRequest<PREDICTION> withMinValue(@Nullable Double minValue) {
-    this.minValue = minValue;
-    return this;
-  }
-
-  @NotNull public final PredictRequest<PREDICTION> withMaxConcepts(@Nullable Integer maxConcepts) {
-    this.maxConcepts = maxConcepts;
     return this;
   }
 
@@ -75,25 +71,28 @@ public final class PredictRequest<PREDICTION extends Prediction>
       @NotNull @Override public Request httpRequest() {
         final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder()
             .add("inputs", new JSONArrayBuilder()
-                .addAll(inputData, new Func1<ClarifaiInput, JsonElement>() {
-                  @NotNull @Override public JsonElement call(@NotNull ClarifaiInput model) {
-                    return client.gson.toJsonTree(model);
+                .addAll(images, new Func1<ClarifaiURLImage, JsonElement>() {
+                  @NotNull @Override public JsonElement call(@NotNull ClarifaiURLImage image) {
+                    return new JSONObjectBuilder()
+                        .add("data", new JSONObjectBuilder()
+                            .add("image", client.gson.toJsonTree(image)))
+                        .build();
                   }
                 }));
-        if (language != null || minValue != null || maxConcepts != null) {
-          bodyBuilder.add("model", new JSONObjectBuilder()
-              .add("output_info", new JSONObjectBuilder()
-                  .add("output_config", new JSONObjectBuilder()
-                      .addIfNotNull("language", language)
-                      .addIfNotNull("min_value", minValue)
-                      .addIfNotNull("max_concepts", maxConcepts)
-                  )));
-        }
+        bodyBuilder.add("model", new JSONObjectBuilder()
+            .add("output_info", new JSONObjectBuilder()
+                .add("output_config", new JSONObjectBuilder()
+                    .add("select_concepts", new JSONArrayBuilder()
+                        .addAll(concepts, new Func1<Concept, JsonElement>() {
+                          @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                            return client.gson.toJsonTree(concept);
+                          }
+                        })))));
         final JsonObject body = bodyBuilder.build();
         if (version == null) {
           return postRequest("/v2/models/" + modelID + "/outputs", body);
         }
-        return postRequest("/v2/models/" + modelID + "/versions/" + version.id() + "/outputs", body);
+        return postRequest("/v2/models/" + modelID + "/versions/" + version.id() + "/output", body);
       }
 
       @NotNull @Override public JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>> unmarshaler() {
@@ -111,3 +110,4 @@ public final class PredictRequest<PREDICTION extends Prediction>
     };
   }
 }
+

@@ -4,6 +4,8 @@ import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
+import clarifai2.api.request.feedback.AddModelFeedbackRequest;
+import clarifai2.api.request.feedback.AddSearchesFeedbackRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
@@ -27,8 +29,10 @@ import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
+import clarifai2.api.request.model.MultiModelPredictRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
+import clarifai2.api.request.model.SelectConceptsRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.DefaultModels;
@@ -317,6 +321,20 @@ public interface ClarifaiClient {
    * @return a request builder that, when executed, will predict upon your model
    */
   @NotNull PredictRequest<Prediction> predict(@NotNull String modelID);
+
+  /**
+   * Adds feedback for the searches in order to improve its future performance.
+   *
+   * @return a request builder that, when executed, adds feedback for the searches
+   */
+  @NotNull AddSearchesFeedbackRequest addSearchesFeedback();
+
+  /**
+   * Adds feedback to the model in order to improve its future performance.
+   *
+   * @return a request builder that, when executed, adds feedback to the model
+   */
+  @NotNull AddModelFeedbackRequest addModelFeedback();
 
   /**
    * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.

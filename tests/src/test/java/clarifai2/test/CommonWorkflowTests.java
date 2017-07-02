@@ -25,6 +25,7 @@ import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -582,7 +583,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   }
 
   @Test public void testSyncNetworkExceptions() throws ExecutionException, InterruptedException {
-    final ClarifaiResponse<List<Model<?>>> badResponse = new ClarifaiBuilder(appID, appSecret)
+    final ClarifaiResponse<List<Model<?>>> badResponse = new ClarifaiBuilder(apiKey)
         .baseURL(baseURL)
         .client(new OkHttpClient.Builder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -613,6 +614,8 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     logger.debug(details.errorDetails());
   }
 
+  // This test is now slightly misleading, but points out that we need to stop users from using this method if they have
+  // set an API key (no reason to get a token if you already have a key).
   @Test public void testBuildClientAsync() throws InterruptedException, ExecutionException {
     final Future<ClarifaiClient> futureClient = new ClarifaiBuilder(appID, appSecret)
         .baseURL(baseURL)
@@ -640,6 +643,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     ));
   }
 
+  @Retry
   @Test
   public void testCreateModel_multi_lang() {
     final String modelID = "creatingModel" + System.nanoTime();

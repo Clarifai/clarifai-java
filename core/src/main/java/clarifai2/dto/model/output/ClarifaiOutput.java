@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
@@ -40,7 +41,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
 
   @NotNull public abstract Model<PREDICTION> model();
 
-  @NotNull public abstract ClarifaiInput input();
+  @Nullable public abstract ClarifaiInput input();
 
   @NotNull public abstract List<PREDICTION> data();
 
@@ -99,7 +100,7 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
               root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               fromJson(gson, root.get("model"), new TypeToken<Model<Prediction>>() {}),
-              fromJson(gson, root.get("input"), ClarifaiInput.class),
+              isJsonNull(root.get("input")) ? null : fromJson(gson, root.get("input"), ClarifaiInput.class),
               allPredictions,
               fromJson(gson, root.get("status"), ClarifaiStatus.class)
           );

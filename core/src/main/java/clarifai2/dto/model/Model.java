@@ -26,6 +26,7 @@ import java.util.List;
 
 import static clarifai2.internal.InternalUtil.clientInstance;
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -223,7 +224,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())
               .createdAt(fromJson(gson, root.get("created_at"), Date.class))
-              .appID(root.get("app_id") == null ? null : root.get("app_id").getAsString())
+              .appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
               .modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
               ._outputInfo(fromJson(gson, root.get("output_info"), OutputInfo.class))
               .client(clientInstance(gson))

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static clarifai2.internal.InternalUtil.fromJson;
+import static clarifai2.internal.InternalUtil.isJsonNull;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -37,7 +38,7 @@ public abstract class ConceptOutputInfo extends OutputInfo {
     return new AutoValue_ConceptOutputInfo(concepts, false, false, null);
   }
 
-  @NotNull public abstract List<Concept> concepts();
+  @Nullable public abstract List<Concept> concepts();
 
   @NotNull public abstract boolean areConceptsMutuallyExclusive();
 
@@ -102,11 +103,19 @@ public abstract class ConceptOutputInfo extends OutputInfo {
         ) {
           final JsonObject root = json.getAsJsonObject();
 
-          final List<Concept> concepts = root.getAsJsonObject("data") == null ? Collections.<Concept>emptyList() : fromJson(
+          JsonObject data = root.getAsJsonObject("data");
+
+          List<Concept> concepts = isJsonNull(data)
+              ? Collections.<Concept>emptyList()
+              : fromJson(
                   gson,
-                  root.getAsJsonObject("data").getAsJsonArray("concepts"),
+                  data.getAsJsonArray("concepts"),
                   new TypeToken<List<Concept>>() {}
               );
+          if (concepts == null) {
+            concepts = Collections.<Concept>emptyList();
+          }
+
           boolean areConceptsMutuallyExclusive = false;
           boolean isEnvironmentClosed = false;
           String language = null;

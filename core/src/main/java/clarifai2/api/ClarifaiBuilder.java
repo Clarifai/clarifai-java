@@ -3,6 +3,7 @@ package clarifai2.api;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.util.List;
@@ -13,9 +14,14 @@ import java.util.concurrent.Future;
 
 public final class ClarifaiBuilder {
 
-  @NotNull final String appID;
+  @Nullable
+  final String appID;
 
-  @NotNull final String appSecret;
+  @Nullable
+  final String appSecret;
+
+  @Nullable
+  final String apiKey;
 
   @NotNull
   OkHttpClient client = new OkHttpClient();
@@ -26,6 +32,13 @@ public final class ClarifaiBuilder {
   public ClarifaiBuilder(@NotNull String appID, @NotNull String appSecret) {
     this.appID = appID;
     this.appSecret = appSecret;
+    this.apiKey = null;
+  }
+
+  public ClarifaiBuilder(@NotNull String apiKey) {
+    this.apiKey = apiKey;
+    this.appID = null;
+    this.appSecret = null;
   }
 
   @NotNull
@@ -80,13 +93,13 @@ public final class ClarifaiBuilder {
    */
   @NotNull
   public Future<ClarifaiClient> build() {
-    final ExecutorService executor = Executors.newFixedThreadPool(1);
-    final Future<ClarifaiClient> future = executor.submit(new Callable<ClarifaiClient>() {
-      @Override public ClarifaiClient call() throws Exception {
-        return new ClarifaiClientImpl(ClarifaiBuilder.this);
-      }
-    });
-    executor.shutdown();
-    return future;
-  }
+      final ExecutorService executor = Executors.newFixedThreadPool(1);
+      final Future<ClarifaiClient> future = executor.submit(new Callable<ClarifaiClient>() {
+        @Override public ClarifaiClient call() throws Exception {
+          return new ClarifaiClientImpl(ClarifaiBuilder.this);
+        }
+      });
+      executor.shutdown();
+      return future;
+    }
 }
