@@ -50,6 +50,41 @@ public final class JSONObjectBuilder {
     return this;
   }
 
+  @NotNull public JSONObjectBuilder addIfNotNull(@NotNull String name, @Nullable JsonElement json) {
+    if (json != null) {
+      return add(name, json);
+    }
+    return this;
+  }
+
+  @NotNull public JSONObjectBuilder addIfNotNull(@NotNull String name, @Nullable String value) {
+    if (value != null) {
+      return add(name, value);
+    }
+    return this;
+  }
+
+  @NotNull public JSONObjectBuilder addIfNotNull(@NotNull String name, @Nullable Number value) {
+    if (value != null) {
+      return add(name, value);
+    }
+    return this;
+  }
+
+  @NotNull public JSONObjectBuilder addIfNotNull(@NotNull String name, @Nullable Boolean value) {
+    if (value != null) {
+      return add(name, value);
+    }
+    return this;
+  }
+
+  @NotNull public JSONObjectBuilder addIfNotNull(@NotNull String name, @Nullable Character value) {
+    if (value != null) {
+      return add(name, value);
+    }
+    return this;
+  }
+
   @NotNull public JsonObject build() {
     return inner;
   }

@@ -53,6 +53,7 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
   @NotNull final String appID = EnvVar.CLARIFAI_APP_ID.value();
   @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
+  @NotNull final String apiKey = EnvVar.CLARIFAI_API_KEY.value();
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
 
   @NotNull final ClarifaiClient client = new ClarifaiBuilder(appID, appSecret)
@@ -65,6 +66,21 @@ public abstract class BaseClarifaiAPITest {
           .build()
       )
       .buildSync();
+
+//  @NotNull final ClarifaiClient client = makeClient(apiKey);
+
+  @NotNull public ClarifaiClient makeClient(String apiKey) {
+    return new ClarifaiBuilder(apiKey)
+        .baseURL(baseURL)
+        .client(new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(new HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC))
+            .build()
+        )
+        .buildSync();
+  }
 
   static void assertFailure(@NotNull ClarifaiRequest<?> request) {
     final ClarifaiResponse<?> response = request.executeSync();

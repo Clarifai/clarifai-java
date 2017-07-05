@@ -39,11 +39,14 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   @NotNull
   public final HttpUrl baseURL;
 
-  @NotNull
+  @Nullable
   private final String appID;
 
-  @NotNull
+  @Nullable
   private final String appSecret;
+
+  @Nullable
+  private final String apiKey;
 
   @NotNull
   private final OkHttpClient tokenRefreshHTTPClient;
@@ -54,8 +57,15 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   private boolean closed = false;
 
   BaseClarifaiClient(@NotNull ClarifaiBuilder builder) {
-    this.appID = notNullOrThrow(builder.appID, "appID == null");
-    this.appSecret = notNullOrThrow(builder.appSecret, "appSecret == null");
+    if (builder.apiKey == null) {
+      this.appID = notNullOrThrow(builder.appID, "appID cannot be null if apiKey is null");
+      this.appSecret = notNullOrThrow(builder.appSecret, "appSecret cannot be null if apiKey is null");
+      this.apiKey = null;
+    } else {
+      this.apiKey = builder.apiKey;
+      this.appID = null;
+      this.appSecret = null;
+    }
 
     this.gson = vendGson();
 
@@ -66,27 +76,28 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     this.httpClient = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
       @Override
       public Response intercept(Chain chain) throws IOException {
-        final Request.Builder requestBuilder = chain.request().newBuilder()
-            .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
-        final ClarifaiToken credential = refreshIfNeeded();
-        if (credential != null) {
-          requestBuilder.addHeader("Authorization", "Bearer " + credential.getAccessToken());
+        if (apiKey == null) {
+          final Request.Builder requestBuilder = chain.request().newBuilder()
+              .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
+          final ClarifaiToken credential = refreshIfNeeded();
+          if (credential != null) {
+            requestBuilder.addHeader("Authorization", "Bearer " + credential.getAccessToken());
+          }
+          return chain.proceed(requestBuilder.build());
+        } else {
+          final Request.Builder requestBuilder = chain.request().newBuilder()
+              .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
+          requestBuilder.addHeader("Authorization", "Key " + apiKey);
+          return chain.proceed(requestBuilder.build());
         }
-        return chain.proceed(requestBuilder.build());
       }
     }).build();
 
     this.tokenRefreshHTTPClient = unmodifiedClient.newBuilder().build();
 
-    refreshIfNeeded();
-  }
-
-  @NotNull
-  private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {
-    if (check == null) {
-      throw new IllegalArgumentException(errorMsg);
+    if (apiKey == null) {
+      refreshIfNeeded();
     }
-    return check;
   }
 
   private static void closeOkHttpClient(@NotNull OkHttpClient client) {
@@ -159,6 +170,14 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
       }
       return null;
     }
+  }
+
+  @NotNull
+  private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {
+    if (check == null) {
+      throw new IllegalArgumentException(errorMsg);
+    }
+    return check;
   }
 
   @NotNull

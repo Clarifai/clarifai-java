@@ -1,10 +1,13 @@
 package clarifai2.dto.model;
 
 import clarifai2.api.BaseClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.exception.ClarifaiException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public final class DefaultModels {
@@ -29,6 +32,9 @@ public final class DefaultModels {
   @NotNull private final AtomicReference<VideoModel> travelVideo;
   @NotNull private final AtomicReference<VideoModel> weddingVideo;
   @NotNull private final AtomicReference<VideoModel> apparelVideo;
+
+  private final int maxGetModelAttempts = 20;
+  private final int insufficientScopesStatusCode = 11007;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -73,12 +79,22 @@ public final class DefaultModels {
 
   @NotNull
   private <M extends Model<?>> M update(@NotNull final BaseClarifaiClient client, @NotNull final M unupdatedModel) {
-    @SuppressWarnings("unchecked") final M model =
-        (M) client.getModelByID(unupdatedModel.id()).executeSync().getOrNull();
-    if (model == null) {
-      return update(client, unupdatedModel);
+    for (int i = 0; i < maxGetModelAttempts; i++) {
+      ClarifaiResponse<Model<?>> response = client.getModelByID(unupdatedModel.id()).executeSync();
+      if (response.getStatus().statusCode() == insufficientScopesStatusCode) {
+        return unupdatedModel;
+      }
+      @SuppressWarnings("unchecked") final M model = (M) response.getOrNull();
+      if (model != null) {
+        return model;
+      }
+      try {
+        TimeUnit.SECONDS.sleep(1);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
-    return model;
+    throw new ClarifaiException("Maximum attempts reached of getting a default model.");
   }
 
   @NotNull public ConceptModel generalModel() { return general.get(); }

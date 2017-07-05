@@ -45,6 +45,10 @@ public final class InternalUtil {
     return in;
   }
 
+  @Contract("null -> true") public static boolean isJsonNull(@Nullable JsonElement in) {
+    return in == null || in.isJsonNull();
+  }
+
   @NotNull public static JsonElement coerceJsonNull(@Nullable JsonElement in) {
     return in == null ? JsonNull.INSTANCE : in;
   }
