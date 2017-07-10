@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 import static clarifai2.internal.InternalUtil.fromJson;
@@ -240,6 +242,8 @@ public interface ClarifaiRequest<RESULT> {
 
     @NotNull private final DeserializedRequest<T> request;
 
+    @NotNull final ExecutorService executor = Executors.newFixedThreadPool(1);
+
     Impl(
         @NotNull BaseClarifaiClient client,
         @NotNull DeserializedRequest<T> request
@@ -299,27 +303,23 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @Override public void executeAsync(@Nullable final Callback<T> callback) {
-      try {
-        client.httpClient.dispatcher().executorService().invokeAny(Collections.singletonList(new Callable<Void>() {
-          @Override public Void call() throws Exception {
-            final ClarifaiResponse<T> response = executeSync();
-            if (callback != null) {
-              if (response.isSuccessful()) {
-                callback.onClarifaiResponseSuccess(response.get());
+      executor.submit(new Callable<Void>() {
+        @Override public Void call() throws Exception {
+          final ClarifaiResponse<T> response = executeSync();
+          if (callback != null) {
+            if (response.isSuccessful()) {
+              callback.onClarifaiResponseSuccess(response.get());
+            } else {
+              if (response.getStatus().networkErrorOccurred()) {
+                callback.onClarifaiResponseNetworkError(new IOException(response.getStatus().errorDetails()));
               } else {
-                if (response.getStatus().networkErrorOccurred()) {
-                  callback.onClarifaiResponseNetworkError(new IOException(response.getStatus().errorDetails()));
-                } else {
-                  callback.onClarifaiResponseUnsuccessful(response.responseCode());
-                }
+                callback.onClarifaiResponseUnsuccessful(response.responseCode());
               }
             }
-            return null;
           }
-        }));
-      } catch (InterruptedException | ExecutionException e) {
-        e.printStackTrace();
-      }
+          return null;
+        }
+      });
     }
   }
 }
