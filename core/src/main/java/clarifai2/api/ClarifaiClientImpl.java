@@ -4,8 +4,8 @@ import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
-import clarifai2.api.request.feedback.AddModelFeedbackRequest;
-import clarifai2.api.request.feedback.AddSearchesFeedbackRequest;
+import clarifai2.api.request.feedback.ModelFeedbackRequest;
+import clarifai2.api.request.feedback.SearchesFeedbackRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
@@ -30,10 +30,8 @@ import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
-import clarifai2.api.request.model.MultiModelPredictRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
-import clarifai2.api.request.model.SelectConceptsRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.prediction.Prediction;
@@ -203,11 +201,11 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new PredictRequest<>(this, modelID);
   }
 
-  @NotNull @Override public AddSearchesFeedbackRequest addSearchesFeedback() {
-    return new AddSearchesFeedbackRequest(this);
+  @NotNull @Override public SearchesFeedbackRequest searchesFeedback() {
+    return new SearchesFeedbackRequest(this);
   }
 
-  @NotNull @Override public AddModelFeedbackRequest addModelFeedback() {
-    return new AddModelFeedbackRequest(this);
+  @NotNull @Override public ModelFeedbackRequest modelFeedback(@NotNull String modelID) {
+    return new ModelFeedbackRequest(this, modelID);
   }
 }

@@ -12,7 +12,7 @@ import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class AddSearchesFeedbackRequest extends ClarifaiRequest.Builder<JsonNull> {
+public final class SearchesFeedbackRequest extends ClarifaiRequest.Builder<JsonNull> {
   @Nullable private String id;
 
   private String endUserId;
@@ -20,31 +20,31 @@ public final class AddSearchesFeedbackRequest extends ClarifaiRequest.Builder<Js
   private String eventType;
   private String searchId;
 
-  public AddSearchesFeedbackRequest(@NotNull final BaseClarifaiClient client) {
+  public SearchesFeedbackRequest(@NotNull final BaseClarifaiClient client) {
     super(client);
   }
 
-  @NotNull public AddSearchesFeedbackRequest withId(@Nullable String id) {
+  @NotNull public SearchesFeedbackRequest withId(@Nullable String id) {
     this.id = id;
     return this;
   }
 
-  @NotNull public AddSearchesFeedbackRequest withEndUserId(@NotNull String endUserId) {
+  @NotNull public SearchesFeedbackRequest withEndUserId(@NotNull String endUserId) {
     this.endUserId = endUserId;
     return this;
   }
 
-  @NotNull public AddSearchesFeedbackRequest withSessionId(@NotNull String sessionId) {
+  @NotNull public SearchesFeedbackRequest withSessionId(@NotNull String sessionId) {
     this.sessionId = sessionId;
     return this;
   }
 
-  @NotNull public AddSearchesFeedbackRequest withEventType(@NotNull String eventType) {
+  @NotNull public SearchesFeedbackRequest withEventType(@NotNull String eventType) {
     this.eventType = eventType;
     return this;
   }
 
-  @NotNull public AddSearchesFeedbackRequest withSearchId(@NotNull String searchId) {
+  @NotNull public SearchesFeedbackRequest withSearchId(@NotNull String searchId) {
     this.searchId = searchId;
     return this;
   }
@@ -59,7 +59,6 @@ public final class AddSearchesFeedbackRequest extends ClarifaiRequest.Builder<Js
                 )
             )
             .build();
-        System.out.println(body);
         return postRequest("/v2/searches/feedback/", body);
       }
 
