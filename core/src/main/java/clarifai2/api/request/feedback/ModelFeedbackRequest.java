@@ -22,8 +22,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public final class AddModelFeedbackRequest extends ClarifaiRequest.Builder<JsonNull> {
-  @Nullable private String id;
+public final class ModelFeedbackRequest extends ClarifaiRequest.Builder<JsonNull> {
+  @Nullable private String modelID;
+  @Nullable private String inputID;
   @Nullable private String imageUrl;
   @NotNull private final List<ConceptFeedback> concepts = new ArrayList<>();
   @NotNull private final List<RegionFeedback> regions = new ArrayList<>();
@@ -34,59 +35,60 @@ public final class AddModelFeedbackRequest extends ClarifaiRequest.Builder<JsonN
   @Nullable private String eventType;
   @Nullable private String outputId;
 
-  public AddModelFeedbackRequest(@NotNull final BaseClarifaiClient client) {
+  public ModelFeedbackRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
+    this.modelID = modelID;
   }
 
-  @NotNull public AddModelFeedbackRequest withId(@Nullable String id) {
-    this.id = id;
+  @NotNull public ModelFeedbackRequest withInputId(@NotNull String inputID) {
+    this.inputID = inputID;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withImageUrl(@Nullable String imageUrl) {
+  @NotNull public ModelFeedbackRequest withImageUrl(@NotNull String imageUrl) {
     this.imageUrl = imageUrl;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withConcepts(@NotNull ConceptFeedback... concepts) {
+  @NotNull public ModelFeedbackRequest withConcepts(@NotNull ConceptFeedback... concepts) {
     return withConcepts(Arrays.asList(concepts));
   }
 
-  @NotNull public AddModelFeedbackRequest withConcepts(@NotNull Collection<ConceptFeedback> concepts) {
+  @NotNull public ModelFeedbackRequest withConcepts(@NotNull Collection<ConceptFeedback> concepts) {
     this.concepts.addAll(concepts);
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withRegions(@NotNull RegionFeedback... regions) {
+  @NotNull public ModelFeedbackRequest withRegions(@NotNull RegionFeedback... regions) {
     return withRegions(Arrays.asList(regions));
   }
 
-  @NotNull public AddModelFeedbackRequest withRegions(@NotNull Collection<RegionFeedback> regions) {
+  @NotNull public ModelFeedbackRequest withRegions(@NotNull Collection<RegionFeedback> regions) {
     this.regions.addAll(regions);
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withVersion(@NotNull ModelVersion version) {
+  @NotNull public ModelFeedbackRequest withVersion(@NotNull ModelVersion version) {
     this.version = version;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withEndUserId(@NotNull String endUserId) {
+  @NotNull public ModelFeedbackRequest withEndUserId(@NotNull String endUserId) {
     this.endUserId = endUserId;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withSessionId(@NotNull String sessionId) {
+  @NotNull public ModelFeedbackRequest withSessionId(@NotNull String sessionId) {
     this.sessionId = sessionId;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withEventType(@NotNull String eventType) {
+  @NotNull public ModelFeedbackRequest withEventType(@NotNull String eventType) {
     this.eventType = eventType;
     return this;
   }
 
-  @NotNull public AddModelFeedbackRequest withOutputId(@NotNull String outputId) {
+  @NotNull public ModelFeedbackRequest withOutputId(@NotNull String outputId) {
     this.outputId = outputId;
     return this;
   }
@@ -105,16 +107,16 @@ public final class AddModelFeedbackRequest extends ClarifaiRequest.Builder<JsonN
         }
         final JsonObject body = new JSONObjectBuilder()
             .add("input", new JSONObjectBuilder()
-                .add("id", id)
+                .add("id", inputID)
                 .add("data", dataJsonObject.build())
                 .add("feedback_info", makeFeedbackInfoJsonObject()
                 )
             )
             .build();
         if (version == null) {
-          return postRequest("/v2/models/" + id + "/feedback", body);
+          return postRequest("/v2/models/" + modelID + "/feedback", body);
         }
-        return postRequest("/v2/models/" + id + "/versions/" + version.id() + "/feedback", body);
+        return postRequest("/v2/models/" + modelID + "/versions/" + version.id() + "/feedback", body);
       }
 
       @NotNull private JSONArrayBuilder makeConceptsJsonArray() {

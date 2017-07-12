@@ -1,6 +1,6 @@
 package clarifai2.test;
 
-import clarifai2.api.request.feedback.AddModelFeedbackRequest;
+import clarifai2.api.request.feedback.ModelFeedbackRequest;
 
 import clarifai2.api.request.feedback.Feedback;
 import clarifai2.dto.feedback.ConceptFeedback;
@@ -11,11 +11,11 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-public class AddModelFeedbackTests extends BaseClarifaiAPITest {
+public class ModelFeedbackTests extends BaseClarifaiAPITest {
 
-  @Test public void shouldFailWhenInvalidId() {
-    AddModelFeedbackRequest request = client.addModelFeedback()
-        .withId("@invalidId")
+  @Test public void shouldFailWhenInvalidModelId() {
+    ModelFeedbackRequest request = client.modelFeedback("@invalidModelId")
+        .withInputId("@inputId")
         .withImageUrl("@imageUrl")
         .withConcepts(
             ConceptFeedback.forIdAndValue("@conceptFeedbackId1", true),
@@ -28,9 +28,9 @@ public class AddModelFeedbackTests extends BaseClarifaiAPITest {
     assertFailure(request);
   }
 
-  @Test public void shouldSucceedWhenValid() {
-    AddModelFeedbackRequest request = client.addModelFeedback()
-        .withId(client.getDefaultModels().travelModel().id())
+  @Test public void shouldSucceedWhenValidRequest() {
+    ModelFeedbackRequest request = client.modelFeedback(client.getDefaultModels().travelModel().id())
+        .withInputId("@inputId")
         .withImageUrl(FAMILY_IMAGE_URL)
         .withConcepts(
             ConceptFeedback.forIdAndValue("car", true),
@@ -43,9 +43,9 @@ public class AddModelFeedbackTests extends BaseClarifaiAPITest {
     assertSuccess(request);
   }
 
-  @Test public void shouldSucceedWhenValidRegions() {
-    AddModelFeedbackRequest request = client.addModelFeedback()
-        .withId(client.getDefaultModels().travelModel().id())
+  @Test public void shouldSucceedWhenValidRequestWithRegions() {
+    ModelFeedbackRequest request = client.modelFeedback(client.getDefaultModels().travelModel().id())
+        .withInputId("@inputId")
         .withImageUrl(FAMILY_IMAGE_URL)
         .withRegions(
             RegionFeedback.make(
@@ -60,9 +60,9 @@ public class AddModelFeedbackTests extends BaseClarifaiAPITest {
     assertSuccess(request);
   }
 
-  @Test public void shouldSucceedWhenValidFace() {
-    AddModelFeedbackRequest request = client.addModelFeedback()
-        .withId(client.getDefaultModels().travelModel().id())
+  @Test public void shouldSucceedWhenValidRequestWithFaceFeedback() {
+    ModelFeedbackRequest request = client.modelFeedback(client.getDefaultModels().travelModel().id())
+        .withInputId("@inputId")
         .withImageUrl(FAMILY_IMAGE_URL)
         .withRegions(
             RegionFeedback.make(
