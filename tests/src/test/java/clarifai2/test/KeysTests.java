@@ -19,6 +19,7 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
 
 import org.jetbrains.annotations.Nullable;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -150,7 +151,8 @@ public class KeysTests extends BaseClarifaiAPITest {
     ClarifaiResponse<Model<?>> response = request.executeSync();
     assertNotEquals(0, response.get().asConceptModel().outputInfo().concepts().size());
   }
-
+  
+  @Ignore("2017/07/12: temporarily disabled")
   @Test public void getModelInputsShouldNotReturnConceptsWhenNoPermissions() {
     try {
       String modelId = addModelWithInputsAndConcepts(client);
@@ -169,6 +171,7 @@ public class KeysTests extends BaseClarifaiAPITest {
     }
   }
 
+  @Ignore("2017/07/12: temporarily disabled")
   @Test public void getModelInputsShouldReturnConceptsWhenWithPermissions() {
     try {
       String modelId = addModelWithInputsAndConcepts(client);
