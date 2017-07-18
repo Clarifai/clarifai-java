@@ -340,7 +340,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Test public void t17c_searchInputsWithModel_metadata() {
     final List<SearchHit> hits = assertSuccess(
         client.searchInputs(SearchClause.matchMetadata(new JSONObjectBuilder().add("foo", "bar").build()))
-    );
+    ).searchHits();
     final ClarifaiInput hit = hits.stream()
         .filter(someHit -> "inputWithMetadata".equals(someHit.input().id()))
         .findFirst()
@@ -374,7 +374,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     {
       final List<SearchHit> hitsBeforeAdding = assertSuccess(
           client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
-      );
+      ).searchHits();
       assertEquals(0, hitsBeforeAdding.size());
     }
     assertSuccess(client.addInputs().plus(
@@ -384,13 +384,13 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     {
       final List<SearchHit> hitsAfterAdding = assertSuccess(
           client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
-      );
+      ).searchHits();
       assertEquals(1, hitsAfterAdding.size());
     }
     {
       final List<SearchHit> hits = assertSuccess(
           client.searchInputs(SearchClause.matchGeo(PointF.at(3F, 0F), PointF.at(70, 30F)))
-      );
+      ).searchHits();
       assertEquals(1, hits.size());
     }
   }

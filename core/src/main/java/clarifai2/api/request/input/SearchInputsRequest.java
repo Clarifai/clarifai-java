@@ -3,7 +3,7 @@ package clarifai2.api.request.input;
 import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
-import clarifai2.dto.input.SearchHit;
+import clarifai2.dto.search.SearchInputsResult;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<List<SearchHit>, SearchInputsRequest> {
+public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<SearchInputsResult, SearchInputsRequest> {
 
   private final List<SearchClause> andClauses = new ArrayList<>();
 
@@ -32,10 +32,10 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
     this.andClauses.addAll(searchClauses);
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<SearchHit>> unmarshaler() {
-    return new JSONUnmarshaler<List<SearchHit>>() {
-      @NotNull @Override public List<SearchHit> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(gson, json.getAsJsonObject().get("hits"), new TypeToken<List<SearchHit>>() {});
+  @NotNull @Override protected JSONUnmarshaler<SearchInputsResult> unmarshaler() {
+    return new JSONUnmarshaler<SearchInputsResult>() {
+      @NotNull @Override public SearchInputsResult fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
+        return InternalUtil.fromJson(gson, json.getAsJsonObject(), new TypeToken<SearchInputsResult>() {});
       }
     };
   }
