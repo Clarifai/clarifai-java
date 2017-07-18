@@ -18,7 +18,13 @@ public class ExecuteAsyncTests extends BaseClarifaiAPITest {
   private int simultaneousCallsNum = 10;
   @NotNull private final CountDownLatch loginLatch = new CountDownLatch(simultaneousCallsNum);
 
+  // A collection of heuristics that attempt to capture whether these calls are actually
+  // running asynchronously.  It is theoretically possible for every one of these asserts
+  // to fail, depending on timeing/thread scheduling, even if things are working properly.
+  // Nonetheless, on nearly all real world hosts this test will pass if and only if async
+  // behaves correctly.
   @Test public void shouldMakeSureExecuteAsyncWorks() throws InterruptedException {
+    long asyncExecutionsStartedTime = System.nanoTime();
     for (int i = 0; i < simultaneousCallsNum; i++) {
       client.getDefaultModels().generalModel().predict()
           .withInputs(ClarifaiInput.forImage(
@@ -29,10 +35,23 @@ public class ExecuteAsyncTests extends BaseClarifaiAPITest {
           );
     }
     long asyncExecutionsDoneTime = System.nanoTime();
+    // the login latch should not already be completed, assuming that the asynchronous
+    // calls did not actually happen syncronously:
+    assertTrue(loginLatch.getCount() > 0);
+
+    // but they should eventually complete:
     boolean completed = loginLatch.await(3, TimeUnit.SECONDS);
     assertTrue(completed);
-    long timeBetween = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - asyncExecutionsDoneTime);
-    assertTrue(timeBetween > 10); // It should take at least 10ms for the asynchronous callbacks to be called.
+    long timeToCallbacks = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - asyncExecutionsDoneTime);
+    
+    // The time it takes to make the async calls should be less than 100ms (we're not blocking
+    // on these calls:
+    long timeAsyncCalls = TimeUnit.NANOSECONDS.toMillis(asyncExecutionsDoneTime - asyncExecutionsStartedTime);
+    assertTrue(timeAsyncCalls < 100);
+
+    // and it should take at least 30ms for the async callbacks -- assuming that the calls
+    // actually happen:
+    assertTrue(timeToCallbacks > 30);
   }
 
   private void handleResponse(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
