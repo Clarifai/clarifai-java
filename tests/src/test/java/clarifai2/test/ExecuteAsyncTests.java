@@ -20,7 +20,7 @@ public class ExecuteAsyncTests extends BaseClarifaiAPITest {
 
   // A collection of heuristics that attempt to capture whether these calls are actually
   // running asynchronously.  It is theoretically possible for every one of these asserts
-  // to fail, depending on timeing/thread scheduling, even if things are working properly.
+  // to fail, depending on timing/thread scheduling, even if things are working properly.
   // Nonetheless, on nearly all real world hosts this test will pass if and only if async
   // behaves correctly.
   @Test public void shouldMakeSureExecuteAsyncWorks() throws InterruptedException {
@@ -36,7 +36,7 @@ public class ExecuteAsyncTests extends BaseClarifaiAPITest {
     }
     long asyncExecutionsDoneTime = System.nanoTime();
     // the login latch should not already be completed, assuming that the asynchronous
-    // calls did not actually happen syncronously:
+    // calls did not actually happen synchronously:
     assertTrue(loginLatch.getCount() > 0);
 
     // but they should eventually complete:
