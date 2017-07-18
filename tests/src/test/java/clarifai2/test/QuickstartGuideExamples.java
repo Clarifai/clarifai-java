@@ -9,6 +9,7 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.search.SearchInputsResult;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
   }
 
   @Test public void quickStartSearch() {
-    final ClarifaiResponse<List<SearchHit>> trainImages = client.searchInputs(
+    final ClarifaiResponse<SearchInputsResult> trainImages = client.searchInputs(
         // Finds images that match this picture of a train OR images that match the "train" concept tag
         SearchClause.matchImageVisually(ClarifaiImage.of("@@sampleTrain"))
     )
