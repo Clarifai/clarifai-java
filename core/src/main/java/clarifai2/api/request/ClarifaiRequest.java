@@ -240,8 +240,6 @@ public interface ClarifaiRequest<RESULT> {
 
     @NotNull private final DeserializedRequest<T> request;
 
-    @NotNull final ExecutorService executor = Executors.newFixedThreadPool(1);
-
     Impl(
         @NotNull BaseClarifaiClient client,
         @NotNull DeserializedRequest<T> request
@@ -301,7 +299,7 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @Override public void executeAsync(@Nullable final Callback<T> callback) {
-      executor.submit(new Callable<Void>() {
+      client.httpClient.dispatcher().executorService().submit(new Callable<Void>() {
         @Override public Void call() throws Exception {
           final ClarifaiResponse<T> response = executeSync();
           if (callback != null) {
