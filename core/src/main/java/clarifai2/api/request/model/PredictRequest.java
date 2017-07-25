@@ -6,6 +6,7 @@ import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
@@ -35,6 +36,8 @@ public final class PredictRequest<PREDICTION extends Prediction>
 
   @Nullable private Double minValue = null;
   @Nullable private Integer maxConcepts = null;
+
+  @NotNull private final List<Concept> concepts = new ArrayList<>();
 
   public PredictRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
     super(client);
@@ -70,6 +73,25 @@ public final class PredictRequest<PREDICTION extends Prediction>
     return this;
   }
 
+  /**
+   * If added, only these concepts will be considered in the prediction.
+   * @param concepts the concepts
+   * @return PredictRequest instance
+   */
+  @NotNull public PredictRequest<PREDICTION> selectConcepts(@NotNull Concept... concepts) {
+    return selectConcepts(Arrays.asList(concepts));
+  }
+
+  /**
+   * See {@link PredictRequest#selectConcepts(Concept...)}.
+   * @param concepts the concepts
+   * @return PredictRequest instance
+   */
+  @NotNull public PredictRequest<PREDICTION> selectConcepts(@NotNull Collection<Concept> concepts) {
+    this.concepts.addAll(concepts);
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<List<ClarifaiOutput<PREDICTION>>> request() {
     return new DeserializedRequest<List<ClarifaiOutput<PREDICTION>>>() {
       @NotNull @Override public Request httpRequest() {
@@ -80,13 +102,22 @@ public final class PredictRequest<PREDICTION extends Prediction>
                     return client.gson.toJsonTree(model);
                   }
                 }));
-        if (language != null || minValue != null || maxConcepts != null) {
+        if (language != null || minValue != null || maxConcepts != null || concepts.size() > 0) {
+          JSONObjectBuilder outputConfig = new JSONObjectBuilder()
+              .addIfNotNull("language", language)
+              .addIfNotNull("min_value", minValue)
+              .addIfNotNull("max_concepts", maxConcepts);
+          if (concepts.size() > 0) {
+            outputConfig.add("select_concepts", new JSONArrayBuilder()
+                .addAll(concepts, new Func1<Concept, JsonElement>() {
+                  @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                    return client.gson.toJsonTree(concept);
+                  }
+                }));
+          }
           bodyBuilder.add("model", new JSONObjectBuilder()
               .add("output_info", new JSONObjectBuilder()
-                  .add("output_config", new JSONObjectBuilder()
-                      .addIfNotNull("language", language)
-                      .addIfNotNull("min_value", minValue)
-                      .addIfNotNull("max_concepts", maxConcepts)
+                  .add("output_config", outputConfig
                   )));
         }
         final JsonObject body = bodyBuilder.build();
