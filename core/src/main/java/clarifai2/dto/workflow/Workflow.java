@@ -1,4 +1,4 @@
-package clarifai2.dto.multimodel;
+package clarifai2.dto.workflow;
 
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;

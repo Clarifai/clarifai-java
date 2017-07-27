@@ -29,6 +29,7 @@ import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
+import clarifai2.api.request.model.WorkflowPredictRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
@@ -334,6 +335,14 @@ public interface ClarifaiClient {
    * @return a request builder that, when executed, adds feedback to the model
    */
   @NotNull ModelFeedbackRequest modelFeedback(@NotNull String modelID);
+
+  /**
+   * Predicts using multiple models under the given workflow ID.
+   *
+   * @param workflowID the ID of the workflow to use
+   * @return a request builder that, when executed, will predict upon the models in the workflow
+   */
+  @NotNull WorkflowPredictRequest workflowPredict(@NotNull String workflowID);
 
   /**
    * Closes the {@link OkHttpClient} instances that this client uses to make HTTP requests.

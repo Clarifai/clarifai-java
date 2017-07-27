@@ -30,6 +30,7 @@ import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
+import clarifai2.api.request.model.WorkflowPredictRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
@@ -207,5 +208,9 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public ModelFeedbackRequest modelFeedback(@NotNull String modelID) {
     return new ModelFeedbackRequest(this, modelID);
+  }
+
+  @NotNull @Override public WorkflowPredictRequest workflowPredict(@NotNull String workflowID) {
+    return new WorkflowPredictRequest(this, workflowID);
   }
 }

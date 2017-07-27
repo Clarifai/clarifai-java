@@ -1,5 +1,8 @@
-package clarifai2.dto.multimodel;
+package clarifai2.dto.workflow;
 
+import clarifai2.dto.ClarifaiStatus;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
@@ -19,12 +22,13 @@ import static clarifai2.internal.InternalUtil.fromJson;
 @SuppressWarnings("NullableProblems")
 @AutoValue
 @JsonAdapter(WorkflowResult.Adapter.class)
-public abstract class WorkflowResult<PREDICTION extends Prediction> {
+public abstract class WorkflowResult {
 
   WorkflowResult() {} // AutoValue instances only
 
-  @Nullable public abstract Workflow workflow();
-  @Nullable public abstract List<MultiModelResult<PREDICTION>> multiModelResults();
+  @Nullable public abstract ClarifaiStatus status();
+  @Nullable public abstract ClarifaiInput input();
+  @Nullable public abstract List<ClarifaiOutput<Prediction>> predictions();
 
 
   static class Adapter extends JSONAdapterFactory<WorkflowResult> {
@@ -36,10 +40,11 @@ public abstract class WorkflowResult<PREDICTION extends Prediction> {
             @NotNull TypeToken<WorkflowResult> type,
             @NotNull Gson gson) {
           final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
-          Workflow workflow = fromJson(gson, root.get("workflow"), Workflow.class);
-          List<MultiModelResult<Prediction>> predictions = fromJson(
-              gson, root.get("results"), new TypeToken<List<MultiModelResult<Prediction>>>() {});
-          return new AutoValue_WorkflowResult(workflow, predictions);
+          ClarifaiStatus status = fromJson(gson, root.get("status"), ClarifaiStatus.class);
+          ClarifaiInput input = fromJson(gson, root.get("input"), ClarifaiInput.class);
+          List<ClarifaiOutput<Prediction>> predictions =
+              fromJson(gson, root.get("outputs"), new TypeToken<List<ClarifaiOutput<Prediction>>>() {});
+          return new AutoValue_WorkflowResult(status, input, predictions);
         }
       };
     }

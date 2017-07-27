@@ -35,7 +35,6 @@ import static clarifai2.internal.InternalUtil.toJson;
 @AutoValue
 @JsonAdapter(ClarifaiInput.Adapter.class)
 public abstract class ClarifaiInput implements HasClarifaiID {
-
   ClarifaiInput() {} // AutoValue instances only
 
   /**
