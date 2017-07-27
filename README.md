@@ -35,14 +35,34 @@ Add the following to your dependencies:
 
 Getting Started
 ---------------
-To create a `ClarifaiClient` instance, do the following:
+There are two authentication approaches. The recommended is to use [API Keys](http://blog.clarifai.com/introducing-api-keys-a-safer-way-to-authenticate-your-applications/). You may also use the now deprecated app ID & secret pair. See the [Authentication section](https://developer.clarifai.com/guide/authentication#authentication) of the docs for more info.
+
+To create a `ClarifaiClient` instance with an API Key do the following:
+
+```java
+final ClarifaiClient client = new ClarifaiBuilder("apiKey").buildSync();
+```
+
+If using an app ID & secret instead, pass both to the constructor:
 
 ```java
 final ClarifaiClient client = new ClarifaiBuilder("appID", "appSecret").buildSync();
 ```
 
 The `ClarifaiBuilder` optionally allows you to pass in a custom `OkHttpClient` (allowing for user-defined parameters
-such as connection timeouts, etc).
+such as connection timeouts, etc):
+
+```java
+final ClarifaiClient client = new ClarifaiBuilder(apiKey)
+    .client(new OkHttpClient.Builder()
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .addInterceptor(new HttpLoggingInterceptor(logger::info).setLevel(HttpLoggingInterceptor.Level.BASIC))
+        .build()
+    )
+    .buildSync();
+```
 
 Making API requests
 ---------------------------------------
