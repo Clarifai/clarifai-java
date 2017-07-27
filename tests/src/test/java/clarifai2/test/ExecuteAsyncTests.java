@@ -44,10 +44,10 @@ public class ExecuteAsyncTests extends BaseClarifaiAPITest {
     assertTrue(completed);
     long timeToCallbacks = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - asyncExecutionsDoneTime);
     
-    // The time it takes to make the async calls should be less than 100ms (we're not blocking
+    // The time it takes to make the async calls should be less than 300ms (we're not blocking
     // on these calls:
     long timeAsyncCalls = TimeUnit.NANOSECONDS.toMillis(asyncExecutionsDoneTime - asyncExecutionsStartedTime);
-    assertTrue(timeAsyncCalls < 100);
+    assertTrue(timeAsyncCalls < 300);
 
     // and it should take at least 30ms for the async callbacks -- assuming that the calls
     // actually happen:
