@@ -18,7 +18,15 @@ Installation
 Add the following to the dependencies section of your `build.gradle`:
 
 ```groovy
-compile 'com.clarifai.clarifai-api2:core:[version]'
+// Add the client to your dependencies:
+dependencies {
+    compile 'com.clarifai.clarifai-api2:core:[version]'
+}
+
+// Make sure you have the Maven Central Repository in your Gradle File
+repositories {
+    mavenCentral()
+}
 ```
 
 ### Maven:
