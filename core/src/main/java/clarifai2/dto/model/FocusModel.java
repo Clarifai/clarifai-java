@@ -16,7 +16,7 @@ public abstract class FocusModel extends Model<Focus> {
   @NotNull
   @Override
   public final FocusOutputInfo outputInfo() {
-    return (FocusOutputInfo) _outputInfo();
+    return (FocusOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

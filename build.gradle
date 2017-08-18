@@ -47,7 +47,7 @@ subprojects {
       slf4j: "1.7.21",
       kotlin: "1.0.5-2",
 
-      customHashCodeEquals: "f268f91",
+      customHashCodeEquals: "db3442d",
   ]
 
   ext.deps = [

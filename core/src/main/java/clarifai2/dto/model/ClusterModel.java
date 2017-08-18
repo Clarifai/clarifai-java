@@ -17,7 +17,7 @@ public abstract class ClusterModel extends Model<Cluster> {
   @NotNull
   @Override
   public final ClusterOutputInfo outputInfo() {
-    return (ClusterOutputInfo) _outputInfo();
+    return (ClusterOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

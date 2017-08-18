@@ -1,41 +1,35 @@
 package clarifai2.dto.model;
 
 import clarifai2.api.BaseClarifaiClient;
-import clarifai2.api.ClarifaiResponse;
-import clarifai2.exception.ClarifaiException;
+import clarifai2.api.request.model.GetModelRequest;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
+/**
+ * A collection of default models. NOTE: These models are not complete, which means
+ * that createdAt, appID, modelVersion, and outputInfo are not populated. If you require
+ * this data, execute {@link GetModelRequest} to acquire a complete model.
+ */
 public final class DefaultModels {
 
-  @NotNull private final ExecutorService updater = Executors.newSingleThreadExecutor();
-
-  @NotNull private final AtomicReference<ConceptModel> general;
-  @NotNull private final AtomicReference<ConceptModel> food;
-  @NotNull private final AtomicReference<ConceptModel> travel;
-  @NotNull private final AtomicReference<ConceptModel> nsfw;
-  @NotNull private final AtomicReference<ConceptModel> wedding;
-  @NotNull private final AtomicReference<ConceptModel> apparel;
-  @NotNull private final AtomicReference<ConceptModel> moderation;
-  @NotNull private final AtomicReference<LogoModel> logo;
-  @NotNull private final AtomicReference<ColorModel> color;
-  @NotNull private final AtomicReference<FocusModel> focus;
-  @NotNull private final AtomicReference<FaceDetectionModel> face;
-  @NotNull private final AtomicReference<DemographicsModel> demographics;
-  @NotNull private final AtomicReference<EmbeddingModel> generalEmbed;
-  @NotNull private final AtomicReference<VideoModel> generalVideo;
-  @NotNull private final AtomicReference<VideoModel> foodVideo;
-  @NotNull private final AtomicReference<VideoModel> nsfwVideo;
-  @NotNull private final AtomicReference<VideoModel> travelVideo;
-  @NotNull private final AtomicReference<VideoModel> weddingVideo;
-  @NotNull private final AtomicReference<VideoModel> apparelVideo;
-
-  private final int maxGetModelAttempts = 20;
-  private final int insufficientScopesStatusCode = 11007;
+  @NotNull private final ConceptModel general;
+  @NotNull private final ConceptModel food;
+  @NotNull private final ConceptModel travel;
+  @NotNull private final ConceptModel nsfw;
+  @NotNull private final ConceptModel wedding;
+  @NotNull private final ConceptModel apparel;
+  @NotNull private final ConceptModel moderation;
+  @NotNull private final LogoModel logo;
+  @NotNull private final ColorModel color;
+  @NotNull private final FocusModel focus;
+  @NotNull private final FaceDetectionModel face;
+  @NotNull private final DemographicsModel demographics;
+  @NotNull private final EmbeddingModel generalEmbed;
+  @NotNull private final VideoModel generalVideo;
+  @NotNull private final VideoModel foodVideo;
+  @NotNull private final VideoModel nsfwVideo;
+  @NotNull private final VideoModel travelVideo;
+  @NotNull private final VideoModel weddingVideo;
+  @NotNull private final VideoModel apparelVideo;
 
   public DefaultModels(@NotNull BaseClarifaiClient client) {
     general = create(ModelType.CONCEPT, client, "aaa03c23b3724a16a56b629203edc62c", "general-v1.3");
@@ -62,90 +56,62 @@ public final class DefaultModels {
     apparelVideo = create(ModelType.VIDEO, client, "e0be3b9d6a454f0493ac3a30784001ff", "apparel");
   }
 
-  @NotNull private <M extends Model<?>> AtomicReference<M> create(
+  @NotNull private <M extends Model<?>> M create(
       @NotNull ModelType type,
       @NotNull final BaseClarifaiClient client,
       @NotNull String id,
       @NotNull String name
   ) {
-    final AtomicReference<M> model =
-        new AtomicReference<>(Model.<M>_create(type, client, id, name, null));
-    updater.execute(new Runnable() {
-      @Override public void run() {
-        final M updated = update(client, model.get());
-        model.set(updated);
-      }
-    });
-    return model;
+    return Model.<M>_create(type, client, id, name, null);
   }
 
-  @NotNull
-  private <M extends Model<?>> M update(@NotNull final BaseClarifaiClient client, @NotNull final M unupdatedModel) {
-    for (int i = 0; i < maxGetModelAttempts; i++) {
-      ClarifaiResponse<Model<?>> response = client.getModelByID(unupdatedModel.id()).executeSync();
-      if (response.getStatus().statusCode() == insufficientScopesStatusCode) {
-        return unupdatedModel;
-      }
-      @SuppressWarnings("unchecked") final M model = (M) response.getOrNull();
-      if (model != null) {
-        return model;
-      }
-      try {
-        TimeUnit.SECONDS.sleep(1);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
-    throw new ClarifaiException("Maximum attempts reached of getting a default model.");
-  }
+  @NotNull public ConceptModel generalModel() { return general; }
 
-  @NotNull public ConceptModel generalModel() { return general.get(); }
+  @NotNull public ConceptModel foodModel() { return food; }
 
-  @NotNull public ConceptModel foodModel() { return food.get(); }
+  @NotNull public ConceptModel travelModel() { return travel; }
 
-  @NotNull public ConceptModel travelModel() { return travel.get(); }
+  @NotNull public ConceptModel nsfwModel() { return nsfw; }
 
-  @NotNull public ConceptModel nsfwModel() { return nsfw.get(); }
+  @NotNull public ConceptModel weddingModel() { return wedding; }
 
-  @NotNull public ConceptModel weddingModel() { return wedding.get(); }
+  @NotNull public ConceptModel apparelModel() { return apparel; }
 
-  @NotNull public ConceptModel apparelModel() { return apparel.get(); }
+  @NotNull public ConceptModel moderationModel() { return moderation; }
 
-  @NotNull public ConceptModel moderationModel() { return moderation.get(); }
+  @NotNull public LogoModel logoModel() { return logo; }
 
-  @NotNull public LogoModel logoModel() { return logo.get(); }
+  @NotNull public ColorModel colorModel() { return color; }
 
-  @NotNull public ColorModel colorModel() { return color.get(); }
+  @NotNull public FocusModel focusModel() { return focus; }
 
-  @NotNull public FocusModel focusModel() { return focus.get(); }
+  @NotNull public FaceDetectionModel faceDetectionModel() { return face; }
 
-  @NotNull public FaceDetectionModel faceDetectionModel() { return face.get(); }
+  @NotNull public DemographicsModel demographicsModel() { return demographics; }
 
-  @NotNull public DemographicsModel demographicsModel() { return demographics.get(); }
-
-  @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed.get(); }
+  @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed; }
 
   @NotNull public VideoModel generalVideoModel() {
-    return generalVideo.get();
+    return generalVideo;
   }
 
   @NotNull public VideoModel foodVideoModel() {
-    return foodVideo.get();
+    return foodVideo;
   }
 
   @NotNull public VideoModel travelVideoModel() {
-    return travelVideo.get();
+    return travelVideo;
   }
 
   @NotNull public VideoModel nsfwVideoModel() {
-    return nsfwVideo.get();
+    return nsfwVideo;
   }
 
   @NotNull public VideoModel weddingVideoModel() {
-    return weddingVideo.get();
+    return weddingVideo;
   }
 
   @NotNull public VideoModel apparelVideoModel() {
-    return apparelVideo.get();
+    return apparelVideo;
   }
 }

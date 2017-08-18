@@ -17,7 +17,7 @@ public abstract class VideoModel extends Model<Frame> {
   @NotNull
   @Override
   public final VideoOutputInfo outputInfo() {
-    return (VideoOutputInfo) _outputInfo();
+    return (VideoOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

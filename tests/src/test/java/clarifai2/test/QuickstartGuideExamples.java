@@ -81,4 +81,11 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
     // detect, you can train your "pets" model
     petsModel.train().executeSync();
   }
+
+  @Test
+  public void quickStartConcepts() {
+    ConceptModel model = client.getDefaultModels().generalModel(); // The default model has outputInfo null.
+    ConceptModel completeModel = client.getModelByID(model.id()).executeSync().get().asConceptModel();
+    List<Concept> concepts = completeModel.outputInfo().concepts(); // Using getModelByID retrieves a complete model.
+  }
 }

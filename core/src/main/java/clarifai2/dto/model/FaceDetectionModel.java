@@ -17,7 +17,7 @@ public abstract class FaceDetectionModel extends Model<FaceDetection> {
   @NotNull
   @Override
   public final FaceDetectionOutputInfo outputInfo() {
-    return (FaceDetectionOutputInfo) _outputInfo();
+    return (FaceDetectionOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

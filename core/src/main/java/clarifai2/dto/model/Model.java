@@ -4,11 +4,13 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.api.request.model.GetModelInputsRequest;
+import clarifai2.api.request.model.GetModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.Gson;
@@ -33,6 +35,9 @@ import static clarifai2.internal.InternalUtil.toJson;
 @JsonAdapter(Model.Adapter.class)
 public abstract class Model<PREDICTION extends Prediction> implements HasClarifaiIDRequired {
 
+  private final String nonCompleteModelExceptionMessage
+      = "This model is not complete and does not have this field. Use GetModelRequest to acquire a complete model.";
+
   Model() {} // AutoValue instances only
 
   @SuppressWarnings("unchecked")
@@ -44,12 +49,30 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
       @NotNull String name,
       @Nullable OutputInfo outputInfo
   ) {
+    return _create(modelType, helper, id, name, outputInfo, null);
+  }
+
+  @SuppressWarnings("unchecked")
+  @NotNull
+  public static <T extends Model<?>> T _create(
+      @NotNull ModelType modelType,
+      @NotNull ClarifaiClient helper,
+      @NotNull String id,
+      @NotNull String name,
+      @Nullable OutputInfo outputInfo,
+      @Nullable ModelVersion modelVersion
+  ) {
     return ((T) getBuilder(modelType)
         .client(helper)
         .id(id)
         .name(name)
         ._outputInfo(outputInfo)
+        ._modelVersion(modelVersion)
         .build());
+  }
+
+  @NotNull public GetModelRequest getModelRequest() {
+    return client().getModelByID(id());
   }
 
   @NotNull private static Builder<?> getBuilder(@NotNull ModelType modelType) {
@@ -125,21 +148,63 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((ClusterModel) this);
   }
 
-  @Nullable public abstract String name();
+  /*
+   * AutoValue methods.
+   */
 
-  @Nullable public abstract Date createdAt();
-
-  @Nullable public abstract String appID();
-
-  @Nullable public abstract ModelVersion modelVersion();
+  @IgnoreForHashCodeEquals @Nullable public abstract String name();
 
   @NotNull public abstract ModelType modelType();
 
-  @Nullable public abstract OutputInfo outputInfo();
+  @IgnoreForHashCodeEquals @Nullable abstract Date _createdAt();
+
+  @IgnoreForHashCodeEquals @Nullable abstract String _appID();
+
+  @Nullable abstract ModelVersion _modelVersion();
 
   @IgnoreForHashCodeEquals @Nullable abstract OutputInfo _outputInfo();
 
-  @IgnoreForHashCodeEquals @NotNull abstract ClarifaiClient client();
+  @NotNull abstract ClarifaiClient client();
+
+  /*
+   * Improved getters to the AutoValue methods.
+   */
+
+  @NotNull public Date createdAt() {
+    Date createdAt = _createdAt();
+    if (createdAt == null) {
+      throw new ClarifaiException(nonCompleteModelExceptionMessage);
+    }
+    return createdAt;
+  }
+
+  @NotNull public String appID() {
+    String appID = _appID();
+    if (appID == null) {
+      throw new ClarifaiException(nonCompleteModelExceptionMessage);
+    }
+    return appID;
+  }
+
+  @NotNull public ModelVersion modelVersion() {
+    ModelVersion modelVersion = _modelVersion();
+    if (modelVersion == null) {
+      throw new ClarifaiException(nonCompleteModelExceptionMessage);
+    }
+    return modelVersion;
+  }
+
+  @NotNull public OutputInfo outputInfo() {
+    OutputInfo outputInfo = _outputInfo();
+    if (outputInfo == null) {
+      throw new ClarifaiException(nonCompleteModelExceptionMessage);
+    }
+    return outputInfo;
+  }
+
+  /*
+   * Methods.
+   */
 
   @NotNull public final GetModelInputsRequest getInputs() {
     return client().getModelInputs(id());
@@ -173,9 +238,9 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   protected interface Builder<B extends Builder<B>> {
     @NotNull B id(@NotNull String id);
     @NotNull B name(@NotNull String name);
-    @NotNull B createdAt(@Nullable Date createdAt);
-    @NotNull B appID(@Nullable String appID);
-    @NotNull B modelVersion(@Nullable ModelVersion modelVersion);
+    @NotNull B _createdAt(@Nullable Date createdAt);
+    @NotNull B _appID(@Nullable String appID);
+    @NotNull B _modelVersion(@Nullable ModelVersion modelVersion);
     @NotNull B _outputInfo(@Nullable OutputInfo _outputInfo);
     @NotNull B client(@Nullable ClarifaiClient client);
     @NotNull Model<?> build();
@@ -193,9 +258,9 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
           return new JSONObjectBuilder()
               .add("id", value.id())
               .add("name", value.name())
-              .add("app_id", value.appID())
-              .add("created_at", toJson(gson, value.createdAt(), Date.class))
-              .add("model_version", toJson(gson, value.modelVersion(), ModelVersion.class))
+              .add("app_id", value._appID())
+              .add("created_at", toJson(gson, value._createdAt(), Date.class))
+              .add("model_version", toJson(gson, value._modelVersion(), ModelVersion.class))
               .add("output_info", toJson(gson, value._outputInfo(), OutputInfo.class))
               .build();
         }
@@ -223,9 +288,9 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
           return getBuilder(modelType)
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())
-              .createdAt(fromJson(gson, root.get("created_at"), Date.class))
-              .appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
-              .modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
+              ._createdAt(fromJson(gson, root.get("created_at"), Date.class))
+              ._appID(isJsonNull(root.get("app_id")) ? null : root.get("app_id").getAsString())
+              ._modelVersion(fromJson(gson, root.get("model_version"), ModelVersion.class))
               ._outputInfo(fromJson(gson, root.get("output_info"), OutputInfo.class))
               .client(clientInstance(gson))
               .build()

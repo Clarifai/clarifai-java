@@ -1,6 +1,7 @@
 package clarifai2.dto.model;
 
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.request.model.GetModelRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
@@ -56,7 +57,7 @@ public abstract class ConceptModel extends Model<Concept> {
   @NotNull
   @Override
   public final ConceptOutputInfo outputInfo() {
-    return (ConceptOutputInfo) _outputInfo();
+    return (ConceptOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

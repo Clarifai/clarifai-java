@@ -440,4 +440,10 @@ public class GuideExamples extends BaseClarifaiAPITest {
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
         .executeSync();
   }*/
+
+  @Test public void retrieveCompleteModel() {
+    ConceptModel model = client.getDefaultModels().generalModel();
+    client.getModelByID(model.id()).executeSync().get().asConceptModel();
+  }
+
 }

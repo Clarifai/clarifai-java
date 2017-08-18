@@ -17,7 +17,7 @@ public abstract class EmbeddingModel extends Model<Embedding> {
   @NotNull
   @Override
   public final EmbeddingOutputInfo outputInfo() {
-    return (EmbeddingOutputInfo) _outputInfo();
+    return (EmbeddingOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

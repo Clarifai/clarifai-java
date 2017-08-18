@@ -16,7 +16,7 @@ public abstract class LogoModel extends Model<Logo> {
   @NotNull
   @Override
   public final LogoOutputInfo outputInfo() {
-    return (LogoOutputInfo) _outputInfo();
+    return (LogoOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

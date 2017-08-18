@@ -17,7 +17,7 @@ public abstract class ColorModel extends Model<Color> {
   @NotNull
   @Override
   public final ColorOutputInfo outputInfo() {
-    return (ColorOutputInfo) _outputInfo();
+    return (ColorOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

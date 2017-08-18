@@ -28,6 +28,7 @@ public abstract class ModelVersion implements HasClarifaiIDRequired {
   @NotNull public abstract ModelTrainingStatus status();
 
 
+
   static class Adapter extends JSONAdapterFactory<ModelVersion> {
     @Nullable @Override protected Deserializer<ModelVersion> deserializer() {
       return new Deserializer<ModelVersion>() {

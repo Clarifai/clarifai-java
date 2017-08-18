@@ -16,7 +16,7 @@ public abstract class DemographicsModel extends Model<Region> {
   @NotNull
   @Override
   public final DemographicsOutputInfo outputInfo() {
-    return (DemographicsOutputInfo) _outputInfo();
+    return (DemographicsOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder

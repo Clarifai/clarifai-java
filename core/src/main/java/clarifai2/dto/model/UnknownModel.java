@@ -18,7 +18,7 @@ public abstract class UnknownModel extends Model<Unknown> {
   @NotNull
   @Override
   public final UnknownOutputInfo outputInfo() {
-    return (UnknownOutputInfo) _outputInfo();
+    return (UnknownOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder
