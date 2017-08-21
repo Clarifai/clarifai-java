@@ -1,9 +1,8 @@
 package clarifai2.dto.input;
 
+import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
-import clarifai2.internal.JSONObjectBuilder;
-import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -13,14 +12,42 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-@SuppressWarnings("NullableProblems")
-@AutoValue
-@JsonAdapter(ClarifaiVideo.Adapter.class)
-public abstract class ClarifaiVideo extends ClarifaiImage {
+import static clarifai2.internal.InternalUtil.assertJsonIs;
+import static clarifai2.internal.InternalUtil.fromJson;
 
-  @NotNull public abstract URL url();
+@SuppressWarnings("NullableProblems")
+@JsonAdapter(ClarifaiVideo.Adapter.class)
+public abstract class ClarifaiVideo implements ClarifaiInputValue {
+
+  @Nullable public abstract Crop crop();
+
+  @NotNull public abstract ClarifaiVideo withCrop(@NotNull Crop crop);
+
+  @NotNull public static ClarifaiURLVideo of(@NotNull URL videoURL) {
+    return new AutoValue_ClarifaiURLVideo(Crop.create(), videoURL);
+  }
+
+  @NotNull public static ClarifaiURLVideo of(@NotNull String videoURL) {
+    final URL result;
+    try {
+      result = new URL(videoURL);
+    } catch (MalformedURLException e) {
+      throw new ClarifaiException("Could not parse URL " + videoURL, e);
+    }
+    return of(result);
+  }
+
+  @NotNull public static ClarifaiFileVideo of(@NotNull byte[] videoBytes) {
+    return new AutoValue_ClarifaiFileVideo(Crop.create(), videoBytes);
+  }
+
+  @NotNull public static ClarifaiFileVideo of(@NotNull File videoFile) {
+    return of(InternalUtil.read(videoFile));
+  }
 
   static class Adapter extends JSONAdapterFactory<ClarifaiVideo> {
 
@@ -30,9 +57,7 @@ public abstract class ClarifaiVideo extends ClarifaiImage {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
-          return new JSONObjectBuilder()
-              .add("url", value.url().toString())
-              .build();
+          return gson.toJsonTree(value, value.getClass());
         }
       };
     }
@@ -44,8 +69,11 @@ public abstract class ClarifaiVideo extends ClarifaiImage {
             @NotNull JsonElement json,
             @NotNull TypeToken<ClarifaiVideo> type,
             @NotNull Gson gson) {
-          final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
-          return ClarifaiImage.ofVideo(root.get("url").getAsString());
+          return fromJson(
+              gson,
+              json,
+              assertJsonIs(json, JsonObject.class).has("url") ? ClarifaiURLVideo.class : ClarifaiFileVideo.class
+          );
         }
       };
     }

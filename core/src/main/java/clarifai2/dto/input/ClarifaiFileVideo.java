@@ -18,26 +18,23 @@ import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(ClarifaiFileImage.Adapter.class)
-public abstract class ClarifaiFileImage extends ClarifaiImage {
+@JsonAdapter(ClarifaiFileVideo.Adapter.class)
+public abstract class ClarifaiFileVideo extends ClarifaiVideo {
 
-  ClarifaiFileImage() {} // AutoValue instances only
+  ClarifaiFileVideo() {} // AutoValue instances only
 
-  @NotNull public final byte[] imageBytes() {
+  @NotNull public final byte[] videoBytes() {
     // Return a defensive copy so that the underlying data can't be modified
     final byte[] bytes = bytes();
     return Arrays.copyOf(bytes, bytes.length);
   }
 
-  @NotNull @Override public abstract ClarifaiFileImage withCrop(@NotNull Crop crop);
-
   @SuppressWarnings("mutable") @NotNull abstract byte[] bytes();
 
-
-  static class Adapter extends JSONAdapterFactory<ClarifaiFileImage> {
-    @Nullable @Override protected Serializer<ClarifaiFileImage> serializer() {
-      return new Serializer<ClarifaiFileImage>() {
-        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiFileImage value, @NotNull Gson gson) {
+  static class Adapter extends JSONAdapterFactory<ClarifaiFileVideo> {
+    @Nullable @Override protected Serializer<ClarifaiFileVideo> serializer() {
+      return new Serializer<ClarifaiFileVideo>() {
+        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiFileVideo value, @NotNull Gson gson) {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
@@ -49,8 +46,9 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
       };
     }
 
-    @NotNull @Override protected TypeToken<ClarifaiFileImage> typeToken() {
-      return new TypeToken<ClarifaiFileImage>() {};
+    @NotNull @Override protected TypeToken<ClarifaiFileVideo> typeToken() {
+      return new TypeToken<ClarifaiFileVideo>() {};
     }
   }
 }
+

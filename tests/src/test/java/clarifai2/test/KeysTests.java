@@ -151,7 +151,7 @@ public class KeysTests extends BaseClarifaiAPITest {
     ClarifaiResponse<Model<?>> response = request.executeSync();
     assertNotEquals(0, response.get().asConceptModel().outputInfo().concepts().size());
   }
-  
+
   @Ignore("2017/07/12: temporarily disabled")
   @Test public void getModelInputsShouldNotReturnConceptsWhenNoPermissions() {
     try {
@@ -193,7 +193,7 @@ public class KeysTests extends BaseClarifaiAPITest {
   @Test public void predictRequestShouldReturnModelEvenWhenNoPermissions() {
     PredictRequest<Prediction> request = makeClient(EnvVar.CLARIFAI_API_KEY_PREDICT_AND_INPUTS_GET.value())
         .predict(client.getDefaultModels().travelModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiURLImage.of(FAMILY_IMAGE_URL)));
+        .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL));
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = request.executeSync();
     assertEquals(10000, response.getStatus().statusCode());
     assertNotNull(response.get().get(0).model().id());
@@ -203,7 +203,7 @@ public class KeysTests extends BaseClarifaiAPITest {
     PredictRequest<Prediction> request = makeClient(
           EnvVar.CLARIFAI_API_KEY_PREDICT_AND_INPUTS_MODELS_CONCEPTS_GET.value())
         .predict(client.getDefaultModels().travelModel().id())
-        .withInputs(ClarifaiInput.forImage(ClarifaiURLImage.of(FAMILY_IMAGE_URL)));
+        .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL));
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = request.executeSync();
     assertEquals(10000, response.getStatus().statusCode());
     assertNotNull(response.get().get(0).model().id());
@@ -216,7 +216,7 @@ public class KeysTests extends BaseClarifaiAPITest {
       concepts.add(Concept.forID(concept));
     }
     ClarifaiInput input = ClarifaiInput.forImage(url).withConcepts(concepts);
-    
+
     ClarifaiResponse<List<ClarifaiInput>> response =
         client.addInputs().plus(input).allowDuplicateURLs(true).executeSync();
     if(!response.isSuccessful() || response.get().size() != 1) {

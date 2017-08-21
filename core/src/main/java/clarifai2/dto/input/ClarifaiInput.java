@@ -3,7 +3,6 @@ package clarifai2.dto.input;
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,103 +36,115 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   ClarifaiInput() {} // AutoValue instances only
 
   /**
-   * @param image the image to represent
-   * @return a {@link ClarifaiInput} that represents the given image
-   */
-  @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
-    return new AutoValue_ClarifaiInput(null, null, image, new JsonObject(), Collections.<Concept>emptyList(), null);
-  }
-
-  /**
+   * This is just a convenience function.
+   * It's equivalent to {@code ClarifaiInput.forInputValue(ClarifaiImage.of(imageBytes))}.
    * @param imageBytes the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull byte[] imageBytes) {
-    return new AutoValue_ClarifaiInput(null,
-        null,
-        new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes),
-        new JsonObject(),
-        Collections.<Concept>emptyList(),
-        null
-    );
+    return ClarifaiInput.forInputValue(ClarifaiImage.of(imageBytes));
   }
 
   /**
+   * This is just a convenience function.
+   * It's equivalent to {@code ClarifaiInput.forInputValue(ClarifaiImage.of(imageFile))}.
    * @param imageFile the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull File imageFile) {
-    return new AutoValue_ClarifaiInput(null,
-        null,
-        of(InternalUtil.read(imageFile)),
-        new JsonObject(),
-        Collections.<Concept>emptyList(),
-        null
-    );
+    return ClarifaiInput.forInputValue(ClarifaiImage.of(imageFile));
   }
 
   /**
+   * This is just a convenience function.
+   * It's equivalent to {@code ClarifaiInput.forInputValue(ClarifaiImage.of(imageURL))}.
    * @param imageURL the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull String imageURL) {
-    final URL result;
-    try {
-      result = new URL(imageURL);
-    } catch (MalformedURLException e) {
-      throw new ClarifaiException("Could not parse URL " + imageURL, e);
-    }
-    return forImage(result);
+    return ClarifaiInput.forInputValue(ClarifaiImage.of(imageURL));
   }
 
   /**
+   * This is just a convenience function.
+   * It's equivalent to {@code ClarifaiInput.forInputValue(ClarifaiImage.of(imageURL))}.
    * @param imageURL the image to represent
    * @return a {@link ClarifaiInput} that represents the given image
    */
   @NotNull public static ClarifaiInput forImage(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiInput(null,
-        null,
-        new AutoValue_ClarifaiURLImage(Crop.create(), imageURL),
-        new JsonObject(),
-        Collections.<Concept>emptyList(),
-        null
-    );
+    return ClarifaiInput.forInputValue(ClarifaiImage.of(imageURL));
   }
 
   /**
-   * @param imageURL the video to represent
+   * This is just a convenience function.
+   * It's equivalent to {@code forInputValue(ClarifaiVideo.of(videoBytes))}.
+   * @param videoBytes the video to represent
    * @return a {@link ClarifaiInput} that represents the given video
    */
-  @NotNull public static ClarifaiInput forVideo(@NotNull String imageURL) {
-    final URL result;
-    try {
-      result = new URL(imageURL);
-    } catch (MalformedURLException e) {
-      throw new ClarifaiException("Could not parse URL " + imageURL, e);
-    }
-    return forVideo(result);
+  @NotNull public static ClarifaiInput forVideo(@NotNull byte[] videoBytes) {
+    return forInputValue(ClarifaiVideo.of(videoBytes));
   }
 
   /**
-   * @param imageURL the video to represent
+   * This is just a convenience function.
+   * It's equivalent to {@code forInputValue(ClarifaiVideo.of(videoFile))}.
+   * @param videoFile the video to represent
    * @return a {@link ClarifaiInput} that represents the given video
    */
-  @NotNull public static ClarifaiInput forVideo(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiInput(null,
-        null,
-        new AutoValue_ClarifaiVideo(Crop.create(), imageURL),
-        new JsonObject(),
-        Collections.<Concept>emptyList(),
-        null
-    );
+  @NotNull public static ClarifaiInput forVideo(@NotNull File videoFile) {
+    return forInputValue(ClarifaiVideo.of(videoFile));
+  }
+
+  /**
+   * This is just a convenience function.
+   * It's equivalent to {@code forInputValue(ClarifaiVideo.of(videoURL))}.
+   * @param videoURL the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull String videoURL) {
+    return forInputValue(ClarifaiVideo.of(videoURL));
+  }
+
+  /**
+   * This is just a convenience function.
+   * It's equivalent to {@code forInputValue(ClarifaiVideo.of(videoURL))}.
+   * @param videoURL the video to represent
+   * @return a {@link ClarifaiInput} that represents the given video
+   */
+  @NotNull public static ClarifaiInput forVideo(@NotNull URL videoURL) {
+    return forInputValue(ClarifaiVideo.of(videoURL));
+  }
+
+  /**
+   * Deprecated. Use {@link #forInputValue(ClarifaiInputValue)} instead.
+   * @param image the image to represent
+   * @return a {@link ClarifaiInput} that represents the given image
+   */
+  @Deprecated
+  @NotNull public static ClarifaiInput forImage(@NotNull ClarifaiImage image) {
+    return forInputValue(image);
+  }
+
+  /**
+   * Deprecated. Use {@link #forInputValue(ClarifaiInputValue)} instead.
+   * @param video
+   * @return
+   */
+  @Deprecated
+  @NotNull public static ClarifaiInput forVideo(@NotNull ClarifaiVideo video) {
+    return forInputValue(video);
+  }
+
+  @NotNull public static ClarifaiInput forInputValue(@NotNull ClarifaiInputValue inputValue) {
+    return new AutoValue_ClarifaiInput(null, null, inputValue, new JsonObject(), Collections.<Concept>emptyList(), null);
   }
 
   @Nullable public abstract Date createdAt();
 
   /**
-   * @return the image represented by this concept
+   * @return the input value represented by this concept
    */
-  @NotNull public abstract ClarifaiImage image();
+  @NotNull public abstract ClarifaiInputValue inputValue();
 
   /**
    * @return the metadata on this image
@@ -170,7 +180,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a copy of this {@link ClarifaiInput} with its geographic coordinate set to the specified value
    */
   @NotNull public final ClarifaiInput withGeo(@Nullable PointF geo) {
-    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata(), concepts(), geo);
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata(), concepts(), geo);
   }
 
   /**
@@ -179,7 +189,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
     InternalUtil.assertMetadataHasNoNulls(metadata);
-    return new AutoValue_ClarifaiInput(id(), createdAt(), image(), metadata, concepts(), geo());
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata, concepts(), geo());
   }
 
   // Hide the ugly casing that auto-value-with requires
@@ -207,10 +217,10 @@ public abstract class ClarifaiInput implements HasClarifaiID {
           final JSONObjectBuilder data = new JSONObjectBuilder()
               .add("concepts", toJson(gson, value.concepts(), new TypeToken<List<Concept>>() {}))
               .add("metadata", value.metadata());
-          if (value.image() instanceof ClarifaiVideo) {
-            data.add("video", toJson(gson, value.image(), ClarifaiImage.class));
+          if (value.inputValue() instanceof ClarifaiVideo) {
+            data.add("video", toJson(gson, (ClarifaiVideo) value.inputValue(), ClarifaiVideo.class));
           } else {
-            data.add("image", toJson(gson, value.image(), ClarifaiImage.class));
+            data.add("image", toJson(gson, (ClarifaiImage) value.inputValue(), ClarifaiImage.class));
           }
           if (value.geo() != null) {
             data.add("geo", new JSONObjectBuilder()
@@ -258,7 +268,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
               isJsonNull(root.get("id")) ? null : root.get("id").getAsString(),
               fromJson(gson, root.get("created_at"), Date.class),
               data.has("video")
-                  ? fromJson(gson, data.get("video"), ClarifaiImage.class)
+                  ? fromJson(gson, data.get("video"), ClarifaiVideo.class)
                   : fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
               concepts,

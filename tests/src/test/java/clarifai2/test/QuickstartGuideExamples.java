@@ -4,7 +4,6 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.SearchHit;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
@@ -29,7 +28,7 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
         client.getDefaultModels().generalModel() // You can also do client.getModelByID("id") to get custom models
             .predict()
             .withInputs(
-                ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
+                ClarifaiInput.forImage("@@sampleTrain")
             )
             .executeSync();
   }
@@ -56,11 +55,11 @@ public class QuickstartGuideExamples extends BaseClarifaiAPITest {
     // So we will add a positive and a negative example of Boscoe
     client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+            ClarifaiInput.forInputValue(ClarifaiImage.of("@@samplePuppy"))
                 .withConcepts(
                     Concept.forID("boscoe")
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of("@@sampleWedding"))
+            ClarifaiInput.forInputValue(ClarifaiImage.of("@@sampleWedding"))
                 .withConcepts(
                     Concept.forID("boscoe").withValue(false)
                 )

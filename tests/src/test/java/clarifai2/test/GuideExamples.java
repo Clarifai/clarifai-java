@@ -26,21 +26,21 @@ public class GuideExamples extends BaseClarifaiAPITest {
 
   @Test public void addAnInputUsingAPubliclyAccessibleURL() {
     client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .plus(ClarifaiInput.forImage("@@sampleTrain"))
         .allowDuplicateURLs(true)
         .executeSync();
   }
 
   @Test public void addAnInputUsingBytes() {
     client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of(new File("image.png"))))
+        .plus(ClarifaiInput.forImage(new File("image.png")))
         .allowDuplicateURLs(true)
         .executeSync();
   }
 
   @Test public void addInputsWithConcepts() {
     client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+        .plus(ClarifaiInput.forImage("@@samplePuppy")
             .withConcepts(
                 // To mark a concept as being absent, chain `.withValue(false)`
                 Concept.forID("boscoe")
@@ -55,7 +55,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
     // smarter to use Unicode characters only for naming, and use hashes for concept IDs. The Java Documentation
     // recommends using UTF-8 for the encoding scheme.
     client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+        .plus(ClarifaiInput.forImage("@@samplePuppy")
             .withConcepts(
                 // To mark a concept as being absent, chain `.withValue(false)`
                 Concept.forID(URLEncoder.encode("人", "UTF-8"))
@@ -108,8 +108,8 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void addImagesToSearchIndex() {
     client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")),
-            ClarifaiInput.forImage(ClarifaiImage.of("@@sampleWedding"))
+            ClarifaiInput.forImage("@@sampleTrain"),
+            ClarifaiInput.forImage("@@sampleWedding")
         )
         .allowDuplicateURLs(true)
         .executeSync();
@@ -218,7 +218,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void predictViaURL() {
     client.getDefaultModels().generalModel().predict()
         .withInputs(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
+            ClarifaiInput.forImage("@@sampleTrain")
         )
         .executeSync();
   }
@@ -226,7 +226,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void predictViaImageBytes() {
     client.getDefaultModels().generalModel().predict()
         .withInputs(
-            ClarifaiInput.forImage(ClarifaiImage.of(new File("/home/user/image.jpeg")))
+            ClarifaiInput.forImage(new File("/home/user/image.jpeg"))
         )
         .executeSync();
   }
@@ -234,7 +234,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void predictGeneralModel() {
     client.getDefaultModels().generalModel().predict()
         .withInputs(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain"))
+            ClarifaiInput.forImage("@@sampleTrain")
         )
         .executeSync();
   }
@@ -242,7 +242,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void addImageWithConcepts() {
     client.addInputs()
         .plus(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+            ClarifaiInput.forImage("@@samplePuppy")
                 .withConcepts(Concept.forID("boscoe"))
         )
         .allowDuplicateURLs(true)
@@ -264,7 +264,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void predictWithTheModel() {
     client.predict("{{model_id}}")
         .withInputs(
-            ClarifaiInput.forImage(ClarifaiImage.of("@@samplePuppy"))
+            ClarifaiInput.forImage("@@samplePuppy")
         )
         .executeSync();
   }
@@ -359,7 +359,7 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void cropping() {
     client.addInputs()
         .plus(
-            ClarifaiInput.forImage(
+            ClarifaiInput.forInputValue(
                 ClarifaiImage.of("@@sampleTrain")
                     .withCrop(Crop.create()
                         .top(0.2F)
@@ -376,16 +376,10 @@ public class GuideExamples extends BaseClarifaiAPITest {
   @Test public void addMultipleInputsWithIDs() {
     client.addInputs()
         .plus(
-            ClarifaiInput.forImage(
-                ClarifaiImage.of("@@sampleTrain")
-            ).withConcepts(
-                Concept.forID("id1")
-            ),
-            ClarifaiInput.forImage(
-                ClarifaiImage.of("@@sampleWedding")
-            ).withConcepts(
-                Concept.forID("id2")
-            )
+            ClarifaiInput.forImage("@@sampleTrain")
+                .withConcepts(Concept.forID("id1")),
+            ClarifaiInput.forImage("@@sampleWedding")
+                .withConcepts(Concept.forID("id2"))
         )
         .allowDuplicateURLs(true)
         .executeSync();
@@ -401,37 +395,37 @@ public class GuideExamples extends BaseClarifaiAPITest {
 
   @Test public void weddingModel() {
     client.getDefaultModels().weddingModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 
   @Test public void nsfwModel() {
     client.getDefaultModels().nsfwModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 
   @Test public void colorModel() {
     client.getDefaultModels().colorModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 
   @Test public void foodModel() {
     client.getDefaultModels().foodModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 
   @Test public void travelModel() {
     client.getDefaultModels().travelModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 
   @Test public void faceDetectionModel() {
     client.getDefaultModels().faceDetectionModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))
+        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
         .executeSync();
   }
 

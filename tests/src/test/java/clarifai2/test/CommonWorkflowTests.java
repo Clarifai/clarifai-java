@@ -25,7 +25,6 @@ import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -81,7 +80,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t01a_addInputs() throws Exception {
     assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forImage(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
+        .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
                 .withCrop(Crop.create()
                     .top(0.1F)
                     .left(0.1F)
@@ -125,14 +124,12 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(ClarifaiImage.of(
-                TOYOTA_IMAGE_URL))
+            ClarifaiInput.forImage(TOYOTA_IMAGE_URL)
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
                 ),
-            ClarifaiInput.forImage(
-                HONDA_IMAGE_URL)
+            ClarifaiInput.forImage(HONDA_IMAGE_URL)
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
@@ -280,7 +277,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
   @Retry
   @Test public void t16b_predictWithModel_00() {
     assertSuccess(client.getDefaultModels().generalModel().predict()
-        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
+        .withInputs(ClarifaiInput.forInputValue(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
             .withCrop(Crop.create()
                 .top(0.1F)
                 .bottom(0.8F)
@@ -358,7 +355,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Test public void t17e_searchInputsWithModel_geo() {
     assertSuccess(client.addInputs().plus(
-        ClarifaiInput.forImage(ClarifaiImage.of(METRO_NORTH_IMAGE_URL))
+        ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)
             .withGeo(PointF.at(90F, 23F))
     ));
     assertSuccess(

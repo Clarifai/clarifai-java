@@ -47,6 +47,7 @@ public abstract class BaseClarifaiAPITest {
       "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg";
   @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
   @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
+  @NotNull static final File BEER_VIDEO_FILE = new File("../tests/assets/beer.mp4");
   @NotNull @Rule public final TestName testName = new TestName();
   @NotNull @Rule public final RetryRule retryRule = new RetryRule();
   @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();

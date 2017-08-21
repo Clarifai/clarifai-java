@@ -21,7 +21,7 @@ import static clarifai2.internal.InternalUtil.fromJson;
 
 @SuppressWarnings("NullableProblems")
 @JsonAdapter(ClarifaiImage.Adapter.class)
-public abstract class ClarifaiImage {
+public abstract class ClarifaiImage implements ClarifaiInputValue {
 
   @NotNull public static ClarifaiFileImage of(@NotNull byte[] imageBytes) {
     return new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes);
@@ -43,20 +43,6 @@ public abstract class ClarifaiImage {
 
   @NotNull public static ClarifaiURLImage of(@NotNull URL imageURL) {
     return new AutoValue_ClarifaiURLImage(Crop.create(), imageURL);
-  }
-
-  @NotNull public static ClarifaiVideo ofVideo(@NotNull String imageURL) {
-    final URL result;
-    try {
-      result = new URL(imageURL);
-    } catch (MalformedURLException e) {
-      throw new ClarifaiException("Could not parse URL " + imageURL, e);
-    }
-    return ofVideo(result);
-  }
-
-  @NotNull public static ClarifaiVideo ofVideo(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiVideo(Crop.create(), imageURL);
   }
 
   @Nullable public abstract Crop crop();
@@ -82,8 +68,7 @@ public abstract class ClarifaiImage {
         public ClarifaiImage deserialize(
             @NotNull JsonElement json,
             @NotNull TypeToken<ClarifaiImage> type,
-            @NotNull Gson gson
-        ) {
+            @NotNull Gson gson) {
           return fromJson(
               gson,
               json,

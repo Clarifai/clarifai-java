@@ -2,8 +2,8 @@ package clarifai2.test;
 
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.model.PredictRequest;
+import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
@@ -56,8 +56,7 @@ public class PredictTests extends BaseClarifaiAPITest {
     String dogConceptId = "ai_8S2Vq3cR";
     PredictRequest<Prediction> request = client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(
-            ClarifaiInput.forImage(
-                ClarifaiURLImage.of(CAT_IMAGE_URL)))
+            ClarifaiInput.forImage(CAT_IMAGE_URL))
         .selectConcepts(Concept.forID(dogConceptId), Concept.forID(catConceptId));
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> predictionsResponse = request.executeSync();
     List<Prediction> predictions = predictionsResponse.get().get(0).data();
@@ -70,8 +69,8 @@ public class PredictTests extends BaseClarifaiAPITest {
   @NotNull private PredictRequest<Prediction> makePredictRequest() {
     return client.predict(client.getDefaultModels().travelModel().id())
         .withInputs(
-            ClarifaiInput.forImage(
-                ClarifaiURLImage.of(FAMILY_IMAGE_URL)
+            ClarifaiInput.forInputValue(
+                ClarifaiImage.of(FAMILY_IMAGE_URL)
                     .withAllowDuplicateUrl(false)));
   }
 }
