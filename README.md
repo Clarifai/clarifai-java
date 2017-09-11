@@ -5,8 +5,8 @@ Clarifai Java Client
 A simple client for the Clarifai v2 API.
 
 * Try the Clarifai demo at: https://clarifai.com/demo
-* Sign up for a free account at: https://developer.clarifai.com/signup/
-* Read the developer guide at: https://developer.clarifai.com/guide/
+* Sign up for a free account at: https://clarifai.com/developer/signup/
+* Read the developer guide at: https://clarifai.com/developer/guide/
 * Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.2.12/javadoc/
 
 **NOTE**: If you are planning to contribute to this API client, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
@@ -43,7 +43,7 @@ Add the following to your dependencies:
 
 Getting Started
 ---------------
-There are two authentication approaches. The recommended is to use [API Keys](http://blog.clarifai.com/introducing-api-keys-a-safer-way-to-authenticate-your-applications/). You may also use the now deprecated app ID & secret pair. See the [Authentication section](https://developer.clarifai.com/guide/authentication#authentication) of the docs for more info.
+There are two authentication approaches. The recommended is to use [API Keys](http://blog.clarifai.com/introducing-api-keys-a-safer-way-to-authenticate-your-applications/). You may also use the now deprecated app ID & secret pair. See the [Authentication section](https://clarifai.com/developer/guide/authentication#authentication) of the docs for more info.
 
 To create a `ClarifaiClient` instance with an API Key do the following:
 
