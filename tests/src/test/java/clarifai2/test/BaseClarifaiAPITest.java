@@ -45,6 +45,8 @@ public abstract class BaseClarifaiAPITest {
       "https://s3.amazonaws.com/clarifai-img/cd/1d/05/8b9cd2d37560ef9f6c436debc6.jpg";
   @NotNull static final String TOYOTA_IMAGE_URL =
       "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg";
+  @NotNull static final String SUNGLASSES_IMAGE_URL =
+      "https://clarifai.com/developer/static/images/model-samples/apparel-001.jpg";
   @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
   @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
   @NotNull static final File BEER_VIDEO_FILE = new File("../tests/assets/beer.mp4");

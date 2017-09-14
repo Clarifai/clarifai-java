@@ -4,6 +4,7 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static clarifai2.internal.InternalUtil.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -47,8 +49,8 @@ public class PredictTests extends BaseClarifaiAPITest {
     PredictRequest<Prediction> request = makePredictRequest()
         .withMaxConcepts(3);
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> predictionsResponse = request.executeSync();
-    List<ClarifaiOutput<Prediction>> predictions = predictionsResponse.get();
-    assertEquals(3, predictions.get(0).data().size());
+    List<Prediction> predictions = predictionsResponse.get().get(0).data();
+    assertTrue(predictions.size() <= 3);
   }
 
   @Test public void shouldReturnCorrectConceptsWhenSelectConcepts() {
@@ -64,6 +66,25 @@ public class PredictTests extends BaseClarifaiAPITest {
     assertTrue(predictions.size() <= 2);
     // Cat should be in the prediction response.
     assertTrue(predictions.stream().anyMatch(prediction -> prediction.asConcept().id().equals(catConceptId)));
+  }
+
+  @Test public void modelPredictShouldBeSuccessfulWhenNonCompleteModel() {
+    ConceptModel apparelModel = client.getDefaultModels().apparelModel();
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
+        apparelModel.predict().withInputs(ClarifaiInput.forImage(SUNGLASSES_IMAGE_URL)).executeSync();
+    ClarifaiOutput<Concept> output = response.get().get(0);
+    assertNotNull(output.model().modelVersion());
+    assertNotNull(output.data());
+  }
+
+  @Test public void modelPredictShouldBeSuccessfulWhenCompleteModel() {
+    ConceptModel apparelModel =
+        client.getModelByID(client.getDefaultModels().apparelModel().id()).executeSync().get().asConceptModel();
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
+        apparelModel.predict().withInputs(ClarifaiInput.forImage(SUNGLASSES_IMAGE_URL)).executeSync();
+    ClarifaiOutput<Concept> output = response.get().get(0);
+    assertNotNull(output.model().modelVersion());
+    assertNotNull(output.data());
   }
 
   @NotNull private PredictRequest<Prediction> makePredictRequest() {
