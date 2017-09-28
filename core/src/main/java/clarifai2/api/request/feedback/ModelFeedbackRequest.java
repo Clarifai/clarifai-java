@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 public final class ModelFeedbackRequest extends ClarifaiRequest.Builder<JsonNull> {
-  @Nullable private String modelID;
+  @NotNull private String modelID;
   @Nullable private String inputID;
   @Nullable private String imageUrl;
   @NotNull private final List<ConceptFeedback> concepts = new ArrayList<>();

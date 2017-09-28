@@ -30,11 +30,13 @@ import clarifai2.api.request.model.GetModelVersionRequest;
 import clarifai2.api.request.model.GetModelVersionsRequest;
 import clarifai2.api.request.model.GetModelsRequest;
 import clarifai2.api.request.model.ModifyModelRequest;
+import clarifai2.api.request.model.RunModelEvaluationRequest;
 import clarifai2.api.request.model.WorkflowPredictRequest;
 import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.DefaultModels;
+import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Prediction;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
@@ -212,5 +214,10 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public WorkflowPredictRequest workflowPredict(@NotNull String workflowID) {
     return new WorkflowPredictRequest(this, workflowID);
+  }
+
+  @NotNull @Override public RunModelEvaluationRequest runModelEvaluation(@NotNull String modelID,
+      @NotNull String versionID) {
+    return new RunModelEvaluationRequest(this, modelID, versionID);
   }
 }
