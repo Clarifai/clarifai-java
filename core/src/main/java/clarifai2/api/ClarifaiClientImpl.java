@@ -3,6 +3,7 @@ package clarifai2.api;
 import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
+import clarifai2.api.request.concept.ModifyConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.feedback.ModelFeedbackRequest;
 import clarifai2.api.request.feedback.SearchesFeedbackRequest;
@@ -121,6 +122,10 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public GetConceptByIDRequest getConceptByID(@NotNull final String conceptID) {
     return new GetConceptByIDRequest(this, conceptID);
+  }
+
+  @NotNull @Override public ModifyConceptsRequest modifyConcepts() {
+    return new ModifyConceptsRequest(this, "overwrite");
   }
 
   @NotNull @Override

@@ -3,6 +3,7 @@ package clarifai2.api;
 import clarifai2.api.request.concept.AddConceptsRequest;
 import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
+import clarifai2.api.request.concept.ModifyConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
 import clarifai2.api.request.feedback.ModelFeedbackRequest;
 import clarifai2.api.request.feedback.SearchesFeedbackRequest;
@@ -201,6 +202,13 @@ public interface ClarifaiClient {
    * @return a request that will, when executed, return the concept that was retrieved
    */
   @NotNull GetConceptByIDRequest getConceptByID(@NotNull String conceptID);
+
+  /**
+   * Overwrites fields for existing concepts.
+   *
+   * @return a builder to construct a request that will, when executed, return the newly-modified concepts
+   */
+  @NotNull ModifyConceptsRequest modifyConcepts();
 
   /**
    * Get the concepts that match this search string
