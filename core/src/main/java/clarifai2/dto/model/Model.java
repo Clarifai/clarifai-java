@@ -87,10 +87,14 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_ColorModel.Builder();
       case EMBEDDING:
         return new AutoValue_EmbeddingModel.Builder();
+      case FACE_EMBEDDING:
+        return new AutoValue_FaceEmbeddingModel.Builder();
       case LOGO:
         return new AutoValue_LogoModel.Builder();
       case FACE_DETECTION:
         return new AutoValue_FaceDetectionModel.Builder();
+      case FACE_CONCEPTS:
+        return new AutoValue_FaceConceptsModel.Builder();
       case DEMOGRAPHICS:
         return new AutoValue_DemographicsModel.Builder();
       case VIDEO:
@@ -124,12 +128,28 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((FaceDetectionModel) this);
   }
 
+  public final boolean isFaceConceptsModel() {
+    return this instanceof FaceConceptsModel;
+  }
+
+  @NotNull public final FaceConceptsModel asFaceConceptsModel() {
+    return ((FaceConceptsModel) this);
+  }
+
   public final boolean isEmbeddingModel() {
     return this instanceof EmbeddingModel;
   }
 
   @NotNull public final EmbeddingModel asEmbeddingModel() {
     return ((EmbeddingModel) this);
+  }
+
+  public final boolean isFaceEmbeddingModel() {
+    return this instanceof FaceEmbeddingModel;
+  }
+
+  @NotNull public final FaceEmbeddingModel asFaceEmbeddingModel() {
+    return ((FaceEmbeddingModel) this);
   }
 
   public final boolean isFocusModel() {

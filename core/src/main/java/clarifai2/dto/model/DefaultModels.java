@@ -23,7 +23,9 @@ public final class DefaultModels {
   @NotNull private final FocusModel focus;
   @NotNull private final FaceDetectionModel face;
   @NotNull private final DemographicsModel demographics;
+  @NotNull private final FaceConceptsModel celebrity;
   @NotNull private final EmbeddingModel generalEmbed;
+  @NotNull private final FaceEmbeddingModel faceEmbed;
   @NotNull private final VideoModel generalVideo;
   @NotNull private final VideoModel foodVideo;
   @NotNull private final VideoModel nsfwVideo;
@@ -43,8 +45,10 @@ public final class DefaultModels {
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
     focus = create(ModelType.FOCUS, client, "c2cf7cecd8a6427da375b9f35fcd2381", "focus");
     face = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
+    celebrity = create(ModelType.FACE_CONCEPTS, client, "e466caa0619f444ab97497640cefc4dc", "celeb-v1.3");
     demographics = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
     generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
+    faceEmbed = create(ModelType.FACE_EMBEDDING, client, "d02b4508df58432fbb84e800597b8959", "face-embed");
 
     // This is very poor practice, the user should just be able to enter either an image or a video, and the client
     // should just handle it as needed. However, the client will need to be refactored before this is possible.
@@ -89,29 +93,20 @@ public final class DefaultModels {
 
   @NotNull public DemographicsModel demographicsModel() { return demographics; }
 
+  @NotNull public FaceConceptsModel celebrityModel() { return celebrity; }
+
   @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed; }
+  @NotNull public FaceEmbeddingModel faceEmbeddingModel() { return faceEmbed; }
 
-  @NotNull public VideoModel generalVideoModel() {
-    return generalVideo;
-  }
+  @NotNull public VideoModel generalVideoModel() { return generalVideo; }
 
-  @NotNull public VideoModel foodVideoModel() {
-    return foodVideo;
-  }
+  @NotNull public VideoModel foodVideoModel() { return foodVideo; }
 
-  @NotNull public VideoModel travelVideoModel() {
-    return travelVideo;
-  }
+  @NotNull public VideoModel travelVideoModel() { return travelVideo; }
 
-  @NotNull public VideoModel nsfwVideoModel() {
-    return nsfwVideo;
-  }
+  @NotNull public VideoModel nsfwVideoModel() { return nsfwVideo; }
 
-  @NotNull public VideoModel weddingVideoModel() {
-    return weddingVideo;
-  }
+  @NotNull public VideoModel weddingVideoModel() { return weddingVideo; }
 
-  @NotNull public VideoModel apparelVideoModel() {
-    return apparelVideo;
-  }
+  @NotNull public VideoModel apparelVideoModel() { return apparelVideo; }
 }

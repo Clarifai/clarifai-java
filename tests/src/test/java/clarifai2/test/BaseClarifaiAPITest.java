@@ -29,7 +29,8 @@ public abstract class BaseClarifaiAPITest {
 
   @NotNull static final String METRO_NORTH_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
   @NotNull static final String CONAN_GIF_URL = "https://s3.amazonaws.com/samples.clarifai.com/3o6gb3kkXfLvdKEZs4.gif";
-  @NotNull static final String LOGO_IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg";
+  @NotNull static final String LOGO_IMAGE_URL =
+      "https://developer.clarifai.com/static/images/model-samples/logo-002.jpg";
   @NotNull static final String STREETBAND_IMAGE_URL = "https://samples.clarifai.com/demographics.jpg";
   @NotNull static final String FAMILY_IMAGE_URL = "https://samples.clarifai.com/family.jpg";
   @NotNull static final String FERRARI_IMAGE_URL =
@@ -47,6 +48,9 @@ public abstract class BaseClarifaiAPITest {
       "https://s3.amazonaws.com/clarifai-img/43/2a/89/163ade86b76b4ba8ec67d22e40.jpg";
   @NotNull static final String SUNGLASSES_IMAGE_URL =
       "https://clarifai.com/developer/static/images/model-samples/apparel-001.jpg";
+  @NotNull static final String CELEBRITY_IMAGE_URL = "https://samples.clarifai.com/celebrity.jpeg";
+  @NotNull static final String FOOD_IMAGE_URL =
+      "https://developer.clarifai.com/static/images/model-samples/food-004.jpg";
   @NotNull static final File METRO_NORTH_IMAGE_FILE = new File("../tests/assets/metro-north.jpg");
   @NotNull static final File KOTLIN_LOGO_IMAGE_FILE = new File("../tests/assets/image.png");
   @NotNull static final File BEER_VIDEO_FILE = new File("../tests/assets/beer.mp4");
@@ -59,7 +63,7 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final String apiKey = EnvVar.CLARIFAI_API_KEY.value();
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
 
-  @NotNull final ClarifaiClient client = new ClarifaiBuilder(appID, appSecret)
+  @NotNull final ClarifaiClient client = new ClarifaiBuilder(apiKey)
       .baseURL(baseURL)
       .client(new OkHttpClient.Builder()
           .connectTimeout(60, TimeUnit.SECONDS)
@@ -69,8 +73,6 @@ public abstract class BaseClarifaiAPITest {
           .build()
       )
       .buildSync();
-
-//  @NotNull final ClarifaiClient client = makeClient(apiKey);
 
   @NotNull public ClarifaiClient makeClient(String apiKey) {
     return new ClarifaiBuilder(apiKey)
@@ -120,16 +122,6 @@ public abstract class BaseClarifaiAPITest {
         "### " + prefix + ": " + testName.getMethodName() + "\n" +
         "#########################################################" + "\n"
     );
-  }
-
-  @Test(expected = ClarifaiException.class)
-  public void testIncorrectAppID() {
-    new ClarifaiBuilder("fewjiofjewiofjewiojwejfewoi", appSecret).buildSync();
-  }
-
-  @Test(expected = ClarifaiException.class)
-  public void testIncorrectAppSecret() {
-    new ClarifaiBuilder(appID, "fjweiojf2983fj203jf23ofj23ofj").buildSync();
   }
 
   <T> T assertSuccess(@NotNull ClarifaiPaginatedRequest<T> request) {

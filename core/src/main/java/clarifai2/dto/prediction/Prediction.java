@@ -29,6 +29,14 @@ public abstract class Prediction {
     return (FaceDetection) this;
   }
 
+  public final boolean isFaceConcepts() {
+    return this instanceof FaceConcepts;
+  }
+
+  @NotNull public final FaceConcepts asFaceConcepts() {
+    return (FaceConcepts) this;
+  }
+
   public final boolean isBlur() {
     return this instanceof Blur;
   }
@@ -51,5 +59,9 @@ public abstract class Prediction {
 
   @NotNull public final Cluster asCluster() {
     return (Cluster) this;
+  }
+
+  @NotNull public final Demographics asDemographics() {
+    return (Demographics) this;
   }
 }

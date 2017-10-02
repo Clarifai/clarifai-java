@@ -5,6 +5,7 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
+import clarifai2.dto.prediction.FaceConcepts;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
