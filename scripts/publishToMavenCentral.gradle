@@ -39,8 +39,8 @@ if (project.hasProperty("sonatypeUsernameClarifai")) {
     }
   }
   bintray {
-    user = project.jcenterUsernameClarifai
-    key = project.jcenterApiKeyClarifai
+    user = project.hasProperty('jcenterUsernameClarifai') ? project.jcenterUsernameClarifai : System.getenv('JCENTER_USERNAME_CLARIFAI')
+    key = project.hasProperty('jcenterApiKeyClarifai') ? project.jcenterApiKeyClarifai : System.getenv('JCENTER_API_KEY_CLARIFAI')
 
     publish = true
     configurations = ["archives"]
@@ -65,8 +65,8 @@ if (project.hasProperty("sonatypeUsernameClarifai")) {
 
         mavenCentralSync {
           sync = true
-          user = project.sonatypeUsernameClarifai
-          password = project.sonatypePasswordClarifai
+          user = project.hasProperty('sonatypeUsernameClarifai') ? project.sonatypeUsernameClarifai : System.getenv('SONATYPE_USERNAME_CLARIFAI')
+          password = project.hasProperty('sonatypePasswordClarifai') ? project.sonatypePasswordClarifai : System.getenv('SONATYPE_PASSWORD_CLARIFAI')
         }
       }
     }

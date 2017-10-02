@@ -15,3 +15,14 @@ cache:
     - $HOME/.gradle/native/
     - $HOME/.gradle/daemon/native/
 
+deploy:
+  provider: script
+  script:
+    - ./gradlew bintrayUpload
+  on:
+    tags: true
+    repo: Clarifai/clarifai-java
+
+branches:
+  only:
+    - master
