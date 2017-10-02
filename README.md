@@ -102,7 +102,6 @@ Predict the contents of an image:
 ```java
 Model<Concept> generalModel = client.getDefaultModels().generalModel();
 
-// via URL:
 PredictRequest<Concept> request = generalModel.predict().withInputs(
         ClarifaiInput.forImage("https://samples.clarifai.com/metro-north.jpg")
     );
@@ -112,7 +111,6 @@ Predict the contents of a video:
 ```java
 Model<Frame> generalVideoModel = client.getDefaultModels().generalVideoModel();
 
-// via url
 PredictRequest<Frame> videoRequest = generalVideoModel.predict().withInputs(
     ClarifaiInput.forVideo("https://samples.clarifai.com/beer.mp4")
 );
