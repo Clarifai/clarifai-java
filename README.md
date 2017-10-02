@@ -105,7 +105,7 @@ Model<Concept> generalModel = client.getDefaultModels().generalModel();
 PredictRequest<Concept> request = generalModel.predict().withInputs(
         ClarifaiInput.forImage("https://samples.clarifai.com/metro-north.jpg")
     );
-List<ClarifaiOutput<Concept>> result1 = request.executeSync().get();
+List<ClarifaiOutput<Concept>> result = request.executeSync().get();
 ```
 Predict the contents of a video:
 ```java
