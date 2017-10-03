@@ -96,6 +96,30 @@ Once a `ClarifaiPaginatedRequest<T>` is built, you can call `ClarifaiPaginatedRe
 `ClarifaiRequest<T>` for the specified page. Pages are 1-indexed. Currently, the API does not indicate how many elements
 there are in a paginated request in total, but this is planned for the future.
 
+Example Requests
+----------------
+Predict the contents of an image:
+```java
+Model<Concept> generalModel = client.getDefaultModels().generalModel();
+
+PredictRequest<Concept> request = generalModel.predict().withInputs(
+        ClarifaiInput.forImage("https://samples.clarifai.com/metro-north.jpg")
+    );
+List<ClarifaiOutput<Concept>> result = request.executeSync().get();
+```
+Predict the contents of a video:
+```java
+Model<Frame> generalVideoModel = client.getDefaultModels().generalVideoModel();
+
+PredictRequest<Frame> videoRequest = generalVideoModel.predict().withInputs(
+    ClarifaiInput.forVideo("https://samples.clarifai.com/beer.mp4")
+);
+List<ClarifaiOutput<Frame>> videoResults = videoRequest.executeSync().get();
+```
+
+See the [developer guide](https://clarifai.com/developer/guide/) for more detailed examples
+and examples of other features such as custom training and search.
+
 Using API responses
 ------------------
 All responses from the API are immutable data types (constructed using AutoValue). Some of these types, such as
