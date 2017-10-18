@@ -77,7 +77,7 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
       @Override
       public Response intercept(Chain chain) throws IOException {
         final Request.Builder requestBuilder = chain.request().newBuilder()
-            .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
+            .header("X-Clarifai-Client", String.format("java:%s:%s", BuildConfig.VERSION, System.getProperty("java.version", "?")));
         if (closed) {
           throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
         }
