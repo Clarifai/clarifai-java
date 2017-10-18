@@ -4,7 +4,7 @@ Clarifai Java Client
 
 |        | Travis | AppVeyor |
 |--------|--------|----------|
-| master | [![Build Status](https://travis-ci.com/Clarifai/private-clarifai-java.svg?token=pCuuyXHHizqqpTwKsQA5&branch=model-eval)](https://travis-ci.com/Clarifai/private-clarifai-java) | [![Build status](https://ci.appveyor.com/api/projects/status/jp6tau4r1hpfxljs/branch/master?svg=true)](https://ci.appveyor.com/project/robertwenquan/private-clarifai-java/branch/master) |
+| master | [![Build Status](https://travis-ci.com/Clarifai/private-clarifai-java.svg?token=8de8FRGdZftbbncyqcof&branch=master)](https://travis-ci.com/Clarifai/private-clarifai-java) | [![Build status](https://ci.appveyor.com/api/projects/status/jp6tau4r1hpfxljs/branch/master?svg=true)](https://ci.appveyor.com/project/robertwenquan/private-clarifai-java/branch/master) |
 | latest | n/a  | [![Build status](https://ci.appveyor.com/api/projects/status/jp6tau4r1hpfxljs?svg=true)](https://ci.appveyor.com/project/robertwenquan/private-clarifai-java) |
 
 A simple client for the Clarifai v2 API.
