@@ -611,20 +611,9 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     logger.debug(details.errorDetails());
   }
 
-  // This test is now slightly misleading, but points out that we need to stop users from using this method if they have
-  // set an API key (no reason to get a token if you already have a key).
-  @Test public void testBuildClientAsync() throws InterruptedException, ExecutionException {
-    final Future<ClarifaiClient> futureClient = new ClarifaiBuilder(appID, appSecret)
-        .baseURL(baseURL)
-        .build();
-    retryAndTimeout(30, TimeUnit.SECONDS, futureClient::isDone);
-    final ClarifaiClient client = futureClient.get();
-    logger.debug(client.getToken().toString());
-  }
-
   @Test(expected = ClarifaiException.class)
   public void testClosingClientWorks() {
-    final ClarifaiClient toBeClosed = new ClarifaiBuilder(appID, appSecret).buildSync();
+    final ClarifaiClient toBeClosed = new ClarifaiBuilder(apiKey).buildSync();
     toBeClosed.close();
     toBeClosed.getModels().getPage(1).executeSync();
   }

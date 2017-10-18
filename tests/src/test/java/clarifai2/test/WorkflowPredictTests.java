@@ -7,6 +7,7 @@ import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.dto.workflow.WorkflowPredictResult;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;

@@ -76,17 +76,18 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
     this.httpClient = unmodifiedClient.newBuilder().addInterceptor(new Interceptor() {
       @Override
       public Response intercept(Chain chain) throws IOException {
+        final Request.Builder requestBuilder = chain.request().newBuilder()
+            .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
+        if (closed) {
+          throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
+        }
         if (apiKey == null) {
-          final Request.Builder requestBuilder = chain.request().newBuilder()
-              .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
           final ClarifaiToken credential = refreshIfNeeded();
           if (credential != null) {
             requestBuilder.addHeader("Authorization", "Bearer " + credential.getAccessToken());
           }
           return chain.proceed(requestBuilder.build());
         } else {
-          final Request.Builder requestBuilder = chain.request().newBuilder()
-              .header("X-Clarifai-Client", "java: " + BuildConfig.VERSION);
           requestBuilder.addHeader("Authorization", "Key " + apiKey);
           return chain.proceed(requestBuilder.build());
         }
@@ -128,9 +129,6 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   @Nullable
   private ClarifaiToken refreshIfNeeded() {
     synchronized (this) {
-      if (closed) {
-        throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
-      }
       if (!hasValidToken()) {
         currentClarifaiToken = refresh();
       }

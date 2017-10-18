@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class KeysTests extends BaseClarifaiAPITest {
+
   @Test public void shouldHaveCorrectStatusWhenInvalidKey() {
     GetInputsRequest request = makeClient("some-invalid-key-321").getInputs();
     ClarifaiResponse<List<ClarifaiInput>> response = request.getPage(1).executeSync();
@@ -222,7 +223,6 @@ public class KeysTests extends BaseClarifaiAPITest {
     if(!response.isSuccessful() || response.get().size() != 1) {
       return null;
     }
-
     return response.get().get(0).id();
   }
 

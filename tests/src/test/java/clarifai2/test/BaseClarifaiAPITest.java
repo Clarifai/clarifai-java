@@ -58,8 +58,6 @@ public abstract class BaseClarifaiAPITest {
   @NotNull @Rule public final RetryRule retryRule = new RetryRule();
   @NotNull @Rule public final ExpectedException thrown = ExpectedException.none();
   @NotNull final Logger logger = LoggerFactory.getLogger(getClass());
-  @NotNull final String appID = EnvVar.CLARIFAI_APP_ID.value();
-  @NotNull final String appSecret = EnvVar.CLARIFAI_APP_SECRET.value();
   @NotNull final String apiKey = EnvVar.CLARIFAI_API_KEY.value();
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
 

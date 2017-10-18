@@ -2,6 +2,11 @@ Clarifai Java Client
 ==================
 [![Release](https://img.shields.io/maven-central/v/com.clarifai.clarifai-api2/core.svg?style=flat-square)](http://mvnrepository.com/artifact/com.clarifai.clarifai-api2/core)
 
+|        | Travis | AppVeyor |
+|--------|--------|----------|
+| master | [![Build Status](https://travis-ci.com/Clarifai/private-clarifai-java.svg?token=pCuuyXHHizqqpTwKsQA5&branch=model-eval)](https://travis-ci.com/Clarifai/private-clarifai-java) | [![Build status](https://ci.appveyor.com/api/projects/status/jp6tau4r1hpfxljs/branch/master?svg=true)](https://ci.appveyor.com/project/robertwenquan/private-clarifai-java/branch/master) |
+| latest | n/a  | [![Build status](https://ci.appveyor.com/api/projects/status/jp6tau4r1hpfxljs?svg=true)](https://ci.appveyor.com/project/robertwenquan/private-clarifai-java) |
+
 A simple client for the Clarifai v2 API.
 
 * Try the Clarifai demo at: https://clarifai.com/demo
