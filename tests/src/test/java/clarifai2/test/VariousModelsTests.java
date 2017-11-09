@@ -45,6 +45,37 @@ public class VariousModelsTests extends BaseClarifaiAPITest {
     assertNotNull(response.get().get(0).data().get(0));
   }
 
+  @Test public void shouldBeSuccessfulForLandscapeQualityModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
+        client.getDefaultModels().landscapeQualityModel().predict()
+        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
+    System.out.println(response.rawBody());
+    assertTrue(response.isSuccessful());
+    List<Concept> concepts = response.get().get(0).data();
+    assertNotNull(concepts);
+    assertTrue(concepts.size() > 0);
+  }
+
+  @Test public void shouldBeSuccessfulForPortraitQualityModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
+        client.getDefaultModels().portraitQualityModel().predict()
+        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
+    assertTrue(response.isSuccessful());
+    List<Concept> concepts = response.get().get(0).data();
+    assertNotNull(concepts);
+    assertTrue(concepts.size() > 0);
+  }
+
+  @Test public void shouldBeSuccessfulForTexturesAndPatternsModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
+        client.getDefaultModels().texturesAndPatternsModel().predict()
+        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
+    assertTrue(response.isSuccessful());
+    List<Concept> concepts = response.get().get(0).data();
+    assertNotNull(concepts);
+    assertTrue(concepts.size() > 0);
+  }
+
   @Test public void shouldBeCorrectForLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> response = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();

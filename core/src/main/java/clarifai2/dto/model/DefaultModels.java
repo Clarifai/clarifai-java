@@ -18,6 +18,9 @@ public final class DefaultModels {
   @NotNull private final ConceptModel wedding;
   @NotNull private final ConceptModel apparel;
   @NotNull private final ConceptModel moderation;
+  @NotNull private final ConceptModel landscapeQuality;
+  @NotNull private final ConceptModel portraitQuality;
+  @NotNull private final ConceptModel texturesAndPatterns;
   @NotNull private final LogoModel logo;
   @NotNull private final ColorModel color;
   @NotNull private final FocusModel focus;
@@ -41,6 +44,9 @@ public final class DefaultModels {
     wedding = create(ModelType.CONCEPT, client, "c386b7a870114f4a87477c0824499348", "weddings-v1.0");
     apparel = create(ModelType.CONCEPT, client, "e0be3b9d6a454f0493ac3a30784001ff", "apparel");
     moderation = create(ModelType.CONCEPT, client, "d16f390eb32cad478c7ae150069bd2c6", "moderation");
+    landscapeQuality = create(ModelType.CONCEPT, client, "bec14810deb94c40a05f1f0eb3c91403", "landscape-quality");
+    portraitQuality = create(ModelType.CONCEPT, client, "de9bd05cfdbf4534af151beb2a5d0953", "portrait-quality");
+    texturesAndPatterns = create(ModelType.CONCEPT, client, "fbefb47f9fdb410e8ce14f24f54b47ff", "textures-patterns");
     logo = create(ModelType.LOGO, client, "c443119bf2ed4da98487520d01a0b1e3", "logo-v0.4");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
     focus = create(ModelType.FOCUS, client, "c2cf7cecd8a6427da375b9f35fcd2381", "focus");
@@ -82,6 +88,12 @@ public final class DefaultModels {
   @NotNull public ConceptModel apparelModel() { return apparel; }
 
   @NotNull public ConceptModel moderationModel() { return moderation; }
+
+  @NotNull public ConceptModel landscapeQualityModel() { return landscapeQuality; }
+
+  @NotNull public ConceptModel portraitQualityModel() { return portraitQuality; }
+
+  @NotNull public ConceptModel texturesAndPatternsModel() { return texturesAndPatterns; }
 
   @NotNull public LogoModel logoModel() { return logo; }
 
