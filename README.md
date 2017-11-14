@@ -11,7 +11,7 @@ A simple client for the Clarifai v2 API.
 * Try the Clarifai demo at: https://clarifai.com/demo
 * Sign up for a free account at: https://clarifai.com/developer/signup/
 * Read the developer guide at: https://clarifai.com/developer/guide/
-* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.3.0/javadoc/
+* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.4.0/javadoc/
 
 **NOTE**: If you are planning to contribute to this API client, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
