@@ -1,3 +1,8 @@
+branches:
+  only:
+    - master
+    - /^\d+\.\d+\.\d+$/
+
 sudo: true
 
 language: java
@@ -22,7 +27,3 @@ deploy:
   on:
     tags: true
     repo: Clarifai/clarifai-java
-
-branches:
-  only:
-    - master
