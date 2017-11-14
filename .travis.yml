@@ -20,6 +20,9 @@ cache:
     - $HOME/.gradle/native/
     - $HOME/.gradle/daemon/native/
 
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_fe71053f5cc2_key -iv $encrypted_fe71053f5cc2_iv -in gradle.properties.enc -out gradle.properties -d
+
 deploy:
   provider: script
   script:
