@@ -24,6 +24,7 @@ deploy:
   provider: script
   script:
     - ./gradlew bintrayUpload
+  skip_cleanup: true
   on:
     tags: true
     repo: Clarifai/clarifai-java
