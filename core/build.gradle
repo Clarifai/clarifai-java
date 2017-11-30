@@ -9,7 +9,7 @@ dependencies {
   )
 
   compileOnly(
-      "com.jakewharton.auto.value:auto-value-annotations:$versions.autoValue",
+      "com.google.auto.value:auto-value:$versions.autoValue",
       deps.nullityAnnotations,
       "com.github.kevinmost.auto-value-custom-hashcode-equals:adapter:$versions.customHashCodeEquals",
   )
