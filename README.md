@@ -46,7 +46,7 @@ Add the following to your dependencies:
 ```
 
 ### Jars:
-
+All links hosted by Maven Central (https://repo1.maven.org/):
 - [Clarifai 2.4.0 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.4.0/core-2.4.0.jar)
 
   **Dependencies:**
