@@ -45,6 +45,15 @@ Add the following to your dependencies:
 </dependency>
 ```
 
+### Jars:
+
+- [Clarifai 2.4.0 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.4.0/core-2.4.0.jar)
+
+  **Dependencies:**
+  - [OkHttp 3.4.1 (.jar)](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/3.4.1/okhttp-3.4.1.jar)
+    - [Okio 1.9.0 (.jar)](https://repo1.maven.org/maven2/com/squareup/okio/okio/1.9.0/okio-1.9.0.jar)
+  - [Gson 2.7 (.jar)](https://repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar)
+
 Getting Started
 ---------------
 There are two authentication approaches. The recommended is to use [API Keys](http://blog.clarifai.com/introducing-api-keys-a-safer-way-to-authenticate-your-applications/). You may also use the now deprecated app ID & secret pair. See the [Authentication section](https://clarifai.com/developer/guide/authentication#authentication) of the docs for more info.
