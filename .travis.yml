@@ -25,11 +25,21 @@ before_deploy:
   - openssl aes-256-cbc -K $encrypted_fe71053f5cc2_key -iv $encrypted_fe71053f5cc2_iv -in gradle.properties.enc -out gradle.properties -d
 
 deploy:
-  provider: script
-  script:
-    - ./gradlew bintrayUpload
-  skip_cleanup: true
-  on:
-    jdk: oraclejdk9
-    tags: true
-    repo: Clarifai/clarifai-java
+  - provider: script
+    script:
+      - ./gradlew bintrayUpload
+    skip_cleanup: true
+    on:
+      jdk: oraclejdk9
+      tags: true
+      repo: Clarifai/clarifai-java
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file:
+      - core/build/libs/core-*.jar
+    on:
+      jdk: oraclejdk9
+      tags: true
+      repo: Clarifai/clarifai-java
