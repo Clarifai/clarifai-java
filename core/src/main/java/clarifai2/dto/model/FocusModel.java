@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class FocusModel extends Model<Focus> {
   FocusModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.FOCUS; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.FOCUS; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

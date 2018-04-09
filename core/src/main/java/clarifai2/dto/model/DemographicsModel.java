@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DemographicsModel extends Model<Region> {
   DemographicsModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.DEMOGRAPHICS; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.DEMOGRAPHICS; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

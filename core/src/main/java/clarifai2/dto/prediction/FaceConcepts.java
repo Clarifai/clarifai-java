@@ -28,6 +28,8 @@ public abstract class FaceConcepts extends Prediction {
 
   @NotNull public abstract List<Concept> concepts();
 
+  @NotNull public abstract String id();
+
   static class Adapter extends JSONAdapterFactory<FaceConcepts> {
     @Nullable @Override protected Deserializer<FaceConcepts> deserializer() {
       return new Deserializer<FaceConcepts>() {
@@ -48,7 +50,8 @@ public abstract class FaceConcepts extends Prediction {
           }
           return new AutoValue_FaceConcepts(
               crop,
-              concepts
+              concepts,
+              root.get("id").getAsString()
           );
         }
       };

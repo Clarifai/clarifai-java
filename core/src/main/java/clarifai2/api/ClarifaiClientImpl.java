@@ -19,6 +19,7 @@ import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
 import clarifai2.api.request.model.Action;
+import clarifai2.api.request.model.CreateModelGenericRequest;
 import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
@@ -37,7 +38,7 @@ import clarifai2.api.request.model.PatchModelRequest;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.DefaultModels;
-import clarifai2.dto.model.ModelVersion;
+import clarifai2.dto.model.Model;
 import clarifai2.dto.prediction.Prediction;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
@@ -135,6 +136,10 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public CreateModelRequest createModel(@NotNull final String id) {
     return new CreateModelRequest(this, id);
+  }
+
+  @NotNull @Override public <T extends Model> CreateModelGenericRequest createModelGeneric(@NotNull final String id) {
+    return new CreateModelGenericRequest<T>(this, id);
   }
 
   @NotNull @Override public DefaultModels getDefaultModels() {

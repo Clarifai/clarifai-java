@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 import static clarifai2.internal.InternalUtil.fromJson;

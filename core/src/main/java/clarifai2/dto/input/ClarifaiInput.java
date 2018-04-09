@@ -3,6 +3,7 @@ package clarifai2.dto.input;
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Region;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -136,7 +137,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   }
 
   @NotNull public static ClarifaiInput forInputValue(@NotNull ClarifaiInputValue inputValue) {
-    return new AutoValue_ClarifaiInput(null, null, inputValue, new JsonObject(), Collections.<Concept>emptyList(), null);
+    return new AutoValue_ClarifaiInput(null, null, inputValue, new JsonObject(), Collections.<Concept>emptyList(), null,
+        null);
   }
 
   @Nullable public abstract Date createdAt();
@@ -167,6 +169,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    */
   @Nullable public abstract PointF geo();
 
+  @Nullable public abstract List<Region> regions();
+
   /**
    * @param id the ID to assign to this input
    * @return a copy of this {@link ClarifaiInput} with its ID set to the specified value
@@ -180,7 +184,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a copy of this {@link ClarifaiInput} with its geographic coordinate set to the specified value
    */
   @NotNull public final ClarifaiInput withGeo(@Nullable PointF geo) {
-    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata(), concepts(), geo);
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata(), concepts(), geo, regions());
   }
 
   /**
@@ -189,7 +193,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
     InternalUtil.assertMetadataHasNoNulls(metadata);
-    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata, concepts(), geo());
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata, concepts(), geo(), regions());
   }
 
   // Hide the ugly casing that auto-value-with requires
@@ -272,7 +276,12 @@ public abstract class ClarifaiInput implements HasClarifaiID {
                   : fromJson(gson, data.get("image"), ClarifaiImage.class),
               metadata,
               concepts,
-              geoPoint
+              geoPoint,
+              data.has("regions") ? InternalUtil.fromJson(
+                      gson,
+                      data.get("regions"),
+                      new TypeToken<List<Region>>() {}
+                  ) : Collections.<Region>emptyList()
           );
         }
       };

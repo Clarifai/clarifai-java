@@ -6,21 +6,17 @@ import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
-import static clarifai2.internal.InternalUtil.fromJson;
 import static clarifai2.internal.InternalUtil.toJson;
 
 @SuppressWarnings("NullableProblems")
@@ -29,8 +25,16 @@ import static clarifai2.internal.InternalUtil.toJson;
 public abstract class FaceFeedback {
   FaceFeedback() {} // AutoValue instances only
 
+  @NotNull public static FaceFeedback make(@NotNull ConceptFeedback... identityConceptFeedbacks) {
+    return make(Arrays.asList(identityConceptFeedbacks));
+  }
+
+  @NotNull public static FaceFeedback make(@NotNull Collection<ConceptFeedback> identityConceptFeedbacks) {
+    return make(identityConceptFeedbacks, Collections.<ConceptFeedback>emptyList());
+  }
+
   @NotNull public static FaceFeedback make(@NotNull Collection<ConceptFeedback> identityConceptFeedbacks,
-      @NotNull Collection<ConceptFeedback> ageConceptFeedbacks) {
+      @Nullable Collection<ConceptFeedback> ageConceptFeedbacks) {
     return new AutoValue_FaceFeedback(identityConceptFeedbacks, ageConceptFeedbacks);
   }
 

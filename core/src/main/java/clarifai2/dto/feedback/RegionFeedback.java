@@ -29,17 +29,27 @@ import static clarifai2.internal.InternalUtil.toJson;
 @AutoValue
 @JsonAdapter(RegionFeedback.Adapter.class)
 public abstract class RegionFeedback {
+  private String id = null;
   private Collection<ConceptFeedback> conceptFeedbacks = new ArrayList<>();
   private FaceFeedback faceFeedback = null;
 
   RegionFeedback() {} // AutoValue instances only
 
-  @NotNull public static RegionFeedback make(@NotNull Crop crop, @NotNull Feedback feedback) {
+  @NotNull public static RegionFeedback make() {
+    return make(null, null);
+  }
+
+  @NotNull public static RegionFeedback make(@Nullable Crop crop, @Nullable Feedback feedback) {
     return new AutoValue_RegionFeedback(crop, feedback);
   }
 
-  @NotNull public abstract Crop crop();
-  @NotNull public abstract Feedback feedback();
+  @Nullable public abstract Crop crop();
+  @Nullable public abstract Feedback feedback();
+
+  @NotNull public RegionFeedback withID(@NotNull String regionID) {
+    this.id = regionID;
+    return this;
+  }
 
   @NotNull public RegionFeedback withConceptFeedbacks(@NotNull ConceptFeedback... inputData) {
     return withConceptFeedbacks(Arrays.asList(inputData));
@@ -62,20 +72,21 @@ public abstract class RegionFeedback {
           if (value == null) {
             return JsonNull.INSTANCE;
           }
-          final JSONObjectBuilder builder = new JSONObjectBuilder();
-          JSONObjectBuilder plainRegion = builder
-              .add("region_info", new JSONObjectBuilder()
-                  .add("bounding_box", new JSONObjectBuilder()
-                      .add("top_row", value.crop().top())
-                      .add("left_col", value.crop().left())
-                      .add("bottom_row", value.crop().bottom())
-                      .add("right_col", value.crop().right()))
-                  .add("feedback", value.feedback().toString()));
-          JSONObjectBuilder dataObject = null;
-          if (value.conceptFeedbacks.size() > 0 || value.faceFeedback != null) {
-            dataObject = new JSONObjectBuilder();
-            plainRegion.add("data", dataObject);
+          final JSONObjectBuilder plainRegion = new JSONObjectBuilder();
+          if (value.id != null) {
+            plainRegion.add("id", value.id);
           }
+          if (value.crop() != null) {
+            plainRegion
+                .add("region_info", new JSONObjectBuilder()
+                    .add("bounding_box", new JSONObjectBuilder()
+                        .add("top_row", value.crop().top())
+                        .add("left_col", value.crop().left())
+                        .add("bottom_row", value.crop().bottom())
+                        .add("right_col", value.crop().right()))
+                    .add("feedback", value.feedback().toString()));
+          }
+          JSONObjectBuilder dataObject = new JSONObjectBuilder();
           if (value.conceptFeedbacks.size() > 0) {
             dataObject
                 .add("concepts", new JSONArrayBuilder()
@@ -88,6 +99,9 @@ public abstract class RegionFeedback {
           }
           if (value.faceFeedback != null) {
             dataObject.add("face", toJson(gson, value.faceFeedback, FaceFeedback.class));
+          }
+          if (dataObject.size() > 0) {
+            plainRegion.add("data", dataObject);
           }
           return plainRegion.build();
         }

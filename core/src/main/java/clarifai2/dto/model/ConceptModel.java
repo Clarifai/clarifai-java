@@ -51,7 +51,8 @@ public abstract class ConceptModel extends Model<Concept> {
     return client().modifyModel(id());
   }
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.CONCEPT; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.CONCEPT; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

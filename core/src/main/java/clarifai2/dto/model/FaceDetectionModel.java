@@ -11,7 +11,8 @@ public abstract class FaceDetectionModel extends Model<FaceDetection> {
 
   FaceDetectionModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.FACE_DETECTION; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.FACE_DETECTION; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

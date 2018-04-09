@@ -49,7 +49,6 @@ public class VariousModelsTests extends BaseClarifaiAPITest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
         client.getDefaultModels().landscapeQualityModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    System.out.println(response.rawBody());
     assertTrue(response.isSuccessful());
     List<Concept> concepts = response.get().get(0).data();
     assertNotNull(concepts);

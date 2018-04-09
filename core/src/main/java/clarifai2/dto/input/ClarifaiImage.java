@@ -1,5 +1,6 @@
 package clarifai2.dto.input;
 
+import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;

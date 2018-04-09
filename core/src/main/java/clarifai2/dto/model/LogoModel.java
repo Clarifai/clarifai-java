@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class LogoModel extends Model<Logo> {
   LogoModel() {}
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.LOGO; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.LOGO; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

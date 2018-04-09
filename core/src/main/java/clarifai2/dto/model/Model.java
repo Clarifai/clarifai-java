@@ -175,6 +175,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   @IgnoreForHashCodeEquals @Nullable public abstract String name();
 
   @NotNull public abstract ModelType modelType();
+  public static ModelType modelTypeStatic() { return ModelType.UNKNOWN; }
 
   @IgnoreForHashCodeEquals @Nullable abstract Date _createdAt();
 

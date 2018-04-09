@@ -11,7 +11,8 @@ public abstract class EmbeddingModel extends Model<Embedding> {
 
   EmbeddingModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.EMBEDDING; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.EMBEDDING; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

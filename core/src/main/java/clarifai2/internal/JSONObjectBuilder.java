@@ -85,6 +85,10 @@ public final class JSONObjectBuilder {
     return this;
   }
 
+  public int size() {
+    return inner.size();
+  }
+
   @NotNull public JsonObject build() {
     return inner;
   }

@@ -1,5 +1,6 @@
 package clarifai2.dto.input;
 
+import clarifai2.dto.prediction.Region;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;

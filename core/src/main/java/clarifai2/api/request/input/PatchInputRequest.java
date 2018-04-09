@@ -3,8 +3,10 @@ package clarifai2.api.request.input;
 import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
+import clarifai2.dto.feedback.RegionFeedback;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.dto.prediction.Region;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
@@ -26,6 +28,7 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
   @NotNull private final String inputID;
 
   @NotNull private final List<Concept> concepts = new ArrayList<>();
+  @NotNull private final List<RegionFeedback> regionFeedbacks = new ArrayList<>();
 
   public PatchInputRequest(@NotNull BaseClarifaiClient client, @NotNull String inputID, @NotNull String action) {
     super(client);
@@ -42,25 +45,42 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
     return this;
   }
 
+  @NotNull public PatchInputRequest plusRegionFeedbacks(@NotNull RegionFeedback... regionFeedbacks) {
+    return plusRegionFeedbacks(Arrays.asList(regionFeedbacks));
+  }
+
+  @NotNull public PatchInputRequest plusRegionFeedbacks(@NotNull Collection<RegionFeedback> regionFeedbacks) {
+    this.regionFeedbacks.addAll(regionFeedbacks);
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
     return new DeserializedRequest<ClarifaiInput>() {
       @NotNull @Override public Request httpRequest() {
+        JSONObjectBuilder data = new JSONObjectBuilder();
+        if (!concepts.isEmpty()) {
+          data = data.add("concepts", new JSONArrayBuilder()
+              .addAll(concepts, new Func1<Concept, JsonElement>() {
+                @NotNull @Override public JsonElement call(@NotNull Concept concept) {
+                  return client.gson.toJsonTree(concept);
+                }
+              }));
+        }
+        if (!regionFeedbacks.isEmpty()) {
+          data = data.add("regions", new JSONArrayBuilder()
+              .addAll(regionFeedbacks, new Func1<RegionFeedback, JsonElement>() {
+                @NotNull @Override public JsonElement call(@NotNull RegionFeedback region) {
+                  return client.gson.toJsonTree(region);
+                }
+              }));
+        }
+
         final JsonObject body = new JSONObjectBuilder()
             .add("action", action)
             .add("inputs", new JSONArrayBuilder()
                 .add(new JSONObjectBuilder()
-                    .add("id", inputID)
-                    .add("data", new JSONObjectBuilder()
-                        .add("concepts", new JSONArrayBuilder()
-                            .addAll(concepts, new Func1<Concept, JsonElement>() {
-                              @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                                return client.gson.toJsonTree(concept);
-                              }
-                            })
-                        )
-                    )
-                )
-            )
+                  .add("id", inputID)
+                  .add("data", data)))
             .build();
         return patchRequest("/v2/inputs", body);
       }

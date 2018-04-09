@@ -24,6 +24,8 @@ public abstract class Region extends Prediction {
 
   Region() {} // AutoValue instances only
 
+  @NotNull public abstract String id();
+
   @NotNull public abstract Crop crop();
 
   @NotNull public abstract List<Concept> ageAppearances();
@@ -43,6 +45,7 @@ public abstract class Region extends Prediction {
             @NotNull Gson gson
         ) {
           final JsonObject root = assertJsonIs(json, JsonObject.class);
+          String id = root.get("id").getAsString();
           Crop crop = null;
           List<Concept> ageAppearances = new ArrayList<>();
           List<Concept> genderAppearances = new ArrayList<>();
@@ -50,20 +53,37 @@ public abstract class Region extends Prediction {
           crop = fromJson(gson, root.getAsJsonObject()
               .getAsJsonObject("region_info")
               .getAsJsonObject("bounding_box"), Crop.class);
-          JsonObject face = root.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("face");
-          for (JsonElement ageElement : face.getAsJsonObject("age_appearance").getAsJsonArray("concepts")) {
-            ageAppearances.add(fromJson(gson, ageElement, Concept.class));
-          }
-          for (JsonElement ageElement : face.getAsJsonObject("gender_appearance").getAsJsonArray("concepts")) {
-            genderAppearances.add(fromJson(gson, ageElement, Concept.class));
-          }
-          for (JsonElement ageElement : face.getAsJsonObject("multicultural_appearance").getAsJsonArray("concepts")) {
-            multiCulturalAppearances.add(fromJson(gson, ageElement, Concept.class));
-          }
-          if (crop == null) {
-            throw new IllegalArgumentException("Crop cannot be null");
+          JsonObject data = root.getAsJsonObject().getAsJsonObject("data");
+
+          if (data != null) {
+            JsonObject face = data.getAsJsonObject("face");
+            JsonObject ageAppearance = face.getAsJsonObject("age_appearance");
+            if (ageAppearance != null) {
+              for (JsonElement ageElement : ageAppearance.getAsJsonArray("concepts")) {
+                ageAppearances.add(fromJson(gson, ageElement, Concept.class));
+              }
+            }
+
+            JsonObject genderAppearance = face.getAsJsonObject("gender_appearance");
+            if (genderAppearance != null) {
+              for (JsonElement ageElement : genderAppearance.getAsJsonArray("concepts")) {
+                genderAppearances.add(fromJson(gson, ageElement, Concept.class));
+              }
+            }
+
+            JsonObject multiculturalAppearance = face.getAsJsonObject("multicultural_appearance");
+            if (multiculturalAppearance != null) {
+              for (JsonElement ageElement : multiculturalAppearance.getAsJsonArray("concepts")) {
+                multiCulturalAppearances.add(fromJson(gson, ageElement, Concept.class));
+              }
+            }
+
+            if (crop == null) {
+              throw new IllegalArgumentException("Crop cannot be null");
+            }
           }
           return new AutoValue_Region(
+              id,
               crop,
               ageAppearances,
               genderAppearances,

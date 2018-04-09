@@ -18,6 +18,7 @@ import clarifai2.api.request.input.PatchInputMetadataRequest;
 import clarifai2.api.request.input.PatchInputRequest;
 import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.input.SearchInputsRequest;
+import clarifai2.api.request.model.CreateModelGenericRequest;
 import clarifai2.api.request.model.CreateModelRequest;
 import clarifai2.api.request.model.DeleteAllModelsRequest;
 import clarifai2.api.request.model.DeleteModelRequest;
@@ -226,6 +227,8 @@ public interface ClarifaiClient {
    * @return a request that, when executed, will return a newly-created model
    */
   @NotNull CreateModelRequest createModel(@NotNull String id);
+
+  @NotNull <T extends Model> CreateModelGenericRequest createModelGeneric(@NotNull String id);
 
   /**
    * Get models that all Clarifai accounts automatically have access to.

@@ -11,7 +11,8 @@ public abstract class ColorModel extends Model<Color> {
 
   ColorModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.COLOR; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.COLOR; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

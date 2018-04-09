@@ -11,7 +11,8 @@ public abstract class ClusterModel extends Model<Cluster> {
 
   ClusterModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.CLUSTER; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.CLUSTER; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

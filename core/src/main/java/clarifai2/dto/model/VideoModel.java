@@ -11,7 +11,8 @@ public abstract class VideoModel extends Model<Frame> {
 
   VideoModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.VIDEO; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.VIDEO; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

@@ -11,7 +11,8 @@ public abstract class FaceEmbeddingModel extends Model<FaceEmbedding> {
 
   FaceEmbeddingModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.FACE_EMBEDDING; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.FACE_EMBEDDING; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull

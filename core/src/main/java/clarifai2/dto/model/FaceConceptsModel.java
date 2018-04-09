@@ -11,7 +11,8 @@ public abstract class FaceConceptsModel extends Model<FaceConcepts> {
 
   FaceConceptsModel() {} // AutoValue instances only
 
-  @NotNull @Override public final ModelType modelType() { return ModelType.FACE_CONCEPTS; }
+  @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
+  public static ModelType modelTypeStatic() { return ModelType.FACE_CONCEPTS; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull
