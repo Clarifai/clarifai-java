@@ -26,11 +26,11 @@ subprojects {
   // Set the group and version across all subprojects to ensure consistency
   group 'com.clarifai.clarifai-api2'
   def details = versionDetails()
-  if (details.commitDistance == 0) {
-    version details.lastTag
-  } else {
-    version details.lastTag + '-' + details.gitHash
+  def tag = details.lastTag.replace(".dirty", "")
+  if (details.commitDistance != 0) {
+    tag = tag + '-' + details.gitHash
   }
+  version tag
   println("Computed version as: ${getVersion()}")
 
   repositories {
