@@ -140,7 +140,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void t01c_addInputWithMetadata() {
-    assertSuccess(client.addInputs().allowDuplicateURLs(true).plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
+    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
         .withID("inputWithMetadata")
         .withMetadata(new JSONObjectBuilder()
             .add("foo", "bar")
@@ -571,7 +571,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
 
   @Retry
   @Test public void testDeleteBatch() {
-    assertSuccess(client.addInputs().allowDuplicateURLs(true).plus(
+    assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("kotlin"),
         ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE).withID("train")
     ));
