@@ -138,8 +138,8 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
     return new CreateModelRequest(this, id);
   }
 
-  @NotNull @Override public <T extends Model> CreateModelGenericRequest createModelGeneric(@NotNull final String id) {
-    return new CreateModelGenericRequest<T>(this, id);
+  @NotNull @Override public <T extends Model<?>> CreateModelGenericRequest<T> createModelGeneric(@NotNull final String id) {
+    return new CreateModelGenericRequest<>(this, id);
   }
 
   @NotNull @Override public DefaultModels getDefaultModels() {

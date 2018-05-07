@@ -228,7 +228,7 @@ public interface ClarifaiClient {
    */
   @NotNull CreateModelRequest createModel(@NotNull String id);
 
-  @NotNull <T extends Model> CreateModelGenericRequest createModelGeneric(@NotNull String id);
+  @NotNull <T extends Model<?>> CreateModelGenericRequest<T> createModelGeneric(@NotNull String id);
 
   /**
    * Get models that all Clarifai accounts automatically have access to.

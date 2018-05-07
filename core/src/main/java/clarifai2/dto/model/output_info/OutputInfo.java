@@ -19,6 +19,25 @@ public abstract class OutputInfo {
   OutputInfo() {}
 
   static class Adapter extends JSONAdapterFactory<OutputInfo> {
+
+    @Nullable @Override protected Serializer<OutputInfo> serializer() {
+      return new Serializer<OutputInfo>() {
+        @NotNull @Override public JsonElement serialize(@Nullable OutputInfo value, @NotNull final Gson gson) {
+
+          JsonElement jsonOutputInfo;
+          if (value instanceof FaceConceptsOutputInfo) {
+            jsonOutputInfo = gson.toJsonTree(value, FaceConceptsOutputInfo.class);
+          } else if (value instanceof ConceptOutputInfo) {
+            jsonOutputInfo = gson.toJsonTree(value, ConceptOutputInfo.class);
+          } else {
+            throw new RuntimeException("Unsupported serialization for this OutputInfo object.");
+          }
+
+          return jsonOutputInfo;
+        }
+      };
+    }
+
     @Nullable @Override protected Deserializer<OutputInfo> deserializer() {
       return new Deserializer<OutputInfo>() {
         @Nullable @Override

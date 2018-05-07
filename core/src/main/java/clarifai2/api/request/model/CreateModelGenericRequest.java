@@ -3,6 +3,8 @@ package clarifai2.api.request.model;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.Model;
+import clarifai2.dto.model.output_info.ConceptOutputInfo;
+import clarifai2.dto.model.output_info.FaceConceptsOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
@@ -17,9 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.assertNotNull;
 import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.toJson;
 
-public final class CreateModelGenericRequest<T extends Model> extends ClarifaiRequest.Builder<Model<?>> {
+public final class CreateModelGenericRequest<T extends Model<?>> extends ClarifaiRequest.Builder<T> {
 
   @NotNull private final BaseClarifaiClient helper;
   @NotNull private final String id;
@@ -32,18 +33,18 @@ public final class CreateModelGenericRequest<T extends Model> extends ClarifaiRe
     this.id = id;
   }
 
-  @NotNull public CreateModelGenericRequest withOutputInfo(@Nullable OutputInfo outputInfo) {
+  @NotNull public CreateModelGenericRequest<T> withOutputInfo(@Nullable OutputInfo outputInfo) {
     this.outputInfo = outputInfo;
     return this;
   }
 
-  @NotNull public CreateModelGenericRequest withName(@Nullable String name) {
+  @NotNull public CreateModelGenericRequest<T> withName(@Nullable String name) {
     this.name = name;
     return this;
   }
 
-  @NotNull @Override protected DeserializedRequest<Model<?>> request() {
-    return new DeserializedRequest<Model<?>>() {
+  @NotNull @Override protected DeserializedRequest<T> request() {
+    return new DeserializedRequest<T>() {
       @NotNull @Override public Request httpRequest() {
         final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
 
@@ -52,12 +53,12 @@ public final class CreateModelGenericRequest<T extends Model> extends ClarifaiRe
         return postRequest("/v2/models", body);
       }
 
-      @NotNull @Override public JSONUnmarshaler<Model<?>> unmarshaler() {
-        return new JSONUnmarshaler<Model<?>>() {
-          @NotNull @Override public Model<?> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return assertNotNull(
-                fromJson(gson, assertJsonIs(json, JsonObject.class).get("model"), new TypeToken<Model<?>>() {})
-            );
+      @NotNull @Override public JSONUnmarshaler<T> unmarshaler() {
+        return new JSONUnmarshaler<T>() {
+          @NotNull @Override public T fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
+            JsonElement model = assertJsonIs(json, JsonObject.class).get("model");
+
+            return assertNotNull((T) fromJson(gson, model, new TypeToken<Model<?>>() {}));
           }
         };
       }
@@ -65,16 +66,11 @@ public final class CreateModelGenericRequest<T extends Model> extends ClarifaiRe
   }
 
   @NotNull protected JsonElement buildJSONOfModel() {
-    return toJson(
-        client.gson,
-        Model._create(
-            T.modelTypeStatic(),
-            helper,
-            id,
-            name != null ? name : id,
-            outputInfo
-        ),
-        new TypeToken<Model<?>>() {}
-    );
+
+    return new JSONObjectBuilder()
+        .add("id", id)
+        .addIfNotNull("name", name)
+        .addIfNotNull("output_info", client.gson.toJsonTree(outputInfo, OutputInfo.class))
+        .build();
   }
 }
