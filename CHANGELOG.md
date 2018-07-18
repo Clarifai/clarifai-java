@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [[2.5.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.5.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.5.1) - 2018-04-09
+## [[2.5.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.5.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.5.1) - 2018-05-07
 
 ### Fixed
 - Output info serialization fixed when creating models
