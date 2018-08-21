@@ -1,22 +1,19 @@
-Clarifai Java Client
-==================
-[![Release](https://img.shields.io/maven-central/v/com.clarifai.clarifai-api2/core.svg?style=flat-square)](http://mvnrepository.com/artifact/com.clarifai.clarifai-api2/core)
+![Clarifai logo](logo.png)
 
-|        | Travis | AppVeyor |
-|--------|--------|----------|
-| master | [![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java) | [![Build Status](https://ci.appveyor.com/api/projects/status/93a843ujrp35u6a6?svg=true)](https://ci.appveyor.com/project/robertwenquan/clarifai-java) |
-
-A simple client for the Clarifai v2 API.
+# Clarifai API Java Client
 
 * Try the Clarifai demo at: https://clarifai.com/demo
 * Sign up for a free account at: https://clarifai.com/developer/signup/
 * Read the developer guide at: https://clarifai.com/developer/guide/
-* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.4.0/javadoc/
+* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.5.1/javadoc/
 
-**NOTE**: If you are planning to contribute to this API client, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+[![Release](https://img.shields.io/maven-central/v/com.clarifai.clarifai-api2/core.svg?style=flat-square)](http://mvnrepository.com/artifact/com.clarifai.clarifai-api2/core)
+[![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java)
+[![Build Status](https://ci.appveyor.com/api/projects/status/93a843ujrp35u6a6?svg=true)](https://ci.appveyor.com/project/robertwenquan/clarifai-java)
 
-Installation
-------------
+
+## Installation
+
 ### Gradle:
 
 Add the following to the dependencies section of your `build.gradle`:
@@ -47,15 +44,15 @@ Add the following to your dependencies:
 
 ### Jars:
 All links hosted by Maven Central (https://repo1.maven.org/):
-- [Clarifai 2.4.0 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.4.0/core-2.4.0.jar)
+- [Clarifai 2.5.1 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.5.1/core-2.5.1.jar)
 
   **Dependencies:**
   - [OkHttp 3.4.1 (.jar)](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/3.4.1/okhttp-3.4.1.jar)
     - [Okio 1.9.0 (.jar)](https://repo1.maven.org/maven2/com/squareup/okio/okio/1.9.0/okio-1.9.0.jar)
   - [Gson 2.7 (.jar)](https://repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar)
 
-Getting Started
----------------
+## Getting Started
+
 There are two authentication approaches. The recommended is to use [API Keys](http://blog.clarifai.com/introducing-api-keys-a-safer-way-to-authenticate-your-applications/). You may also use the now deprecated app ID & secret pair. See the [Authentication section](https://clarifai.com/developer/guide/authentication#authentication) of the docs for more info.
 
 To create a `ClarifaiClient` instance with an API Key do the following:
@@ -85,8 +82,8 @@ final ClarifaiClient client = new ClarifaiBuilder(apiKey)
     .buildSync();
 ```
 
-Making API requests
----------------------------------------
+## Making API requests
+
 Network operations using the API client only occur by calling `.executeSync()` or `.executeAsync(...)` on a
 `ClarifaiRequest<T>` object.
 
@@ -109,8 +106,8 @@ Once a `ClarifaiPaginatedRequest<T>` is built, you can call `ClarifaiPaginatedRe
 `ClarifaiRequest<T>` for the specified page. Pages are 1-indexed. Currently, the API does not indicate how many elements
 there are in a paginated request in total, but this is planned for the future.
 
-Example Requests
-----------------
+## Example Requests
+
 Predict the contents of an image:
 ```java
 Model<Concept> generalModel = client.getDefaultModels().generalModel();
@@ -133,8 +130,7 @@ List<ClarifaiOutput<Frame>> videoResults = videoRequest.executeSync().get();
 See the [developer guide](https://clarifai.com/developer/guide/) for more detailed examples
 and examples of other features such as custom training and search.
 
-Using API responses
-------------------
+## Using API responses
 All responses from the API are immutable data types (constructed using AutoValue). Some of these types, such as
 `ClarifaiModel`, are also used as parameters to make requests (for example, you can either get a model as a response
 from the API, or pass a model to the API to create it in your account). Builders are exposed to the user for all
@@ -156,14 +152,11 @@ client.getModelByID("myID").executeAsync(
 );
 ```
 
-
-Requirements
-------------
+## Requirements
 JDK 7 or later.
 
 
-Android
----------
+## Android
 The client will work on Android Gingerbread and higher (minSdkVersion 9).
 
 You need to add the INTERNET permission to your `AndroidManifest.xml`, as follows:
@@ -176,3 +169,17 @@ The Android Linter may also give an "InvalidPackage" error. This error may be sa
 using Java 8 methods when they are available (which will not occur on Android). To suppress these linter errors, do
 *NOT* disable your linter. Simply follow the instructions
 [here](https://guides.codepath.com/android/Consuming-APIs-with-Retrofit#issues).
+
+## Getting Help
+
+If you need any help with using the library, please contact Support at support@clarifai.com or our
+Developer Relations team at developers@clarifai.com.
+
+If you've found a bug or would like to make a feature request, please make an issue or a pull
+request here.
+
+Contributions are welcome, see [CONTRIBUTING](CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
