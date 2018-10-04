@@ -31,7 +31,7 @@ public final class PredictRequest<PREDICTION extends Prediction>
   @NotNull private final String modelID;
   @NotNull private final List<ClarifaiInput> inputData = new ArrayList<>();
 
-  @Nullable private ModelVersion version = null;
+  @Nullable private String modelVersionID = null;
   @Nullable private String language = null;
 
   @Nullable private Double minValue = null;
@@ -54,7 +54,12 @@ public final class PredictRequest<PREDICTION extends Prediction>
   }
 
   @NotNull public PredictRequest<PREDICTION> withVersion(@NotNull ModelVersion version) {
-    this.version = version;
+    this.modelVersionID = version.id();
+    return this;
+  }
+
+  @NotNull public PredictRequest<PREDICTION> withVersion(@NotNull String versionID) {
+    this.modelVersionID = versionID;
     return this;
   }
 
@@ -121,10 +126,10 @@ public final class PredictRequest<PREDICTION extends Prediction>
                   )));
         }
         final JsonObject body = bodyBuilder.build();
-        if (version == null) {
+        if (modelVersionID == null) {
           return postRequest("/v2/models/" + modelID + "/outputs", body);
         }
-        return postRequest("/v2/models/" + modelID + "/versions/" + version.id() + "/outputs", body);
+        return postRequest("/v2/models/" + modelID + "/versions/" + modelVersionID + "/outputs", body);
       }
 
       @NotNull @Override public JSONUnmarshaler<List<ClarifaiOutput<PREDICTION>>> unmarshaler() {

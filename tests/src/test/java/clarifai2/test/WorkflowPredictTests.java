@@ -24,8 +24,12 @@ public class WorkflowPredictTests extends BaseClarifaiAPITest {
     ClarifaiResponse<WorkflowPredictResult> response = request.executeSync();
     assertEquals("food-and-general", response.get().workflow().id());
     List<ClarifaiOutput<Prediction>> modelOutputs = response.get().workflowResults().get(0).predictions();
-    assertTrue(modelOutputs.stream().anyMatch(modelOutput -> modelOutput.model().name().contains("food")));
-    assertTrue(modelOutputs.stream().anyMatch(modelOutput -> modelOutput.model().name().contains("general")));
+    assertTrue(modelOutputs.stream().anyMatch(
+        modelOutput -> modelOutput.model().name().toLowerCase().contains("food")
+    ));
+    assertTrue(modelOutputs.stream().anyMatch(
+        modelOutput -> modelOutput.model().name().toLowerCase().contains("general")
+    ));
   }
 
   @Test public void shouldApplyMinValue() {

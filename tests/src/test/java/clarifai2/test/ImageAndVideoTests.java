@@ -3,14 +3,14 @@ package clarifai2.test;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Frame;
+import clarifai2.dto.prediction.Prediction;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 
 public class ImageAndVideoTests extends BaseClarifaiAPITest {
@@ -56,6 +56,19 @@ public class ImageAndVideoTests extends BaseClarifaiAPITest {
             ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE)
         );
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
+    Assert.assertTrue(response.isSuccessful());
+  }
+
+  @Test public void shouldBeSuccessfulWhenSpecifyingModelVersionID() {
+    ConceptModel model = client.getDefaultModels().generalModel();
+    // It's reasonably safe to have this hard-coded in a test as this is the general's model version ID which is
+    // unlikely to be ever removed.
+    String modelVersionID = "aa9ca48295b37401f8af92ad1af0d91d";
+
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(model.id())
+        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL))
+        .withVersion(modelVersionID)
+        .executeSync();
     Assert.assertTrue(response.isSuccessful());
   }
 }

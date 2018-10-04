@@ -236,12 +236,11 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   }
 
   @NotNull public final PredictRequest<PREDICTION> predict() {
-    // If the model doesn't have a model version set, `_modelVersion()` will be null.
-    // The predict request will only make a request to a specific model/version url,
-    // if `_modelVersion()` is non-null. If null, only model ID is used.
-
-    //noinspection unchecked
-    return (PredictRequest<PREDICTION>) client().predict(id()).withVersion(_modelVersion());
+    PredictRequest<Prediction> predict = client().predict(id());
+    if (_modelVersion() != null) {
+      predict.withVersion(_modelVersion());
+    }
+    return (PredictRequest<PREDICTION>) predict;
   }
 
   @NotNull public final ClarifaiRequest<ModelVersion> getVersionByID(@NotNull String versionID) {
