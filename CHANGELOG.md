@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [[2.5.2]](https://github.com/Clarifai/clarifai-java/releases/tag/2.5.2) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.5.2) - 2018-10-05
+
+### Added
+- In a predict request, allow specifying the model version ID directly
+
 ## [[2.5.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.5.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.5.1) - 2018-05-07
 
 ### Fixed
