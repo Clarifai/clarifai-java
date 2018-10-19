@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -182,8 +183,15 @@ public interface ClarifaiRequest<RESULT> {
 
   abstract class Builder<T> extends Adapter<T> {
 
+    @Nullable private final MediaType requestContentType;
+
     protected Builder(@NotNull BaseClarifaiClient client) {
+      this(client, MEDIA_TYPE_JSON);
+    }
+
+    protected Builder(@NotNull BaseClarifaiClient client, @Nullable MediaType contentType) {
       super(client);
+      requestContentType = contentType;
     }
 
     @NotNull @Override public final ClarifaiResponse<T> executeSync() {
@@ -228,7 +236,7 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @NotNull private RequestBody toRequestBody(@NotNull JsonElement json) {
-      return RequestBody.create(MEDIA_TYPE_JSON, client.gson.toJson(json));
+      return RequestBody.create(requestContentType, client.gson.toJson(json));
     }
 
   }
@@ -275,7 +283,7 @@ public interface ClarifaiRequest<RESULT> {
         final int code = response.code();
 
         final boolean successfulHTTPCode = 200 <= code && code < 300;
-        if (successfulHTTPCode && status.equals(ClarifaiStatus.success())) {
+        if (successfulHTTPCode && (status == null || status.equals(ClarifaiStatus.success()))) {
           return new ClarifaiResponse.Successful<>(
               status,
               code,

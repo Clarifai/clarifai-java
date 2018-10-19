@@ -42,6 +42,7 @@ import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.solutions.Solutions;
 import com.google.gson.JsonObject;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +55,8 @@ import java.util.List;
  * Create an instance of this interface using the {@link ClarifaiBuilder}
  */
 public interface ClarifaiClient {
+
+  @NotNull Solutions solutions();
 
   /**
    * @return {@code true} if the user has a token and it isn't expired; else, {@code false}

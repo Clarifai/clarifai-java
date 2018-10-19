@@ -40,6 +40,7 @@ import clarifai2.api.request.model.TrainModelRequest;
 import clarifai2.dto.model.DefaultModels;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.solutions.Solutions;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,8 +52,15 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   private final DefaultModels builtInModels = new DefaultModels(this);
 
+  private final String apiKey;
+
   ClarifaiClientImpl(@NotNull ClarifaiBuilder builder) {
     super(builder);
+    apiKey = builder.apiKey;
+  }
+
+  @NotNull @Override public Solutions solutions() {
+    return new Solutions(apiKey);
   }
 
   @NotNull @Override public AddInputsRequest addInputs() {
