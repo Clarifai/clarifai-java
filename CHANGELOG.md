@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [[2.6.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.6.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.6.0) - 2018-10-19
+
+### Added
+- Moderation solution
+
 ## [[2.5.2]](https://github.com/Clarifai/clarifai-java/releases/tag/2.5.2) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.5.2) - 2018-10-05
 
 ### Added
