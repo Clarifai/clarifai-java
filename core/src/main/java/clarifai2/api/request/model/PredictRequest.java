@@ -37,6 +37,8 @@ public final class PredictRequest<PREDICTION extends Prediction>
   @Nullable private Double minValue = null;
   @Nullable private Integer maxConcepts = null;
 
+  @Nullable private Integer sampleMs = null;
+
   @NotNull private final List<Concept> concepts = new ArrayList<>();
 
   public PredictRequest(@NotNull final BaseClarifaiClient client, @NotNull String modelID) {
@@ -97,6 +99,11 @@ public final class PredictRequest<PREDICTION extends Prediction>
     return this;
   }
 
+  @NotNull public final PredictRequest<PREDICTION> withSampleMs(@Nullable Integer sampleMs) {
+    this.sampleMs = sampleMs;
+    return this;
+  }
+
   @NotNull @Override protected DeserializedRequest<List<ClarifaiOutput<PREDICTION>>> request() {
     return new DeserializedRequest<List<ClarifaiOutput<PREDICTION>>>() {
       @NotNull @Override public Request httpRequest() {
@@ -107,11 +114,12 @@ public final class PredictRequest<PREDICTION extends Prediction>
                     return client.gson.toJsonTree(model);
                   }
                 }));
-        if (language != null || minValue != null || maxConcepts != null || concepts.size() > 0) {
+        if (language != null || minValue != null || maxConcepts != null || concepts.size() > 0 || sampleMs != null) {
           JSONObjectBuilder outputConfig = new JSONObjectBuilder()
               .addIfNotNull("language", language)
               .addIfNotNull("min_value", minValue)
-              .addIfNotNull("max_concepts", maxConcepts);
+              .addIfNotNull("max_concepts", maxConcepts)
+              .addIfNotNull("sample_ms", sampleMs);
           if (concepts.size() > 0) {
             outputConfig.add("select_concepts", new JSONArrayBuilder()
                 .addAll(concepts, new Func1<Concept, JsonElement>() {

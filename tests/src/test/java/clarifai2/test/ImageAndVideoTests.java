@@ -4,6 +4,7 @@ import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.model.PredictRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.VideoModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Frame;
@@ -71,4 +72,20 @@ public class ImageAndVideoTests extends BaseClarifaiAPITest {
         .executeSync();
     Assert.assertTrue(response.isSuccessful());
   }
+
+  @Test public void videoShouldBeSuccessfulWhenSpecifyingSampleMs() {
+    VideoModel model = client.getDefaultModels().generalVideoModel();
+
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(model.id())
+        .withInputs(ClarifaiInput.forVideo(BEER_VIDEO_FILE))
+        .withSampleMs(2000)
+        .executeSync();
+    Assert.assertTrue(response.isSuccessful());
+
+    for (Prediction prediction : response.get().get(0).data()) {
+      Frame frame = prediction.asFrame();
+      Assert.assertEquals(0, frame.time() % 2000);
+    }
+  }
 }
+
