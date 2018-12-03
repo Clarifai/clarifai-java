@@ -61,12 +61,6 @@ To create a `ClarifaiClient` instance with an API Key do the following:
 final ClarifaiClient client = new ClarifaiBuilder("apiKey").buildSync();
 ```
 
-If using an app ID & secret instead, pass both to the constructor:
-
-```java
-final ClarifaiClient client = new ClarifaiBuilder("appID", "appSecret").buildSync();
-```
-
 The `ClarifaiBuilder` optionally allows you to pass in a custom `OkHttpClient` (allowing for user-defined parameters
 such as connection timeouts, etc):
 
