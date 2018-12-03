@@ -1,11 +1,13 @@
 package clarifai2.dto.input;
 
+import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import okio.ByteString;
@@ -45,6 +47,22 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
               .add("base64", ByteString.of(value.bytes()).base64())
               .add("crop", toJson(gson, value.crop(), Crop.class))
               .build();
+        }
+      };
+    }
+
+    @Nullable @Override protected Deserializer<ClarifaiFileImage> deserializer() {
+      return new Deserializer<ClarifaiFileImage>() {
+        @Nullable @Override
+        public ClarifaiFileImage deserialize(
+            @NotNull JsonElement json,
+            @NotNull TypeToken<ClarifaiFileImage> type,
+            @NotNull Gson gson) {
+          final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
+          String base64 = root.get("base64").getAsString();
+          byte[] bytes = ByteString.decodeBase64(base64).toByteArray();
+          return ClarifaiImage.of(bytes)
+              .withCrop(gson.fromJson(root.get("crop"), Crop.class));
         }
       };
     }

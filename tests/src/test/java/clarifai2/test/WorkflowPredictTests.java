@@ -7,7 +7,6 @@ import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.dto.workflow.WorkflowPredictResult;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -66,6 +65,16 @@ public class WorkflowPredictTests extends BaseClarifaiAPITest {
         .allMatch(prediction -> prediction.asConcept().value() >= 0.9));
     assertTrue(modelOutputs.get(0).data().size() <= 3);
     assertTrue(modelOutputs.get(1).data().size() <= 3);
+  }
+
+  @Test public void shouldWorkflowPredictFileImage() {
+    ClarifaiInput clarifaiInput = ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE);
+
+    final WorkflowPredictRequest wf1 = client.workflowPredict("food-and-general");
+    ClarifaiResponse<WorkflowPredictResult> response = wf1
+            .withInputs(clarifaiInput)
+            .executeSync();
+    assertTrue(response.isSuccessful());
   }
 
   @NotNull private WorkflowPredictRequest makeWorkflowPredictRequestForFoodAndGeneral() {
