@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [[2.6.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.6.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.6.1) - 2018-12-03
+
+### Fixed
+- Added deserialization of file images in the workflow predict response
+
 ## [[2.6.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.6.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.6.0) - 2018-10-19
 
 ### Added
