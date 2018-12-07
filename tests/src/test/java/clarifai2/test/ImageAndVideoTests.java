@@ -73,7 +73,22 @@ public class ImageAndVideoTests extends BaseClarifaiAPITest {
     Assert.assertTrue(response.isSuccessful());
   }
 
-  @Test public void videoShouldBeSuccessfulWhenSpecifyingSampleMs() {
+  @Test public void videoURLShouldBeSuccessfulWhenSpecifyingSampleMs() {
+    VideoModel model = client.getDefaultModels().generalVideoModel();
+
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(model.id())
+        .withInputs(ClarifaiInput.forVideo(VIDEO_URL))
+        .withSampleMs(2000)
+        .executeSync();
+    Assert.assertTrue(response.isSuccessful());
+
+    for (Prediction prediction : response.get().get(0).data()) {
+      Frame frame = prediction.asFrame();
+      Assert.assertEquals(0, frame.time() % 2000);
+    }
+  }
+
+  @Test public void videoFileShouldBeSuccessfulWhenSpecifyingSampleMs() {
     VideoModel model = client.getDefaultModels().generalVideoModel();
 
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict(model.id())
