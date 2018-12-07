@@ -19,6 +19,7 @@ public class GetModerationStatusRequest extends ClarifaiRequest.Builder<Moderati
   @NotNull private final String inputID;
 
   public GetModerationStatusRequest(@NotNull BaseClarifaiClient client, @NotNull String inputID) {
+    // TODO(Rok) LOW: Once backend supports the utf-8 charset header, remove this MediaType argument.
     super(client, MediaType.parse("application/json"));
     this.inputID = inputID;
   }

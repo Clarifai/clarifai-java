@@ -64,4 +64,12 @@ public abstract class Prediction {
   @NotNull public final Demographics asDemographics() {
     return (Demographics) this;
   }
+
+  public final boolean isFrame() {
+    return this instanceof Frame;
+  }
+
+  @NotNull public final Frame asFrame() {
+    return (Frame) this;
+  }
 }

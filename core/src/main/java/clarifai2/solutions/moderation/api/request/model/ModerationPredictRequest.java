@@ -29,8 +29,8 @@ public final class ModerationPredictRequest<PREDICTION extends Prediction>
   @NotNull private final String modelID;
   @NotNull private final List<ClarifaiInput> inputData = new ArrayList<>();
 
-//  public ModerationPredictRequest(@NotNull BaseSolutionsClient client, @NotNull String modelID) {
   public ModerationPredictRequest(@NotNull BaseClarifaiClient client, @NotNull String modelID) {
+    // TODO(Rok) LOW: Once backend supports the utf-8 charset header, remove this MediaType argument.
     super(client, MediaType.parse("application/json"));
     this.modelID = modelID;
   }
