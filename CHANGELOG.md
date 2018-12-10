@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [[2.7.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.7.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.7.0) - 2018-12-10
+
+### Added
+- Sample milliseconds parameter for video prediction
+
 ## [[2.6.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.6.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.6.1) - 2018-12-03
 
 ### Fixed

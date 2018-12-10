@@ -5,7 +5,7 @@
 * Try the Clarifai demo at: https://clarifai.com/demo
 * Sign up for a free account at: https://clarifai.com/developer/signup/
 * Read the developer guide at: https://clarifai.com/developer/guide/
-* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.6.1/javadoc/
+* Read the full Javadocs at: https://jitpack.io/com/github/clarifai/clarifai-java/core/2.7.0/javadoc/
 
 [![Release](https://img.shields.io/maven-central/v/com.clarifai.clarifai-api2/core.svg?style=flat-square)](http://mvnrepository.com/artifact/com.clarifai.clarifai-api2/core)
 [![Build Status](https://travis-ci.org/Clarifai/clarifai-java.svg?branch=master)](https://travis-ci.org/Clarifai/clarifai-java)
@@ -44,7 +44,7 @@ Add the following to your dependencies:
 
 ### Jars:
 All links hosted by Maven Central (https://repo1.maven.org/):
-- [Clarifai 2.6.1 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.6.0/core-2.6.0.jar)
+- [Clarifai 2.7.0 (.jar)](https://repo1.maven.org/maven2/com/clarifai/clarifai-api2/core/2.7.0/core-2.7.0.jar)
 
   **Dependencies:**
   - [OkHttp 3.4.1 (.jar)](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/3.4.1/okhttp-3.4.1.jar)
