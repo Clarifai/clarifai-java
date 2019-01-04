@@ -1,5 +1,6 @@
 package clarifai2.internal;
 
+import clarifai2.internal.grpc.api.GeoOuterClass;
 import clarifai2.Func1;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.dto.PointF;
@@ -134,6 +135,13 @@ public final class InternalUtil {
     return new JSONObjectBuilder()
         .add("latitude", geoPoint.x())
         .add("longitude", geoPoint.y())
+        .build();
+  }
+
+  @NotNull public static GeoOuterClass.GeoPoint asGeoPointProto(@NotNull PointF geoPoint) {
+    return GeoOuterClass.GeoPoint.newBuilder()
+        .setLatitude(geoPoint.x())
+        .setLongitude(geoPoint.y())
         .build();
   }
 

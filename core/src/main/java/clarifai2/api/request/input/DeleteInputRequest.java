@@ -1,13 +1,10 @@
 package clarifai2.api.request.input;
 
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 public final class DeleteInputRequest extends ClarifaiRequest.Builder<JsonNull> {
@@ -19,18 +16,22 @@ public final class DeleteInputRequest extends ClarifaiRequest.Builder<JsonNull> 
     this.inputID = inputID;
   }
 
+  @NotNull @Override protected String method() {
+    return "DELETE";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs/" + inputID;
+  }
+
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {
     return new DeserializedRequest<JsonNull>() {
-      @NotNull @Override public Request httpRequest() {
-        return deleteRequest("/v2/inputs/" + inputID, new JsonObject());
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub().deleteInput(InputOuterClass.DeleteInputRequest.newBuilder().build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {
-        return new JSONUnmarshaler<JsonNull>() {
-          @NotNull @Override public JsonNull fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return JsonNull.INSTANCE;
-          }
-        };
+      @NotNull @Override public JsonNull unmarshalerGrpc(Object returnedObject) {
+        return JsonNull.INSTANCE;
       }
     };
   }

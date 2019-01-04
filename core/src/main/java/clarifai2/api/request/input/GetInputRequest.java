@@ -1,14 +1,10 @@
 package clarifai2.api.request.input;
 
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput> {
@@ -20,18 +16,24 @@ public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput
     this.inputID = inputID;
   }
 
+  @NotNull @Override protected String method() {
+    return "GET";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs/" + inputID;
+  }
+
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
     return new DeserializedRequest<ClarifaiInput>() {
-      @NotNull @Override public Request httpRequest() {
-        return getRequest("/v2/inputs/" + inputID);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub()
+            .getInput(InputOuterClass.GetInputRequest.newBuilder().build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<ClarifaiInput> unmarshaler() {
-        return new JSONUnmarshaler<ClarifaiInput>() {
-          @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return InternalUtil.fromJson(gson, json.getAsJsonObject().get("input"), TypeToken.get(ClarifaiInput.class));
-          }
-        };
+      @NotNull @Override public ClarifaiInput unmarshalerGrpc(Object returnedObject) {
+        InputOuterClass.SingleInputResponse inputResponse = (InputOuterClass.SingleInputResponse) returnedObject;
+        return ClarifaiInput.deserialize(inputResponse.getInput());
       }
     };
   }

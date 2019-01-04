@@ -1,6 +1,8 @@
 package clarifai2.dto.model;
 
+import clarifai2.internal.grpc.api.ModelVersionOuterClass;
 import clarifai2.dto.HasClarifaiIDRequired;
+import clarifai2.grpc.DateTimeConverter;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -43,6 +45,17 @@ public abstract class ModelVersion implements HasClarifaiIDRequired {
    * The number of total inputs. 0 if not available.
    */
   @NotNull public abstract int totalInputCount();
+
+  public static ModelVersion deserialize(ModelVersionOuterClass.ModelVersion modelVersion) {
+    return new AutoValue_ModelVersion(
+        modelVersion.getId(),
+        DateTimeConverter.timestampToDate(modelVersion.getCreatedAt()),
+        ModelTrainingStatus.deserialize(modelVersion.getStatus()),
+        modelVersion.getActiveConceptCount(),
+        modelVersion.hasMetrics() ? ModelMetricsStatus.deserialize(modelVersion.getMetrics().getStatus()) : null,
+        modelVersion.getTotalInputCount()
+    );
+  }
 
   static class Adapter extends JSONAdapterFactory<ModelVersion> {
     @Nullable @Override protected Deserializer<ModelVersion> deserializer() {

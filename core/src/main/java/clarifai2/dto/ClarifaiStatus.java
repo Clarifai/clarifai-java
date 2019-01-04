@@ -1,17 +1,16 @@
 package clarifai2.dto;
 
+import clarifai2.internal.grpc.api.status.StatusOuterClass;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.auto.value.AutoValue;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 import static clarifai2.internal.InternalUtil.isJsonNull;
 
@@ -44,7 +43,7 @@ public abstract class ClarifaiStatus {
     );
   }
 
-  @NotNull public static ClarifaiStatus networkError(@NotNull IOException networkException) {
+  @NotNull public static ClarifaiStatus networkError(@NotNull Exception networkException) {
     return new AutoValue_ClarifaiStatus(
         true,
         0,
@@ -82,6 +81,16 @@ public abstract class ClarifaiStatus {
    */
   @Nullable public abstract String errorDetails();
 
+  public static ClarifaiStatus deserialize(Object obj) {
+    StatusOuterClass.Status status = (StatusOuterClass.Status) obj;
+
+    return new AutoValue_ClarifaiStatus(
+        false,
+        status.getCodeValue(),
+        status.getDescription(),
+        !status.getDetails().equals("") ? status.getDetails() : null
+    );
+  }
 
   static class Adapter extends JSONAdapterFactory<ClarifaiStatus> {
     @Nullable @Override protected Deserializer<ClarifaiStatus> deserializer() {

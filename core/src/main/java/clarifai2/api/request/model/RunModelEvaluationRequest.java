@@ -1,15 +1,10 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.ModelVersionOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.ModelVersion;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public final class RunModelEvaluationRequest extends ClarifaiRequest.Builder<ModelVersion> {
@@ -23,22 +18,26 @@ public final class RunModelEvaluationRequest extends ClarifaiRequest.Builder<Mod
     this.versionID = versionID;
   }
 
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/models/" + modelID + "/versions/" + versionID + "/metrics";
+  }
+
   @NotNull @Override protected DeserializedRequest<ModelVersion> request() {
     return new DeserializedRequest<ModelVersion>() {
-      @NotNull @Override public Request httpRequest() {
-        return postRequest("/v2/models/" + modelID + "/versions/" + versionID + "/metrics", JsonNull.INSTANCE);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub().postModelVersionMetrics(
+            ModelVersionOuterClass.PostModelVersionMetricsRequest.newBuilder().build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<ModelVersion> unmarshaler() {
-        return new JSONUnmarshaler<ModelVersion>() {
-          @NotNull @Override public ModelVersion fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return InternalUtil.fromJson(
-                gson,
-                json.getAsJsonObject().get("model_version"),
-                new TypeToken<ModelVersion>() {}
-            );
-          }
-        };
+      @NotNull @Override public ModelVersion unmarshalerGrpc(Object returnedObject) {
+        ModelVersionOuterClass.SingleModelVersionResponse modelVersionResponse =
+            (ModelVersionOuterClass.SingleModelVersionResponse) returnedObject;
+        return ModelVersion.deserialize(modelVersionResponse.getModelVersion());
       }
     };
   }

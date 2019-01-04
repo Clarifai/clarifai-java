@@ -1,5 +1,7 @@
 package clarifai2.dto.model;
 
+import clarifai2.internal.grpc.api.ModelOuterClass;
+import clarifai2.internal.grpc.api.OutputOuterClass;
 import clarifai2.dto.model.output_info.FaceConceptsOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
@@ -120,8 +122,29 @@ public enum ModelType {
     this.tagType = tagType;
   }
 
+  @NotNull public static ModelType determineModelType(OutputOuterClass.Output output) {
+    String typeExt = output.getModel().getOutputInfo().getTypeExt();
+
+    ModelType determinedModelType = determineModelType(typeExt);
+
+    if (determinedModelType == CONCEPT && output.getData().getFramesCount() > 0) {
+      determinedModelType = VIDEO;
+    }
+
+    return determinedModelType;
+  }
+
+  @NotNull public static ModelType determineModelType(ModelOuterClass.OutputInfo outputInfo) {
+    String typeExt = outputInfo.getTypeExt();
+    return determineModelType(typeExt);
+  }
+
   @NotNull public static ModelType determineModelType(@NotNull JsonElement outputInfoRoot) {
     String typeExt = outputInfoRoot.getAsJsonObject().get("type_ext").getAsString();
+    return determineModelType(typeExt);
+  }
+
+  @NotNull public static ModelType determineModelType(@NotNull String typeExt) {
     if (typeExt.equals("facedetect-celebrity")) {
       typeExt = "facedetect-identity";
     }

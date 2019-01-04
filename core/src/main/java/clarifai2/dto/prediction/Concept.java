@@ -1,6 +1,8 @@
 package clarifai2.dto.prediction;
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.dto.HasClarifaiID;
+import clarifai2.grpc.DateTimeConverter;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.auto.value.AutoValue;
@@ -77,6 +79,31 @@ public abstract class Concept extends Prediction implements HasClarifaiID {
     return withValue(value ? 1.0F : 0.0F);
   }
 
+  public ConceptOuterClass.Concept serialize() {
+    ConceptOuterClass.Concept.Builder builder = ConceptOuterClass.Concept.newBuilder();
+    if (id() != null) {
+      builder.setId(id());
+    }
+    if (name() != null) {
+      builder.setName(name());
+    }
+    if (createdAt() != null) {
+      builder.setCreatedAt(DateTimeConverter.dateToTimestamp(createdAt()));
+    }
+    return builder.build();
+  }
+
+
+  public static Concept deserialize(ConceptOuterClass.Concept concept) {
+    return new AutoValue_Concept(
+        concept.getId(),
+        concept.getName(),
+        DateTimeConverter.timestampToDate(concept.getCreatedAt()),
+        concept.getAppId(),
+        concept.getValue(),
+        concept.getLanguage()
+    );
+  }
 
   static class Adapter extends JSONAdapterFactory<Concept> {
     @Nullable @Override protected Serializer<Concept> serializer() {

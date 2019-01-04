@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +48,7 @@ public abstract class ModerationOutput<PREDICTION extends Prediction> implements
 
   @NotNull public abstract ClarifaiStatus status();
 
-  @NotNull public abstract ModerationStatus moderationStatus();
+  @Nullable public abstract ModerationStatus moderationStatus();
 
 
   @SuppressWarnings("rawtypes")
@@ -87,7 +86,9 @@ public abstract class ModerationOutput<PREDICTION extends Prediction> implements
               isJsonNull(root.get("input")) ? null : fromJson(gson, root.get("input"), ClarifaiInput.class),
               allPredictions,
               fromJson(gson, root.get("status"), ClarifaiStatus.class),
-              fromJson(gson, root.getAsJsonObject("moderation").get("status"), ModerationStatus.class)
+              isJsonNull(root.get("moderation")) ?
+                  null :
+                  fromJson(gson, root.getAsJsonObject("moderation").get("status"), ModerationStatus.class)
           );
         }
       };

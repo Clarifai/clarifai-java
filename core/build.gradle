@@ -6,17 +6,24 @@ dependencies {
   compile(
       "com.squareup.okhttp3:okhttp:$versions.okhttp",
       "com.google.code.gson:gson:$versions.gson",
+      "com.google.protobuf:protobuf-java:$versions.protobuf",
+
+      "io.grpc:grpc-netty-shaded:$versions.grpc",
+      "io.grpc:grpc-protobuf:$versions.grpc",
+      "io.grpc:grpc-stub:$versions.grpc",
+      "com.google.protobuf:protobuf-java-util:$versions.protobufJavaUtil",
   )
 
   compileOnly(
       "com.google.auto.value:auto-value:$versions.autoValue",
       deps.nullityAnnotations,
       "com.github.kevinmost.auto-value-custom-hashcode-equals:adapter:$versions.customHashCodeEquals",
+      "javax.annotation:javax.annotation-api:$versions.javaxAnnotationApi",
   )
 
   apt(
       "com.google.auto.value:auto-value:$versions.autoValue",
-      "com.gabrielittner.auto.value:auto-value-with:1.0.0",
+      "com.gabrielittner.auto.value:auto-value-with:$versions.autoValueWith",
       "com.github.kevinmost.auto-value-custom-hashcode-equals:processor:$versions.customHashCodeEquals",
   )
 }

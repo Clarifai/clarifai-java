@@ -1,5 +1,6 @@
 package clarifai2.dto.model.output_info;
 
+import clarifai2.internal.grpc.api.ModelOuterClass;
 import clarifai2.dto.model.ModelType;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.gson.Gson;
@@ -10,6 +11,9 @@ import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 
@@ -17,6 +21,28 @@ import static clarifai2.internal.InternalUtil.fromJson;
 public abstract class OutputInfo {
 
   OutputInfo() {}
+
+  @NotNull public abstract ModelOuterClass.OutputInfo serialize();
+
+  @Nullable public static OutputInfo deserialize(ModelOuterClass.OutputInfo outputInfo) {
+    Class<? extends OutputInfo> aClass = ModelType.determineModelType(outputInfo).infoType();
+
+    Method m;
+    try {
+      m = aClass.getMethod("deserializeInner", ModelOuterClass.OutputInfo.class);
+    } catch (NoSuchMethodException e) {
+      return null;
+    }
+    Object result = null;
+    try {
+      result = m.invoke(null, outputInfo);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+    return (OutputInfo) result;
+  }
 
   static class Adapter extends JSONAdapterFactory<OutputInfo> {
 
@@ -63,4 +89,3 @@ public abstract class OutputInfo {
     }
   }
 }
-

@@ -41,25 +41,26 @@ subprojects {
   }
 
   ext.versions = [
-      okhttp: "3.4.1",
-      gson: "2.7",
       autoValue: "1.5.2",
-      slf4j: "1.7.21",
-      kotlin: "1.0.5-2",
-
+      autoValueWith: "1.0.0",
       customHashCodeEquals: "db3442d",
+      grpc: "1.17.1",
+      gson: "2.8.5",
+      javaxAnnotationApi: "1.3.2",
+      okhttp: "3.12.0",
+      protobuf: "3.6.1",
+      protobufJavaUtil: "3.6.1",
+
+      junit: "4.12",
+      junitRetryRule: "cbdd972",
+      slf4j: "1.7.21",
   ]
 
   ext.deps = [
-      nullityAnnotations: "org.jetbrains:annotations:13.0",
-      kotlin: [
-          stdlib: "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin",
-          reflect: "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin",
-          gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
-      ],
+      nullityAnnotations: "org.jetbrains:annotations:16.0.3",
   ]
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = "4.3.1"
+  gradleVersion = "4.10.3"
 }

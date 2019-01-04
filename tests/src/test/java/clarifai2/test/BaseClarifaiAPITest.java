@@ -60,7 +60,7 @@ public abstract class BaseClarifaiAPITest {
   @NotNull final String baseURL = EnvVar.CLARIFAI_API_BASE.value();
 
   @NotNull final ClarifaiClient client = new ClarifaiBuilder(apiKey)
-      .baseURL(baseURL)
+//      .baseURL(baseURL)
       .client(new OkHttpClient.Builder()
           .connectTimeout(60, TimeUnit.SECONDS)
           .readTimeout(60, TimeUnit.SECONDS)

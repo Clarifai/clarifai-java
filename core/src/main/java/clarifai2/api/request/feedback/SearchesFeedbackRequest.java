@@ -1,14 +1,12 @@
 package clarifai2.api.request.feedback;
 
+import clarifai2.internal.grpc.api.Feedback;
+import clarifai2.internal.grpc.api.InputOuterClass;
+import clarifai2.internal.grpc.api.Search;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +20,14 @@ public final class SearchesFeedbackRequest extends ClarifaiRequest.Builder<JsonN
 
   public SearchesFeedbackRequest(@NotNull final BaseClarifaiClient client) {
     super(client);
+  }
+
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/searches/feedback/";
   }
 
   @NotNull public SearchesFeedbackRequest withId(@Nullable String id) {
@@ -51,31 +57,30 @@ public final class SearchesFeedbackRequest extends ClarifaiRequest.Builder<JsonN
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {
     return new DeserializedRequest<JsonNull>() {
-      @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
-            .add("input", new JSONObjectBuilder()
-                .add("id", id)
-                .add("feedback_info", makeFeedbackInfoJsonObject()
-                )
-            )
-            .build();
-        return postRequest("/v2/searches/feedback/", body);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        Feedback.FeedbackInfo.Builder feedbackInfoBuilder = Feedback.FeedbackInfo.newBuilder();
+        if (endUserId != null) {
+          feedbackInfoBuilder.setEndUserId(endUserId);
+        }
+        if (sessionId != null) {
+          feedbackInfoBuilder.setSessionId(sessionId);
+        }
+        if (eventType != null) {
+          feedbackInfoBuilder.setEventType(Feedback.EventType.valueOf(eventType));
+        }
+        if (searchId != null) {
+          feedbackInfoBuilder.setSearchId(searchId);
+        }
+        InputOuterClass.Input.Builder inputBuilder = InputOuterClass.Input.newBuilder()
+            .setFeedbackInfo(feedbackInfoBuilder);
+        if (id != null) {
+          inputBuilder.setId(id);
+        }
+        return stub().postSearchFeedback(Search.PostSearchFeedbackRequest.newBuilder().setInput(inputBuilder).build());
       }
 
-      @NotNull private JSONObjectBuilder makeFeedbackInfoJsonObject() {
-        return new JSONObjectBuilder()
-            .add("end_user_id", endUserId)
-            .add("session_id", sessionId)
-            .add("event_type", eventType)
-            .add("search_id", searchId);
-      }
-
-      @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {
-        return new JSONUnmarshaler<JsonNull>() {
-          @NotNull @Override public JsonNull fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return JsonNull.INSTANCE;
-          }
-        };
+      @NotNull @Override public JsonNull unmarshalerGrpc(Object returnedObject) {
+        return JsonNull.INSTANCE;
       }
     };
   }

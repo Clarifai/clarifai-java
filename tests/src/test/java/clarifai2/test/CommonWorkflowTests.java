@@ -26,6 +26,7 @@ import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
+import clarifai2.exception.ClarifaiClientClosedException;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.JsonNull;
@@ -612,7 +613,7 @@ public class CommonWorkflowTests extends BaseClarifaiAPITest {
     logger.debug(details.errorDetails());
   }
 
-  @Test(expected = ClarifaiException.class)
+  @Test(expected = ClarifaiClientClosedException.class)
   public void testClosingClientWorks() {
     final ClarifaiClient toBeClosed = new ClarifaiBuilder(apiKey).buildSync();
     toBeClosed.close();
