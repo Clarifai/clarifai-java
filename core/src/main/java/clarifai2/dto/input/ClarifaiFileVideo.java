@@ -1,24 +1,14 @@
 package clarifai2.dto.input;
 
-import clarifai2.internal.JSONAdapterFactory;
-import clarifai2.internal.JSONObjectBuilder;
+import clarifai2.internal.grpc.api.VideoOuterClass;
+import clarifai2.exception.ClarifaiException;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
-import okio.ByteString;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-import static clarifai2.internal.InternalUtil.toJson;
-
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(ClarifaiFileVideo.Adapter.class)
 public abstract class ClarifaiFileVideo extends ClarifaiVideo {
 
   ClarifaiFileVideo() {} // AutoValue instances only
@@ -31,24 +21,17 @@ public abstract class ClarifaiFileVideo extends ClarifaiVideo {
 
   @SuppressWarnings("mutable") @NotNull abstract byte[] bytes();
 
-  static class Adapter extends JSONAdapterFactory<ClarifaiFileVideo> {
-    @Nullable @Override protected Serializer<ClarifaiFileVideo> serializer() {
-      return new Serializer<ClarifaiFileVideo>() {
-        @NotNull @Override public JsonElement serialize(@Nullable ClarifaiFileVideo value, @NotNull Gson gson) {
-          if (value == null) {
-            return JsonNull.INSTANCE;
-          }
-          return new JSONObjectBuilder()
-              .add("base64", ByteString.of(value.bytes()).base64())
-              .add("crop", toJson(gson, value.crop(), Crop.class))
-              .build();
-        }
-      };
-    }
+  @NotNull @Override public VideoOuterClass.Video serialize(boolean allowDuplicateUrl) {
+    VideoOuterClass.Video video = VideoOuterClass.Video.newBuilder()
+        .setBase64(com.google.protobuf.ByteString.copyFrom(bytes()))
+        .build();
+    return video;
+  }
 
-    @NotNull @Override protected TypeToken<ClarifaiFileVideo> typeToken() {
-      return new TypeToken<ClarifaiFileVideo>() {};
-    }
+  @NotNull public static ClarifaiFileVideo deserializeInner(VideoOuterClass.Video video) {
+    throw new ClarifaiException(
+        "Deserialization of file videos is not supported by the backend, so this should never occur"
+    );
   }
 }
 

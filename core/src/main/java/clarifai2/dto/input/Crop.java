@@ -1,24 +1,13 @@
 package clarifai2.dto.input;
 
-import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.JSONAdapterFactory;
-import clarifai2.internal.JSONArrayBuilder;
+import clarifai2.internal.grpc.api.DataOuterClass;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.isJsonNull;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(Crop.Adapter.class)
 public abstract class Crop {
 
   Crop() {} // AutoValue instances only
@@ -60,62 +49,30 @@ public abstract class Crop {
 
   @NotNull abstract Crop withRight(@NotNull float right);
 
+  @NotNull public static Crop deserialize(List<Float> cropList) {
+    return new AutoValue_Crop(
+        cropList.get(0),
+        cropList.get(1),
+        cropList.get(2),
+        cropList.get(3)
+    );
+  }
 
-  static class Adapter extends JSONAdapterFactory<Crop> {
-    @Nullable @Override protected Serializer<Crop> serializer() {
-      return new Serializer<Crop>() {
-        @NotNull @Override public JsonElement serialize(@Nullable Crop value, @NotNull Gson gson) {
-          // Keep the bloat in our outgoing request size down by skipping all default crops
-          if (value == null || value.equals(Crop.create())) {
-            return JsonNull.INSTANCE;
-          }
-          return new JSONArrayBuilder()
-              .add(value.top())
-              .add(value.left())
-              .add(value.bottom())
-              .add(value.right())
-              .build();
-        }
-      };
-    }
+  @NotNull public static Crop deserialize(DataOuterClass.BoundingBox boundingBox) {
+    return new AutoValue_Crop(
+        boundingBox.getTopRow(),
+        boundingBox.getLeftCol(),
+        boundingBox.getBottomRow(),
+        boundingBox.getRightCol()
+    );
+  }
 
-    @Nullable @Override protected Deserializer<Crop> deserializer() {
-      return new Deserializer<Crop>() {
-        @Nullable @Override
-        public Crop deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<Crop> type,
-            @NotNull Gson gson
-        ) {
-          if (isJsonNull(json)) {
-            return Crop.create();
-          }
-          if (json instanceof JsonArray) {
-            final JsonArray array = (JsonArray) json;
-            return new AutoValue_Crop(
-                array.get(0).getAsFloat(),
-                array.get(1).getAsFloat(),
-                array.get(2).getAsFloat(),
-                array.get(3).getAsFloat()
-            );
-          }
-          if (json instanceof JsonObject) {
-            final JsonObject root = (JsonObject) json;
-            if (root.has("top_row")) {
-              return Crop.create()
-                  .top(root.get("top_row").getAsFloat())
-                  .left(root.get("left_col").getAsFloat())
-                  .bottom(root.get("bottom_row").getAsFloat())
-                  .right(root.get("right_col").getAsFloat());
-            }
-          }
-          throw new ClarifaiException(String.format("Can't parse JSON %s as a Crop object", json));
-        }
-      };
-    }
-
-    @NotNull @Override protected TypeToken<Crop> typeToken() {
-      return new TypeToken<Crop>() {};
-    }
+  public DataOuterClass.BoundingBox serializeBoundingBox() {
+    return DataOuterClass.BoundingBox.newBuilder()
+        .setTopRow(top())
+        .setLeftCol(left())
+        .setBottomRow(bottom())
+        .setRightCol(right())
+        .build();
   }
 }

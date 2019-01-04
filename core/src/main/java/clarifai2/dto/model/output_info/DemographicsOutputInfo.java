@@ -1,20 +1,17 @@
 package clarifai2.dto.model.output_info;
 
-import clarifai2.internal.JSONAdapterFactory;
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.ModelOuterClass;
+import clarifai2.dto.prediction.Concept;
+import clarifai2.exception.ClarifaiException;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(DemographicsOutputInfo.Adapter.class)
 public abstract class DemographicsOutputInfo extends OutputInfo {
 
   DemographicsOutputInfo() {} // AutoValue instances only
@@ -23,26 +20,17 @@ public abstract class DemographicsOutputInfo extends OutputInfo {
 
   @NotNull public abstract String typeExt();
 
+  @NotNull public abstract List<Concept> concepts();
 
-  static class Adapter extends JSONAdapterFactory<DemographicsOutputInfo> {
-    @Nullable @Override protected Deserializer<DemographicsOutputInfo> deserializer() {
-      return new Deserializer<DemographicsOutputInfo>() {
-        @Nullable @Override
-        public DemographicsOutputInfo deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<DemographicsOutputInfo> type,
-            @NotNull Gson gson
-        ) {
-          final JsonObject root = assertJsonIs(json, JsonObject.class);
-          String modelType = root.getAsJsonPrimitive("type").getAsString();
-          String typeExt = root.getAsJsonPrimitive("type_ext").getAsString();
-          return new AutoValue_DemographicsOutputInfo(modelType, typeExt);
-        }
-      };
-    }
+  @Override @NotNull public ModelOuterClass.OutputInfo serialize() {
+    throw new ClarifaiException(this.getClass().getSimpleName() + " is not serializable");
+  }
 
-    @NotNull @Override protected TypeToken<DemographicsOutputInfo> typeToken() {
-      return new TypeToken<DemographicsOutputInfo>() {};
+  @NotNull public static DemographicsOutputInfo deserializeInner(ModelOuterClass.OutputInfo outputInfo) {
+    List<Concept> concepts = new ArrayList<>();
+    for (ConceptOuterClass.Concept concept : outputInfo.getData().getConceptsList()) {
+      concepts.add(Concept.deserialize(concept));
     }
+    return new AutoValue_DemographicsOutputInfo(outputInfo.getType(), outputInfo.getTypeExt(), concepts);
   }
 }

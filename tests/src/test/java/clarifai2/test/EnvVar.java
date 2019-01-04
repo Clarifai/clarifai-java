@@ -1,8 +1,9 @@
 package clarifai2.test;
 
 enum EnvVar {
-  CLARIFAI_APP_ID,
-  CLARIFAI_APP_SECRET,
+  CLARIFAI_APP_ID,  // Deprecated.
+  CLARIFAI_APP_SECRET,  // Deprecated.
+
   CLARIFAI_API_KEY,   // all scopes
   CLARIFAI_API_BASE,
 

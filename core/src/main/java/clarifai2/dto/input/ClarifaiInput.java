@@ -1,9 +1,15 @@
 package clarifai2.dto.input;
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.DataOuterClass;
+import clarifai2.internal.grpc.api.GeoOuterClass;
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.dto.HasClarifaiID;
 import clarifai2.dto.PointF;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Region;
+import clarifai2.grpc.DateTimeConverter;
+import clarifai2.grpc.MetadataConverter;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -19,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -209,6 +216,84 @@ public abstract class ClarifaiInput implements HasClarifaiID {
     return withConcepts(Arrays.asList(concepts));
   }
 
+  public static ClarifaiInput deserialize(InputOuterClass.Input input) {
+    final DataOuterClass.Data data = input.getData();
+
+    final List<Concept> concepts = new ArrayList<>();
+    for (ConceptOuterClass.Concept concept: data.getConceptsList()) {
+      concepts.add(Concept.deserialize(concept));
+    }
+
+    JsonObject metadata = MetadataConverter.structToJsonObject(data.getMetadata());
+
+    PointF geoPoint = null;
+    if (data.hasGeo()) {
+      GeoOuterClass.GeoPoint gp = data.getGeo().getGeoPoint();
+      geoPoint = PointF.at(gp.getLatitude(), gp.getLongitude());
+    }
+
+    final List<Region> regions = new ArrayList<>();
+    for (DataOuterClass.Region region : data.getRegionsList()) {
+      regions.add(Region.deserialize(region));
+    }
+
+    return new AutoValue_ClarifaiInput(
+        input.getId(),
+        DateTimeConverter.timestampToDate(input.getCreatedAt()),
+        data.hasVideo() ? ClarifaiVideo.deserialize(data.getVideo()) : ClarifaiImage.deserialize(data.getImage()),
+        metadata,
+        concepts,
+        geoPoint,
+        regions
+    );
+  }
+
+  public InputOuterClass.Input serialize() {
+    return serialize(false);
+  }
+
+  public InputOuterClass.Input serialize(boolean allowDuplicateURLs) {
+    InputOuterClass.Input.Builder builder = InputOuterClass.Input.newBuilder();
+    if (id() != null) {
+      builder.setId(id());
+    }
+
+    DataOuterClass.Data.Builder dataBuilder = DataOuterClass.Data.newBuilder();
+
+    if (!concepts().isEmpty()) {
+      List<ConceptOuterClass.Concept> conceptsGrpc = new ArrayList<>();
+      for (Concept concept : concepts()) {
+        conceptsGrpc.add(concept.serialize());
+      }
+      dataBuilder.addAllConcepts(conceptsGrpc);
+    }
+
+    if (metadata().size() > 0) {
+      dataBuilder.setMetadata(MetadataConverter.jsonObjectToStruct(metadata()));
+    }
+
+    if (inputValue() instanceof ClarifaiVideo) {
+      ClarifaiVideo video = (ClarifaiVideo) inputValue();
+      dataBuilder.setVideo(video.serialize(allowDuplicateURLs));
+    } else {
+      ClarifaiImage image = (ClarifaiImage) inputValue();
+      dataBuilder.setImage(image.serialize(allowDuplicateURLs));
+    }
+    if (geo() != null) {
+      dataBuilder.setGeo(
+          GeoOuterClass.Geo.newBuilder().setGeoPoint(
+              GeoOuterClass.GeoPoint.newBuilder().setLatitude(geo().x()).setLongitude(geo().y())
+          )
+      );
+    }
+    if (createdAt() != null) {
+      builder.setCreatedAt(DateTimeConverter.dateToTimestamp(createdAt()));
+    }
+    return builder
+        .setData(dataBuilder)
+        .build();
+  }
+
   static class Adapter extends JSONAdapterFactory<ClarifaiInput> {
     @Nullable @Override protected Serializer<ClarifaiInput> serializer() {
       return new Serializer<ClarifaiInput>() {
@@ -278,10 +363,10 @@ public abstract class ClarifaiInput implements HasClarifaiID {
               concepts,
               geoPoint,
               data.has("regions") ? InternalUtil.fromJson(
-                      gson,
-                      data.get("regions"),
-                      new TypeToken<List<Region>>() {}
-                  ) : Collections.<Region>emptyList()
+                  gson,
+                  data.get("regions"),
+                  new TypeToken<List<Region>>() {}
+              ) : Collections.<Region>emptyList()
           );
         }
       };

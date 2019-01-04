@@ -1,5 +1,6 @@
 package clarifai2.dto.input;
 
+import clarifai2.internal.grpc.api.ImageOuterClass;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -35,6 +36,21 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
 
   @SuppressWarnings("mutable") @NotNull abstract byte[] bytes();
 
+  public static ClarifaiFileImage deserializeInner(ImageOuterClass.Image imageResponse) {
+    ClarifaiFileImage image = ClarifaiImage.of(imageResponse.getBase64().toByteArray());
+    if (!imageResponse.getCropList().isEmpty()) {
+      image.withCrop(Crop.deserialize(imageResponse.getCropList()));
+    }
+    return image;
+  }
+
+  @NotNull @Override public ImageOuterClass.Image serialize(boolean allowDuplicateUrl) {
+    ImageOuterClass.Image image = ImageOuterClass.Image.newBuilder()
+        .setBase64(com.google.protobuf.ByteString.copyFrom(bytes()))
+        .setAllowDuplicateUrl(allowDuplicateUrl)
+        .build();
+    return image;
+  }
 
   static class Adapter extends JSONAdapterFactory<ClarifaiFileImage> {
     @Nullable @Override protected Serializer<ClarifaiFileImage> serializer() {

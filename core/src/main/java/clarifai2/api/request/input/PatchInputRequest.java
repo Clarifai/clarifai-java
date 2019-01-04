@@ -1,21 +1,14 @@
 package clarifai2.api.request.input;
 
-import clarifai2.Func1;
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.DataOuterClass;
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.feedback.RegionFeedback;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.dto.prediction.Region;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -54,44 +47,43 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
     return this;
   }
 
+  @NotNull @Override protected String method() {
+    return "PATCH";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs";
+  }
+
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
     return new DeserializedRequest<ClarifaiInput>() {
-      @NotNull @Override public Request httpRequest() {
-        JSONObjectBuilder data = new JSONObjectBuilder();
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        DataOuterClass.Data.Builder dataBuilder = DataOuterClass.Data.newBuilder();
         if (!concepts.isEmpty()) {
-          data = data.add("concepts", new JSONArrayBuilder()
-              .addAll(concepts, new Func1<Concept, JsonElement>() {
-                @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                  return client.gson.toJsonTree(concept);
-                }
-              }));
+          List<ConceptOuterClass.Concept> conceptsGrpc = new ArrayList<>();
+          for (Concept concept : concepts) {
+            conceptsGrpc.add(concept.serialize());
+          }
+          dataBuilder.addAllConcepts(conceptsGrpc);
         }
         if (!regionFeedbacks.isEmpty()) {
-          data = data.add("regions", new JSONArrayBuilder()
-              .addAll(regionFeedbacks, new Func1<RegionFeedback, JsonElement>() {
-                @NotNull @Override public JsonElement call(@NotNull RegionFeedback region) {
-                  return client.gson.toJsonTree(region);
-                }
-              }));
+          List<DataOuterClass.Region> regionFeedbacksGrpc = new ArrayList<>();
+          for (RegionFeedback regionFeedback : regionFeedbacks) {
+            regionFeedbacksGrpc.add(regionFeedback.serialize());
+          }
+          dataBuilder.addAllRegions(regionFeedbacksGrpc);
         }
-
-        final JsonObject body = new JSONObjectBuilder()
-            .add("action", action)
-            .add("inputs", new JSONArrayBuilder()
-                .add(new JSONObjectBuilder()
-                  .add("id", inputID)
-                  .add("data", data)))
-            .build();
-        return patchRequest("/v2/inputs", body);
+        return stub().patchInputs(
+            InputOuterClass.PatchInputsRequest.newBuilder()
+                .setAction(action)
+                .addInputs(InputOuterClass.Input.newBuilder().setId(inputID).setData(dataBuilder))
+                .build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<ClarifaiInput> unmarshaler() {
-        return new JSONUnmarshaler<ClarifaiInput>() {
-          @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            final JsonElement firstInput = json.getAsJsonObject().getAsJsonArray("inputs").get(0);
-            return InternalUtil.fromJson(gson, firstInput, new TypeToken<ClarifaiInput>() {});
-          }
-        };
+      @NotNull @Override public ClarifaiInput unmarshalerGrpc(Object returnedObject) {
+        InputOuterClass.MultiInputResponse inputsResponse = (InputOuterClass.MultiInputResponse) returnedObject;
+        return ClarifaiInput.deserialize(inputsResponse.getInputs(0));
       }
     };
   }

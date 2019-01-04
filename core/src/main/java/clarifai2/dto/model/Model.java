@@ -1,5 +1,7 @@
 package clarifai2.dto.model;
 
+import clarifai2.internal.grpc.api.ModelOuterClass;
+import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
@@ -11,6 +13,7 @@ import clarifai2.dto.HasClarifaiIDRequired;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
+import clarifai2.grpc.DateTimeConverter;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
 import com.google.gson.Gson;
@@ -270,6 +273,30 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     @NotNull Model<?> build();
   }
 
+  @NotNull public static Model deserialize(ModelOuterClass.Model model, BaseClarifaiClient client) {
+    ModelType modelType = ModelType.determineModelType(model.getOutputInfo());
+    // hacky solution needed because of model type ambiguity.
+    if (modelType == ModelType.DEMOGRAPHICS || modelType == ModelType.FACE_DETECTION) {
+      if (model.getName().equals("demographics")) {
+        modelType = ModelType.DEMOGRAPHICS;
+      } else {
+        modelType = ModelType.FACE_DETECTION;
+      }
+    }
+    return getBuilder(modelType)
+        .id(model.getId())
+        .name(model.getName())
+        ._createdAt(DateTimeConverter.timestampToDate(model.getCreatedAt()))
+        ._appID(model.getAppId())
+        ._modelVersion(ModelVersion.deserialize(model.getModelVersion()))
+        ._outputInfo(
+            (model.hasOutputInfo() && model.getOutputInfo().hasData()) ?
+                OutputInfo.deserialize(model.getOutputInfo()) :
+                null
+        )
+        .client(client)
+        .build();
+  }
 
   @SuppressWarnings("rawtypes")
   static class Adapter extends JSONAdapterFactory<Model> {

@@ -1,12 +1,10 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.ModelVersionOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.ModelVersion;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public final class GetModelVersionRequest extends ClarifaiRequest.Builder<ModelVersion> {
@@ -24,18 +22,24 @@ public final class GetModelVersionRequest extends ClarifaiRequest.Builder<ModelV
     this.versionID = versionID;
   }
 
+  @NotNull @Override protected String method() {
+    return "GET";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return String.format("/v2/models/%s/versions/%s", modelID, versionID);
+  }
+
   @NotNull @Override protected DeserializedRequest<ModelVersion> request() {
     return new DeserializedRequest<ModelVersion>() {
-      @NotNull @Override public Request httpRequest() {
-        return getRequest(String.format("/v2/models/%s/versions/%s", modelID, versionID));
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub().getModelVersion(ModelVersionOuterClass.GetModelVersionRequest.newBuilder().build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<ModelVersion> unmarshaler() {
-        return new JSONUnmarshaler<ModelVersion>() {
-          @NotNull @Override public ModelVersion fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return gson.fromJson(json.getAsJsonObject().get("model_version"), ModelVersion.class);
-          }
-        };
+      @NotNull @Override public ModelVersion unmarshalerGrpc(Object returnedObject) {
+        ModelVersionOuterClass.SingleModelVersionResponse modelVersionResponse =
+            (ModelVersionOuterClass.SingleModelVersionResponse) returnedObject;
+        return ModelVersion.deserialize(modelVersionResponse.getModelVersion());
       }
     };
   }

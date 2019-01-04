@@ -22,7 +22,7 @@ dependencies {
   testCompile(
       project(":core"),
 
-      "junit:junit:4.12",
+      "junit:junit:$versions.junit",
 
       deps.nullityAnnotations,
 
@@ -31,6 +31,6 @@ dependencies {
 
       "com.squareup.okhttp3:logging-interceptor:$versions.okhttp",
 
-      "com.github.kevinmost:junit-retry-rule:cbdd972",
+      "com.github.kevinmost:junit-retry-rule:$versions.junitRetryRule",
   )
 }

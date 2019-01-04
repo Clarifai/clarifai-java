@@ -1,5 +1,12 @@
 package clarifai2.api.request.input;
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.DataOuterClass;
+import clarifai2.internal.grpc.api.GeoOuterClass;
+import clarifai2.internal.grpc.api.ImageOuterClass;
+import clarifai2.internal.grpc.api.InputOuterClass;
+import clarifai2.internal.grpc.api.OutputOuterClass;
+import clarifai2.internal.grpc.api.Search;
 import clarifai2.dto.PointF;
 import clarifai2.dto.Radius;
 import clarifai2.dto.Rectangle;
@@ -7,6 +14,9 @@ import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.prediction.Concept;
+import clarifai2.exception.ClarifaiException;
+import clarifai2.grpc.JsonMarshaller;
+import clarifai2.grpc.MetadataConverter;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
@@ -16,10 +26,17 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Struct;
+import com.google.protobuf.util.JsonFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static clarifai2.internal.InternalUtil.asGeoPointJson;
+import static clarifai2.internal.InternalUtil.asGeoPointProto;
 import static clarifai2.internal.InternalUtil.toJson;
 
 public abstract class SearchClause {
@@ -112,6 +129,8 @@ public abstract class SearchClause {
     return new GeoRect(topLeft, bottomRight);
   }
 
+  @NotNull public abstract Search.And serialize();
+
 
   @JsonAdapter(Metadata.Adapter.class)
   static class Metadata extends SearchClause {
@@ -119,6 +138,13 @@ public abstract class SearchClause {
 
     private Metadata(@NotNull JsonObject metadata) {
       this.metadata = metadata;
+    }
+
+    @NotNull @Override public Search.And serialize() {
+      return Search.And.newBuilder().setInput(
+          InputOuterClass.Input.newBuilder()
+              .setData(DataOuterClass.Data.newBuilder().setMetadata(MetadataConverter.jsonObjectToStruct(metadata)))
+      ).build();
     }
 
     static class Adapter extends JSONAdapterFactory<Metadata> {
@@ -152,6 +178,12 @@ public abstract class SearchClause {
 
     private InputImage(@NotNull ClarifaiImage image) {
       this.image = image;
+    }
+
+    @NotNull @Override public Search.And serialize() {
+      return Search.And.newBuilder().setInput(
+          InputOuterClass.Input.newBuilder().setData(DataOuterClass.Data.newBuilder().setImage(this.image.serialize()))
+      ).build();
     }
 
     static class Adapter extends JSONAdapterFactory<InputImage> {
@@ -188,6 +220,14 @@ public abstract class SearchClause {
       this.image = image;
     }
 
+    @NotNull @Override public Search.And serialize() {
+      return Search.And.newBuilder().setOutput(
+          OutputOuterClass.Output.newBuilder().setInput(
+              InputOuterClass.Input.newBuilder().setData(DataOuterClass.Data.newBuilder().setImage(image.serialize()))
+          )
+      ).build();
+    }
+
     static class Adapter extends JSONAdapterFactory<OutputImage> {
       @Nullable @Override protected Serializer<OutputImage> serializer() {
         return new Serializer<OutputImage>() {
@@ -220,6 +260,17 @@ public abstract class SearchClause {
     private SearchConcept(@NotNull String owningObjectName, @NotNull Concept concept) {
       this.owningObjectName = owningObjectName;
       this.concept = concept;
+    }
+
+    @NotNull @Override public Search.And serialize() {
+      DataOuterClass.Data.Builder dataBuilder = DataOuterClass.Data.newBuilder().addConcepts(concept.serialize());
+      if (owningObjectName.equals("input")) {
+        return Search.And.newBuilder().setInput(InputOuterClass.Input.newBuilder().setData(dataBuilder)).build();
+      } else if (owningObjectName.equals("output")) {
+        return Search.And.newBuilder().setOutput(OutputOuterClass.Output.newBuilder().setData(dataBuilder)).build();
+      } else {
+        throw new ClarifaiException("Unknown owning object name: " + owningObjectName);
+      }
     }
 
     static class Adapter extends JSONAdapterFactory<SearchConcept> {
@@ -257,6 +308,18 @@ public abstract class SearchClause {
       this.radius = radius;
     }
 
+    @NotNull @Override public Search.And serialize() {
+      return Search.And.newBuilder().setInput(
+          InputOuterClass.Input.newBuilder().setData(
+              DataOuterClass.Data.newBuilder().setGeo(
+                  GeoOuterClass.Geo.newBuilder().setGeoPoint(asGeoPointProto(center)).setGeoLimit(
+                      GeoOuterClass.GeoLimit.newBuilder().setType(radius.unit().toString()).setValue(radius.value())
+                  )
+              )
+          )
+      ).build();
+    }
+
     static class Adapter extends JSONAdapterFactory<GeoCircle> {
       @Nullable @Override protected Serializer<GeoCircle> serializer() {
         return new Serializer<GeoCircle>() {
@@ -290,6 +353,22 @@ public abstract class SearchClause {
 
     private GeoRect(@NotNull PointF topLeft, @NotNull PointF bottomRight) {
       this.box = Rectangle.of(topLeft, bottomRight);
+    }
+
+    @NotNull @Override public Search.And serialize() {
+      return Search.And.newBuilder().setInput(
+          InputOuterClass.Input.newBuilder().setData(
+              DataOuterClass.Data.newBuilder().setGeo(
+                  GeoOuterClass.Geo.newBuilder()
+                      .addGeoBox(
+                          GeoOuterClass.GeoBoxedPoint.newBuilder().setGeoPoint(asGeoPointProto(this.box.topLeft()))
+                      )
+                      .addGeoBox(
+                          GeoOuterClass.GeoBoxedPoint.newBuilder().setGeoPoint(asGeoPointProto(this.box.bottomRight()))
+                      )
+              )
+          )
+      ).build();
     }
 
     static class Adapter extends JSONAdapterFactory<GeoRect> {

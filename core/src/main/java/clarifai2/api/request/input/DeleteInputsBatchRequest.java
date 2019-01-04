@@ -1,17 +1,10 @@
 package clarifai2.api.request.input;
 
-import clarifai2.Func1;
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,6 +20,14 @@ public class DeleteInputsBatchRequest extends ClarifaiRequest.Builder<JsonNull> 
     super(client);
   }
 
+  @NotNull @Override protected String method() {
+    return "DELETE";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs";
+  }
+
   @NotNull public DeleteInputsBatchRequest plus(@NotNull String... inputIDs) {
     return plus(Arrays.asList(inputIDs));
   }
@@ -38,23 +39,12 @@ public class DeleteInputsBatchRequest extends ClarifaiRequest.Builder<JsonNull> 
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {
     return new DeserializedRequest<JsonNull>() {
-      @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder().add("ids", new JSONArrayBuilder()
-            .addAll(inputIDs, new Func1<String, JsonElement>() {
-              @NotNull @Override public JsonElement call(@NotNull String s) {
-                return new JsonPrimitive(s);
-              }
-            })
-        ).build();
-        return deleteRequest("v2/inputs", body);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub().deleteInputs(InputOuterClass.DeleteInputsRequest.newBuilder().addAllIds(inputIDs).build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {
-        return new JSONUnmarshaler<JsonNull>() {
-          @NotNull @Override public JsonNull fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return JsonNull.INSTANCE;
-          }
-        };
+      @NotNull @Override public JsonNull unmarshalerGrpc(Object returnedObject) {
+        return JsonNull.INSTANCE;
       }
     };
   }

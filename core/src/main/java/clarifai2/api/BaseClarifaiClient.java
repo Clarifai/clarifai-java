@@ -1,32 +1,25 @@
 package clarifai2.api;
 
 import clarifai2.BuildConfig;
-import clarifai2.exception.ClarifaiException;
+import clarifai2.exception.ClarifaiClientClosedException;
+import clarifai2.exception.DeprecationException;
 import clarifai2.internal.AutoValueTypeAdapterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import okhttp3.Cache;
-import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-
-import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 public abstract class BaseClarifaiClient implements ClarifaiClient {
 
@@ -40,32 +33,12 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   public final HttpUrl baseURL;
 
   @Nullable
-  private final String appID;
-
-  @Nullable
-  private final String appSecret;
-
-  @Nullable
   private final String apiKey;
-
-  @NotNull
-  private final OkHttpClient tokenRefreshHTTPClient;
-
-  @Nullable
-  private ClarifaiToken currentClarifaiToken = null;
 
   private boolean closed = false;
 
   BaseClarifaiClient(@NotNull ClarifaiBuilder builder) {
-    if (builder.apiKey == null) {
-      this.appID = notNullOrThrow(builder.appID, "appID cannot be null if apiKey is null");
-      this.appSecret = notNullOrThrow(builder.appSecret, "appSecret cannot be null if apiKey is null");
-      this.apiKey = null;
-    } else {
-      this.apiKey = builder.apiKey;
-      this.appID = null;
-      this.appSecret = null;
-    }
+    this.apiKey = builder.apiKey;
 
     this.gson = vendGson();
 
@@ -79,26 +52,12 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
         final Request.Builder requestBuilder = chain.request().newBuilder()
             .header("X-Clarifai-Client", String.format("java:%s:%s", BuildConfig.VERSION, System.getProperty("java.version", "?")));
         if (closed) {
-          throw new ClarifaiException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
+          throw new ClarifaiClientClosedException("This " + ClarifaiClient.class.getSimpleName() + " has already been closed");
         }
-        if (apiKey == null) {
-          final ClarifaiToken credential = refreshIfNeeded();
-          if (credential != null) {
-            requestBuilder.addHeader("Authorization", "Bearer " + credential.getAccessToken());
-          }
-          return chain.proceed(requestBuilder.build());
-        } else {
-          requestBuilder.addHeader("Authorization", "Key " + apiKey);
-          return chain.proceed(requestBuilder.build());
-        }
+        requestBuilder.addHeader("Authorization", "Key " + apiKey);
+        return chain.proceed(requestBuilder.build());
       }
     }).build();
-
-    this.tokenRefreshHTTPClient = unmodifiedClient.newBuilder().build();
-
-    if (apiKey == null) {
-      refreshIfNeeded();
-    }
   }
 
   private static void closeOkHttpClient(@NotNull OkHttpClient client) {
@@ -114,68 +73,17 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
   }
 
   @Override public boolean hasValidToken() {
-    return currentClarifaiToken != null && System.currentTimeMillis() <= currentClarifaiToken.getExpiresAt();
+    throw new DeprecationException(
+        "Using app ID/secret is deprecated, and the hasValidToken method as well. Please switch to using API key. "
+            + "See here how: http://help.clarifai.com/api/account-related/all-about-api-keys"
+    );
   }
 
   @NotNull @Override public ClarifaiToken getToken() throws IllegalStateException {
-    if (!hasValidToken()) {
-      throw new IllegalStateException("No valid token in this " + ClarifaiClient.class.getSimpleName() + ". "
-          + "Use hasValidToken() to check if a token exists before invoking this method to avoid this exception.");
-    }
-    //noinspection ConstantConditions
-    return currentClarifaiToken;
-  }
-
-  @Nullable
-  private ClarifaiToken refreshIfNeeded() {
-    synchronized (this) {
-      if (!hasValidToken()) {
-        currentClarifaiToken = refresh();
-      }
-      return currentClarifaiToken;
-    }
-  }
-
-  @Nullable
-  private ClarifaiToken refresh() {
-    try {
-      return tokenRefreshHTTPClient.dispatcher().executorService().invokeAny(Collections.singletonList(
-          new Callable<ClarifaiToken>() {
-            @Override public ClarifaiToken call() throws Exception {
-              final Response tokenResponse = tokenRefreshHTTPClient.newCall(new Request.Builder()
-                  .url(baseURL.newBuilder().addPathSegments("v2/token").build())
-                  .header("Authorization", Credentials.basic(appID, appSecret))
-                  .header("X-Clarifai-Client", "java:" + BuildConfig.VERSION)
-                  .post(RequestBody.create(MEDIA_TYPE_JSON, "\"grant_type\":\"client_credentials\""))
-                  .build()
-              ).execute();
-              if (tokenResponse.isSuccessful()) {
-                final JsonObject response = gson.fromJson(tokenResponse.body().string(), JsonObject.class);
-                return new ClarifaiToken(response.get("access_token").getAsString(),
-                    response.get("expires_in").getAsInt()
-                );
-              } else if (tokenResponse.code() == 401) {
-                throw new ClarifaiException("Clarifai app ID and/or app secret are incorrect");
-              }
-              return null;
-            }
-          }
-      ));
-    } catch (InterruptedException | ExecutionException e) {
-      final Throwable cause = e.getCause();
-      if (cause instanceof ClarifaiException) {
-        throw ((ClarifaiException) cause);
-      }
-      return null;
-    }
-  }
-
-  @NotNull
-  private static <T> T notNullOrThrow(@Nullable T check, String errorMsg) {
-    if (check == null) {
-      throw new IllegalArgumentException(errorMsg);
-    }
-    return check;
+    throw new DeprecationException(
+        "Using app ID/secret is deprecated, and the getToken method as well. Please switch to using API key. "
+            + "See here how: http://help.clarifai.com/api/account-related/all-about-api-keys"
+    );
   }
 
   @NotNull
@@ -194,8 +102,6 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
   @Override public void close() {
     closed = true;
-    closeOkHttpClient(tokenRefreshHTTPClient);
     closeOkHttpClient(httpClient);
   }
 }
-

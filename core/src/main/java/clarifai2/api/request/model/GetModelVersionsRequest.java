@@ -1,16 +1,13 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.ModelVersionOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.model.ModelVersion;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class GetModelVersionsRequest
@@ -23,23 +20,27 @@ public final class GetModelVersionsRequest
     this.modelID = modelID;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<ModelVersion>> unmarshaler() {
-    return new JSONUnmarshaler<List<ModelVersion>>() {
-      @NotNull @Override
-      public List<ModelVersion> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().get("model_versions"),
-            new TypeToken<List<ModelVersion>>() {}
-        );
-      }
-    };
+  @NotNull @Override protected String method() {
+    return "GET";
   }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    return new Request.Builder()
-        .url(buildURL("/v2/models/" + modelID + "/versions", page))
-        .get()
-        .build();
+  @NotNull @Override protected String subUrl(int page) {
+    return buildURL("/v2/models/" + modelID + "/versions", page);
+  }
+
+  @NotNull @Override protected List<ModelVersion> unmarshalerGrpc(Object returnedObject) {
+    ModelVersionOuterClass.MultiModelVersionResponse modelVersionsResponse =
+        (ModelVersionOuterClass.MultiModelVersionResponse) returnedObject;
+
+    List<ModelVersion> modelVersions = new ArrayList<>();
+    for (ModelVersionOuterClass.ModelVersion modelVersion : modelVersionsResponse.getModelVersionsList()) {
+      modelVersions.add(ModelVersion.deserialize(modelVersion));
+    }
+
+    return modelVersions;
+  }
+
+  @NotNull @Override protected ListenableFuture buildRequestGrpc(int page) {
+    return stub(page).listModelVersions(ModelVersionOuterClass.ListModelVersionsRequest.newBuilder().build());
   }
 }

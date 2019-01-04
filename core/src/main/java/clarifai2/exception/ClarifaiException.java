@@ -1,6 +1,6 @@
 package clarifai2.exception;
 
-public final class ClarifaiException extends RuntimeException {
+public class ClarifaiException extends RuntimeException {
 
   public ClarifaiException(Throwable cause) {
     super(cause);

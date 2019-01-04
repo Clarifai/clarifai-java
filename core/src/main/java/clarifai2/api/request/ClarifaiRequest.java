@@ -1,24 +1,30 @@
 package clarifai2.api.request;
 
+import clarifai2.internal.grpc.api.V2Grpc;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.ClarifaiStatus;
 import clarifai2.exception.ClarifaiException;
-import clarifai2.internal.JSONUnmarshaler;
+import clarifai2.exception.ClarifaiClientClosedException;
+import clarifai2.exception.NetworkException;
+import clarifai2.grpc.JsonChannel;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 import static clarifai2.internal.InternalUtil.fromJson;
@@ -130,8 +136,8 @@ public interface ClarifaiRequest<RESULT> {
    * @param <T> the type to deserialize to
    */
   interface DeserializedRequest<T> {
-    @NotNull Request httpRequest();
-    @NotNull JSONUnmarshaler<T> unmarshaler();
+    @NotNull ListenableFuture httpRequestGrpc();
+    @NotNull T unmarshalerGrpc(Object returnedObject);
   }
 
 
@@ -194,6 +200,13 @@ public interface ClarifaiRequest<RESULT> {
       requestContentType = contentType;
     }
 
+    @NotNull public V2Grpc.V2FutureStub stub() {
+      return V2Grpc.newFutureStub(new JsonChannel(client.httpClient))
+          .withOption(JsonChannel.CLARIFAI_METHOD_OPTION, method())
+          .withOption(JsonChannel.CLARIFAI_BASE_URL_OPTION, client.baseURL.toString())
+          .withOption(JsonChannel.CLARIFAI_SUB_URL_OPTION, subUrl());
+    }
+
     @NotNull @Override public final ClarifaiResponse<T> executeSync() {
       return build().executeSync();
     }
@@ -205,6 +218,9 @@ public interface ClarifaiRequest<RESULT> {
     @NotNull protected ClarifaiRequest<T> build() {
       return new Impl<>(client, request());
     }
+
+    @NotNull protected abstract String method();
+    @NotNull protected abstract String subUrl();
 
     @NotNull protected abstract DeserializedRequest<T> request();
 
@@ -259,28 +275,30 @@ public interface ClarifaiRequest<RESULT> {
     @Override
     public ClarifaiResponse<T> executeSync() {
       try {
-        final Response response = client.httpClient.newCall(request.httpRequest()).execute();
-        final String rawJSON;
+        Object o;
         try {
-          rawJSON = response.body().string();
-        } catch (IOException e) {
-          throw new ClarifaiException(e);
+          ListenableFuture listenableFuture = request.httpRequestGrpc();
+          o = listenableFuture.get();
+        } catch (IllegalArgumentException|ClarifaiClientClosedException e) {
+          throw e;
+        } catch (RuntimeException e) {
+          throw new NetworkException(e);
+        } catch (Exception e) {
+          throw new NetworkException(e);
         }
-        final JsonElement json;
-        try {
-          json = client.gson.fromJson(rawJSON, JsonElement.class);
-        } catch (JsonSyntaxException e) {
-          return new ClarifaiResponse.NetworkError<>(
-              ClarifaiStatus.networkError(new IOException("Server provided malformed JSON response"))
-          );
-        }
-        if (json == null) {
-          return new ClarifaiResponse.NetworkError<>(ClarifaiStatus.unknown());
-        }
-        final JsonObject root = json.getAsJsonObject();
-        final ClarifaiStatus status = fromJson(client.gson, root.getAsJsonObject("status"), ClarifaiStatus.class);
 
-        final int code = response.code();
+        JsonFormat.Printer printer = JsonFormat.printer();
+        String rawJSON = printer.print((MessageOrBuilder) o);
+        int code = 200;
+
+        Object statusObj;
+        try {
+          Method getStatus = o.getClass().getMethod("getStatus");
+          statusObj = getStatus.invoke(o);
+        } catch (Exception e) {
+          return new ClarifaiResponse.Failure<>(ClarifaiStatus.unknown(), code, rawJSON);
+        }
+        final ClarifaiStatus status = ClarifaiStatus.deserialize(statusObj);
 
         final boolean successfulHTTPCode = 200 <= code && code < 300;
         if (successfulHTTPCode && (status == null || status.equals(ClarifaiStatus.success()))) {
@@ -288,18 +306,20 @@ public interface ClarifaiRequest<RESULT> {
               status,
               code,
               rawJSON,
-              request.unmarshaler().fromJSON(client.gson, root)
+              request.unmarshalerGrpc(o)
           );
         } else if (successfulHTTPCode && status.equals(ClarifaiStatus.mixedSuccess())) {
           return new ClarifaiResponse.MixedSuccess<>(
               status,
               code,
               rawJSON,
-              request.unmarshaler().fromJSON(client.gson, root)
+              request.unmarshalerGrpc(o)
           );
         }
         return new ClarifaiResponse.Failure<>(status, code, rawJSON);
-      } catch (IOException e) {
+      } catch (ClarifaiClientClosedException e) {
+        throw e;
+      } catch (NetworkException|IOException e) {
         return new ClarifaiResponse.NetworkError<>(ClarifaiStatus.networkError(e));
       }
     }

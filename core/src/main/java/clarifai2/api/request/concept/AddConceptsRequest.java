@@ -1,5 +1,6 @@
 package clarifai2.api.request.concept;
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.Func1;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
@@ -7,6 +8,7 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.internal.JSONArrayBuilder;
 import clarifai2.internal.JSONObjectBuilder;
 import clarifai2.internal.JSONUnmarshaler;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -27,6 +29,14 @@ public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> 
     super(client);
   }
 
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/concepts";
+  }
+
   @NotNull public AddConceptsRequest plus(@NotNull Concept... concepts) {
     return plus(Arrays.asList(concepts));
   }
@@ -38,27 +48,23 @@ public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> 
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {
     return new DeserializedRequest<JsonNull>() {
-      @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
-            .add("concepts", new JSONArrayBuilder()
-                .addAll(concepts, new Func1<Concept, JsonElement>() {
-                  @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                    return new JSONObjectBuilder()
-                        .add("id", concept.id())
-                        .add("name", concept.name())
-                        .build();
-                  }
-                })
-            ).build();
-        return postRequest("/v2/concepts", body);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        List<ConceptOuterClass.Concept> protoConcepts = new ArrayList<>();
+
+        for (Concept concept : concepts) {
+          protoConcepts.add(concept.serialize());
+        }
+
+
+        return stub().postConcepts(
+            ConceptOuterClass.PostConceptsRequest.newBuilder()
+                .addAllConcepts(protoConcepts)
+                .build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<JsonNull> unmarshaler() {
-        return new JSONUnmarshaler<JsonNull>() {
-          @NotNull @Override public JsonNull fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return JsonNull.INSTANCE;
-          }
-        };
+      @NotNull @Override public JsonNull unmarshalerGrpc(Object returnedObject) {
+        return JsonNull.INSTANCE;
       }
     };
   }

@@ -1,14 +1,11 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.ModelOuterClass;
+import clarifai2.internal.grpc.api.ModelVersionOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.Model;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 public final class TrainModelRequest extends ClarifaiRequest.Builder<Model<?>> {
@@ -20,18 +17,23 @@ public final class TrainModelRequest extends ClarifaiRequest.Builder<Model<?>> {
     this.modelID = modelID;
   }
 
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/models/" + modelID + "/versions";
+  }
+
   @NotNull @Override protected DeserializedRequest<Model<?>> request() {
     return new DeserializedRequest<Model<?>>() {
-      @NotNull @Override public Request httpRequest() {
-        return postRequest("/v2/models/" + modelID + "/versions", new JsonObject());
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        return stub().postModelVersions(ModelVersionOuterClass.PostModelVersionsRequest.newBuilder().build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<Model<?>> unmarshaler() {
-        return new JSONUnmarshaler<Model<?>>() {
-          @NotNull @Override public Model<?> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return gson.fromJson(json.getAsJsonObject().get("model"), new TypeToken<Model<?>>() {}.getType());
-          }
-        };
+      @NotNull @Override public Model<?> unmarshalerGrpc(Object returnedObject) {
+        ModelOuterClass.SingleModelResponse modelResponse = (ModelOuterClass.SingleModelResponse) returnedObject;
+        return Model.deserialize(modelResponse.getModel(), client);
       }
     };
   }

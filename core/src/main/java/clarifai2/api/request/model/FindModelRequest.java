@@ -4,17 +4,12 @@ import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelType;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
+import clarifai2.internal.grpc.api.ModelOuterClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<List<Model<?>>, FindModelRequest> {
@@ -24,6 +19,14 @@ public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<Lis
 
   public FindModelRequest(@NotNull final BaseClarifaiClient client) {
     super(client);
+  }
+
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl(final int page) {
+    return buildURL("/v2/models/searches", page);
   }
 
   @NotNull public FindModelRequest withName(@Nullable String name) {
@@ -36,29 +39,25 @@ public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<Lis
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<Model<?>>> unmarshaler() {
-    return new JSONUnmarshaler<List<Model<?>>>() {
-      @NotNull @Override
-      public List<Model<?>> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().get("models"),
-            new TypeToken<List<Model<?>>>() {}
-        );
-      }
-    };
+  @NotNull @Override protected List<Model<?>> unmarshalerGrpc(Object returnedObject) {
+    ModelOuterClass.MultiModelResponse modelsResponse = (ModelOuterClass.MultiModelResponse) returnedObject;
+    List<Model<?>> models = new ArrayList<>();
+    for (ModelOuterClass.Model model : modelsResponse.getModelsList()) {
+      models.add(Model.deserialize(model, client));
+    }
+    return models;
   }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    final JsonObject body = new JSONObjectBuilder()
-        .add("model_query", new JSONObjectBuilder()
-            .add("name", name)
-            .add("type", modelType != null ? modelType.typeName() : null)
-        )
-        .build();
-    return new Request.Builder()
-        .url(buildURL("/v2/models/searches", page))
-        .post(toRequestBody(body, page))
-        .build();
+  @NotNull @Override protected ListenableFuture buildRequestGrpc(int page) {
+    ModelOuterClass.ModelQuery.Builder modelQuery = ModelOuterClass.ModelQuery.newBuilder();
+    if (name != null) {
+      modelQuery.setName(name);
+    }
+    if (modelType != null) {
+      modelQuery.setType(modelType.typeName());
+    }
+    return stub(page).postModelsSearches(
+        ModelOuterClass.PostModelsSearchesRequest.newBuilder().setModelQuery(modelQuery).build()
+    );
   }
 }
