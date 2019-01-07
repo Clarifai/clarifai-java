@@ -15,13 +15,14 @@ public class SearchesFeedbackTests extends BaseClarifaiAPITest {
     assertSuccess(request);
   }
 
-  @Test public void shouldFailWhenInvalidEventType() {
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldFailWhenInvalidEventType() {
     SearchesFeedbackRequest request = client.searchesFeedback()
         .withId("@invalidId")
         .withEndUserId("@endUserId")
         .withSessionId("@sesionId")
         .withEventType("invalid_event_type-321")
         .withSearchId("@searchId");
-    assertFailure(request);
+    request.executeSync();
   }
 }

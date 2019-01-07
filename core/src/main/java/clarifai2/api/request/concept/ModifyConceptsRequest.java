@@ -1,18 +1,10 @@
 package clarifai2.api.request.concept;
 
-import clarifai2.Func1;
+import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -38,36 +30,34 @@ public final class ModifyConceptsRequest extends ClarifaiRequest.Builder<List<Co
     return this;
   }
 
+  @NotNull @Override protected String method() {
+    return "PATCH";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/concepts";
+  }
+
   @NotNull @Override protected DeserializedRequest<List<Concept>> request() {
     return new DeserializedRequest<List<Concept>>() {
-      @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
-            .add("action", action)
-            .add("concepts", new JSONArrayBuilder()
-                .addAll(concepts, new Func1<Concept, JsonElement>() {
-                  @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                    return new JSONObjectBuilder()
-                        .add("id", concept.id())
-                        .add("name", concept.name())
-                        .build();
-                  }
-                })
-            )
-            .build();
-        return patchRequest("/v2/concepts", body);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        List<ConceptOuterClass.Concept> conceptsGrpc = new ArrayList<>();
+        for (Concept concept : concepts) {
+          conceptsGrpc.add(concept.serialize());
+        }
+        return stub().patchConcepts(
+            ConceptOuterClass.PatchConceptsRequest.newBuilder().setAction(action).addAllConcepts(conceptsGrpc).build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<List<Concept>> unmarshaler() {
-        return new JSONUnmarshaler<List<Concept>>() {
-          @NotNull @Override
-          public List<Concept> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-            return InternalUtil.fromJson(
-                gson,
-                json.getAsJsonObject().get("concepts"),
-                new TypeToken<List<Concept>>() {}
-            );
-          }
-        };
+      @NotNull @Override public List<Concept> unmarshalerGrpc(Object returnedObject) {
+        ConceptOuterClass.MultiConceptResponse conceptsResponse =
+            (ConceptOuterClass.MultiConceptResponse) returnedObject;
+        List<Concept> conceptsResult = new ArrayList<>();
+        for (ConceptOuterClass.Concept concept : conceptsResponse.getConceptsList()) {
+          conceptsResult.add(Concept.deserialize(concept));
+        }
+        return conceptsResult;
       }
     };
   }

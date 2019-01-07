@@ -1,5 +1,6 @@
 package clarifai2.dto.model;
 
+import clarifai2.internal.grpc.api.status.StatusOuterClass;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.internal.JSONAdapterFactory;
 import com.google.gson.Gson;
@@ -58,12 +59,32 @@ public enum ModelTrainingStatus {
   /**
    * Training threw an unknown error
    */
-  MODEL_TRAINING_UNKNOWN_ERROR(21115),;
+  MODEL_TRAINING_UNKNOWN_ERROR(21115),
+  /**
+   * Training request was unexpectedly redelivered, contact support@clarifai.com if this continues to happen.
+   */
+  MODEL_TRAINING_UNEXPECTED_REDELIVERY_ERROR(21116),;
 
   private final int statusCode;
 
   ModelTrainingStatus(int statusCode) {
     this.statusCode = statusCode;
+  }
+
+  static final Map<Integer, ModelTrainingStatus> codeToStatus;
+
+  static {
+    final ModelTrainingStatus[] values = ModelTrainingStatus.values();
+    codeToStatus = new HashMap<>(values.length);
+    for (ModelTrainingStatus modelTrainingStatus : values) {
+      if (codeToStatus.containsKey(modelTrainingStatus.statusCode)) {
+        throw new IllegalStateException(
+            codeToStatus.get(modelTrainingStatus.statusCode) + " and " + modelTrainingStatus
+                + " have the same statusCode of " + modelTrainingStatus.statusCode
+        );
+      }
+      codeToStatus.put(modelTrainingStatus.statusCode, modelTrainingStatus);
+    }
   }
 
   public boolean isError() {
@@ -74,24 +95,19 @@ public enum ModelTrainingStatus {
     return this.isError() || this == TRAINED;
   }
 
-  static class Adapter extends JSONAdapterFactory<ModelTrainingStatus> {
-
-    static final Map<Integer, ModelTrainingStatus> codeToStatus;
-
-    static {
-      final ModelTrainingStatus[] values = ModelTrainingStatus.values();
-      codeToStatus = new HashMap<>(values.length);
-      for (ModelTrainingStatus modelTrainingStatus : values) {
-        if (codeToStatus.containsKey(modelTrainingStatus.statusCode)) {
-          throw new IllegalStateException(
-              codeToStatus.get(modelTrainingStatus.statusCode) + " and " + modelTrainingStatus
-                  + " have the same statusCode of " + modelTrainingStatus.statusCode
-          );
-        }
-        codeToStatus.put(modelTrainingStatus.statusCode, modelTrainingStatus);
-      }
+  public static ModelTrainingStatus deserialize(StatusOuterClass.Status status) {
+    ModelTrainingStatus model = codeToStatus.get(status.getCodeValue());
+    if (model == null) {
+      System.err.printf(
+          "Warning This version of the API client does not recognize the model training status: %d. Consider upgrading "
+              + "the client to the latest version.%n",
+          status.getCodeValue()
+      );
     }
+    return model;
+  }
 
+  static class Adapter extends JSONAdapterFactory<ModelTrainingStatus> {
     @Nullable @Override protected Deserializer<ModelTrainingStatus> deserializer() {
       return new Deserializer<ModelTrainingStatus>() {
         @Nullable @Override

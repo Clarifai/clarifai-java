@@ -1,6 +1,6 @@
 package clarifai2.dto.input;
 
-import clarifai2.dto.prediction.Region;
+import clarifai2.internal.grpc.api.ImageOuterClass;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONAdapterFactory;
 import clarifai2.internal.JSONObjectBuilder;
@@ -46,6 +46,22 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
     return allowDuplicateUrl;
   }
 
+  @NotNull @Override public ImageOuterClass.Image serialize(boolean allowDuplicateUrl) {
+    ImageOuterClass.Image image = ImageOuterClass.Image.newBuilder()
+        .setUrl(url().toString())
+        .setAllowDuplicateUrl(allowDuplicateUrl)
+        .build();
+    return image;
+  }
+
+
+  @NotNull public static ClarifaiURLImage deserializeInner(ImageOuterClass.Image imageResponse) {
+    ClarifaiURLImage image = ClarifaiURLImage.of(imageResponse.getUrl());
+    if (imageResponse.getCropCount() > 0) {
+      image.withCrop(Crop.deserialize(imageResponse.getCropList()));
+    }
+    return image;
+  }
 
   static class Adapter extends JSONAdapterFactory<ClarifaiURLImage> {
 

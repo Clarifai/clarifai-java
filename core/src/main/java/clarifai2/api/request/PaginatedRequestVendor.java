@@ -1,7 +1,9 @@
 package clarifai2.api.request;
 
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 
-interface PaginatedRequestVendor {
-  Request vendRequest(int page);
+interface PaginatedRequestVendor<T> {
+  ListenableFuture vendRequestGrpc(int page);
+
+  T vendResponseGrpc(Object returnedObject);
 }

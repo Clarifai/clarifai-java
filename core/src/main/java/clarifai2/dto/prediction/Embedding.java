@@ -1,22 +1,14 @@
 package clarifai2.dto.prediction;
 
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONAdapterFactory;
+import clarifai2.internal.grpc.api.EmbeddingOuterClass;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(Embedding.Adapter.class)
 public abstract class Embedding extends Prediction {
 
   Embedding() {} // AutoValue instances only
@@ -33,35 +25,16 @@ public abstract class Embedding extends Prediction {
   @NotNull public abstract int numDimensions();
 
 
-  static class Adapter extends JSONAdapterFactory<Embedding> {
-    @Nullable @Override protected Deserializer<Embedding> deserializer() {
-      return new Deserializer<Embedding>() {
-        @Nullable @Override
-        public Embedding deserialize(
-            @NotNull JsonElement json,
-            @NotNull TypeToken<Embedding> type,
-            @NotNull Gson gson
-        ) {
-          final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
-
-          final float[] embedding = new float[root.get("num_dimensions").getAsInt()];
-          {
-            final JsonArray embeddingJSON = root.getAsJsonArray("vector");
-            for (int i = 0; i < embeddingJSON.size(); i++) {
-              embedding[i] = embeddingJSON.get(i).getAsFloat();
-            }
-          }
-          return new AutoValue_Embedding(
-              embedding,
-              root.get("num_dimensions").getAsInt()
-          );
-        }
-      };
+  @NotNull public static Embedding deserialize(EmbeddingOuterClass.Embedding embeddingResponse) {
+    List<Float> vectorList = embeddingResponse.getVectorList();
+    float[] embedding = new float[vectorList.size()];
+    for (int i = 0; i < vectorList.size(); i++) {
+      embedding[i] = vectorList.get(i);
     }
-
-    @NotNull @Override protected TypeToken<Embedding> typeToken() {
-      return new TypeToken<Embedding>() {};
-    }
+    return new AutoValue_Embedding(
+        embedding,
+        embeddingResponse.getNumDimensions()
+    );
   }
 }
 

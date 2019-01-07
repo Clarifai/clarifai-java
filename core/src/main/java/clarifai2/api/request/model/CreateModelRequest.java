@@ -1,36 +1,23 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.ModelOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
-import clarifai2.dto.model.ModelType;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static clarifai2.internal.InternalUtil.assertJsonIs;
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.toJson;
-
 public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
-  @NotNull private final BaseClarifaiClient helper;
   @NotNull private final String id;
   @Nullable private ConceptOutputInfo outputInfo;
   @Nullable private String name = null;
 
   public CreateModelRequest(@NotNull final BaseClarifaiClient helper, @NotNull final String id) {
     super(helper);
-    this.helper = helper;
     this.id = id;
   }
 
@@ -44,38 +31,32 @@ public final class CreateModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
-  @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
-    return new DeserializedRequest<ConceptModel>() {
-      @NotNull @Override public Request httpRequest() {
-        final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
-        bodyBuilder.add("model", buildJSONOfModel());
-        final JsonObject body = bodyBuilder.build();
-        return postRequest("/v2/models", body);
-      }
-
-      @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
-        return new JSONUnmarshaler<ConceptModel>() {
-          @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return assertNotNull(
-                fromJson(gson, assertJsonIs(json, JsonObject.class).get("model"), new TypeToken<Model<?>>() {})
-            ).asConceptModel();
-          }
-        };
-      }
-    };
+  @NotNull @Override protected String method() {
+    return "POST";
   }
 
-  @NotNull protected JsonElement buildJSONOfModel() {
-    return toJson(
-        client.gson,
-        Model._create(
-            ModelType.CONCEPT,
-            helper,
-            id,
-            name != null ? name : id,
-            outputInfo
-        ),
-        new TypeToken<Model<?>>() {}
-    );
+  @NotNull @Override protected String subUrl() {
+    return "/v2/models";
+  }
+
+  @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
+    return new DeserializedRequest<ConceptModel>() {
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        ModelOuterClass.Model.Builder modelBuilder = ModelOuterClass.Model.newBuilder()
+            .setId(id);
+        if (name != null) {
+          modelBuilder.setName(name);
+        }
+        if (outputInfo != null) {
+          modelBuilder.setOutputInfo(outputInfo.serialize());
+        }
+        return stub().postModels(ModelOuterClass.PostModelsRequest.newBuilder().addModels(modelBuilder).build());
+      }
+
+      @NotNull @Override public ConceptModel unmarshalerGrpc(Object returnedObject) {
+        ModelOuterClass.SingleModelResponse modelResponse = (ModelOuterClass.SingleModelResponse) returnedObject;
+        return Model.deserialize(modelResponse.getModel(), client).asConceptModel();
+      }
+    };
   }
 }

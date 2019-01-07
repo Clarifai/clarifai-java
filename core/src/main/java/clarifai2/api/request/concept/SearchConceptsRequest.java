@@ -1,19 +1,14 @@
 package clarifai2.api.request.concept;
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class SearchConceptsRequest
@@ -34,32 +29,33 @@ public final class SearchConceptsRequest
     return this;
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<Concept>> unmarshaler() {
-    return new JSONUnmarshaler<List<Concept>>() {
-      @NotNull @Override
-      public List<Concept> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().get("concepts"),
-            new TypeToken<List<Concept>>() {}
-        );
-      }
-    };
+  @NotNull @Override protected String method() {
+    return "POST";
   }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
-    final JSONObjectBuilder conceptQueryBuilder = new JSONObjectBuilder();
-    conceptQueryBuilder.add("name", conceptSearchQuery);
-    if (language != null) {
-      conceptQueryBuilder.add("language", language);
-    }
-    bodyBuilder.add("concept_query", conceptQueryBuilder.build());
-    final JsonObject body = bodyBuilder.build();
+  @NotNull @Override protected String subUrl(int page) {
+    return buildURL("/v2/concepts/searches", page);
+  }
 
-    return new Request.Builder()
-        .post(toRequestBody(body, page))
-        .url(buildURL("/v2/concepts/searches", page))
-        .build();
+  @NotNull @Override protected List<Concept> unmarshalerGrpc(Object returnedObject) {
+    ConceptOuterClass.MultiConceptResponse conceptsResponse = (ConceptOuterClass.MultiConceptResponse) returnedObject;
+
+    List<Concept> concepts = new ArrayList<>();
+    for (ConceptOuterClass.Concept concept : conceptsResponse.getConceptsList()) {
+      concepts.add(Concept.deserialize(concept));
+    }
+
+    return concepts;
+  }
+
+  @NotNull @Override protected ListenableFuture buildRequestGrpc(int page) {
+    ConceptOuterClass.ConceptQuery.Builder conceptQuery = ConceptOuterClass.ConceptQuery.newBuilder()
+        .setName(conceptSearchQuery);
+    if (language != null) {
+      conceptQuery.setLanguage(language);
+    }
+    return stub(page).postConceptsSearches(
+        ConceptOuterClass.PostConceptsSearchesRequest.newBuilder().setConceptQuery(conceptQuery).build()
+    );
   }
 }

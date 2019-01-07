@@ -1,26 +1,16 @@
 package clarifai2.api.request.input;
 
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
-import static clarifai2.internal.InternalUtil.toJson;
 
 public final class AddInputsRequest extends ClarifaiRequest.Builder<List<ClarifaiInput>> {
 
@@ -32,6 +22,14 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
 
   public AddInputsRequest(@NotNull final BaseClarifaiClient helper) {
     super(helper);
+  }
+
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs";
   }
 
   @NotNull public AddInputsRequest plus(@NotNull ClarifaiInput... inputs) {
@@ -59,34 +57,24 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
   @NotNull @Override protected DeserializedRequest<List<ClarifaiInput>> request() {
     return new DeserializedRequest<List<ClarifaiInput>>() {
 
-      @NotNull @Override public Request httpRequest() {
-        final TypeToken<List<ClarifaiInput>> type = new TypeToken<List<ClarifaiInput>>() {};
-        final JsonArray inputs = toJson(client.gson, AddInputsRequest.this.inputs, type).getAsJsonArray();
-        if (allowDuplicateURLs) {
-          for (final JsonElement input : inputs) {
-            final JsonObject image = input.getAsJsonObject().getAsJsonObject("data").getAsJsonObject("image");
-            if (image.has("url")) {
-              image.addProperty("allow_duplicate_url", allowDuplicateURLs);
-            }
-          }
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        List<InputOuterClass.Input> inputsGrpc = new ArrayList<>();
+        for (ClarifaiInput input : inputs) {
+          // Because allow duplicate URL is actually a property of an input, and not this outer request, we have to
+          // pass it in to the serialization method.
+          inputsGrpc.add(input.serialize(allowDuplicateURLs));
         }
-
-        final JsonObject body = new JSONObjectBuilder()
-            .add("inputs", inputs)
-            .build();
-        return postRequest("/v2/inputs", body);
+        return stub().postInputs(InputOuterClass.PostInputsRequest.newBuilder().addAllInputs(inputsGrpc).build());
       }
 
-      @NotNull @Override public JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
-        return new JSONUnmarshaler<List<ClarifaiInput>>() {
-          @NotNull @Override public List<ClarifaiInput> fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return assertNotNull(fromJson(
-                gson,
-                json.getAsJsonObject().getAsJsonArray("inputs"),
-                new TypeToken<List<ClarifaiInput>>() {}
-            ));
-          }
-        };
+      @NotNull @Override public List<ClarifaiInput> unmarshalerGrpc(Object returnedObject) {
+        InputOuterClass.MultiInputResponse inputsResponse = (InputOuterClass.MultiInputResponse) returnedObject;
+
+        List<ClarifaiInput> result = new ArrayList<>();
+        for (InputOuterClass.Input input : inputsResponse.getInputsList()) {
+          result.add(ClarifaiInput.deserialize(input));
+        }
+        return result;
       }
     };
   }

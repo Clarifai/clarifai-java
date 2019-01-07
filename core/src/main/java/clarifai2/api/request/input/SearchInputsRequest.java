@@ -1,18 +1,10 @@
 package clarifai2.api.request.input;
 
-import clarifai2.Func1;
+import clarifai2.internal.grpc.api.Search;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.search.SearchInputsResult;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,12 +24,12 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
     this.andClauses.addAll(searchClauses);
   }
 
-  @NotNull @Override protected JSONUnmarshaler<SearchInputsResult> unmarshaler() {
-    return new JSONUnmarshaler<SearchInputsResult>() {
-      @NotNull @Override public SearchInputsResult fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(gson, json.getAsJsonObject(), new TypeToken<SearchInputsResult>() {});
-      }
-    };
+  @NotNull @Override protected String method() {
+    return "POST";
+  }
+
+  @NotNull @Override protected String subUrl(final int page) {
+    return buildURL("/v2/searches", page);
   }
 
   /**
@@ -82,25 +74,20 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
     return ands(Arrays.asList(clauses));
   }
 
+  @NotNull @Override protected SearchInputsResult unmarshalerGrpc(Object returnedObject) {
+    Search.MultiSearchResponse searchesResponse = (Search.MultiSearchResponse) returnedObject;
+    return SearchInputsResult.deserialize(searchesResponse);
+  }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    final JSONObjectBuilder bodyBuilder = new JSONObjectBuilder();
-    final JSONObjectBuilder queryBuilder = new JSONObjectBuilder();
-    queryBuilder.add("ands", new JSONArrayBuilder()
-        .addAll(andClauses, new Func1<SearchClause, JsonElement>() {
-          @NotNull @Override public JsonElement call(@NotNull SearchClause model) {
-            return SearchInputsRequest.this.gson.toJsonTree(model);
-          }
-        })
-    );
-    if (language != null) {
-      queryBuilder.add("language", language);
+  @NotNull @Override protected ListenableFuture buildRequestGrpc(int page) {
+    Search.Query.Builder searchBuilder = Search.Query.newBuilder();
+    for (SearchClause andClause : andClauses) {
+      searchBuilder.addAnds(andClause.serialize());
     }
-    bodyBuilder.add("query", queryBuilder.build());
-    final JsonObject body = bodyBuilder.build();
-    return new Request.Builder()
-        .url(buildURL("/v2/searches", page))
-        .post(toRequestBody(body, page))
-        .build();
+    if (language != null) {
+      searchBuilder.setLanguage(language);
+    }
+
+    return stub(page).postSearches(Search.PostSearchesRequest.newBuilder().setQuery(searchBuilder).build());
   }
 }

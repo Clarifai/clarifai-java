@@ -12,6 +12,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @deprecated use {@link ModifyModelRequest}
+ */
+@Deprecated
 public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final String modelID;
@@ -51,6 +55,10 @@ public final class PatchModelRequest extends ClarifaiRequest.Builder<ConceptMode
       return new ModifyModelRequest(client, modelID).withConcepts(action, concepts);
     }
   }
+
+  // Because this class is just a wrapper around ModifyModelRequest.
+  @NotNull @Override protected String method() { return null; }
+  @NotNull @Override protected String subUrl() { return null; }
 
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     throw new UnsupportedOperationException();

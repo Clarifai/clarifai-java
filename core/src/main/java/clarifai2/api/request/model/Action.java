@@ -33,6 +33,19 @@ public enum Action {
     this.value = value;
   }
 
+  @NotNull public String serialize() {
+    return this.value;
+  }
+
+  @NotNull public static Action deserialize(String value) {
+    for (final Action action : Action.values()) {
+      if (action.value.equals(value)) {
+        return action;
+      }
+    }
+    throw new IllegalStateException("Unknown Action: " + value);
+  }
+
   static class Adapter extends JSONAdapterFactory<Action> {
 
     @Nullable @Override protected Serializer<Action> serializer() {

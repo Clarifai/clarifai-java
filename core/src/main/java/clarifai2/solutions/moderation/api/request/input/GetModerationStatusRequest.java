@@ -1,7 +1,7 @@
 package clarifai2.solutions.moderation.api.request.input;
 
 import clarifai2.api.BaseClarifaiClient;
-import clarifai2.api.request.ClarifaiRequest;
+import clarifai2.api.request.ClarifaiJsonRequest;
 import clarifai2.internal.InternalUtil;
 import clarifai2.internal.JSONUnmarshaler;
 import clarifai2.solutions.moderation.dto.ModerationStatus;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 
-public class GetModerationStatusRequest extends ClarifaiRequest.Builder<ModerationStatus> {
+public class GetModerationStatusRequest extends ClarifaiJsonRequest.Builder<ModerationStatus> {
   @NotNull private final String inputID;
 
   public GetModerationStatusRequest(@NotNull BaseClarifaiClient client, @NotNull String inputID) {

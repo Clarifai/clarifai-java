@@ -1,21 +1,16 @@
 package clarifai2.api.request.input;
 
+import clarifai2.internal.grpc.api.DataOuterClass;
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.grpc.MetadataConverter;
 import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.protobuf.Struct;
 import org.jetbrains.annotations.NotNull;
-
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
 
 public final class PatchInputMetadataRequest extends ClarifaiRequest.Builder<ClarifaiInput> {
 
@@ -33,30 +28,30 @@ public final class PatchInputMetadataRequest extends ClarifaiRequest.Builder<Cla
     InternalUtil.assertMetadataHasNoNulls(metadata);
   }
 
+  @NotNull @Override protected String method() {
+    return "PATCH";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/inputs";
+  }
+
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {
     return new DeserializedRequest<ClarifaiInput>() {
-      @NotNull @Override public Request httpRequest() {
-        final JsonObject body = new JSONObjectBuilder()
-            .add("action", "overwrite")
-            .add("inputs", new JSONArrayBuilder()
-                .add(new JSONObjectBuilder()
-                    .add("id", inputID)
-                    .add("data", new JSONObjectBuilder()
-                        .add("metadata", metadata)
-                    )
-                )
-            )
-            .build();
-        return patchRequest("/v2/inputs", body);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        Struct metadataGrpc = MetadataConverter.jsonObjectToStruct(metadata);
+
+        InputOuterClass.Input.Builder inputGrpc = InputOuterClass.Input.newBuilder()
+            .setId(inputID)
+            .setData(DataOuterClass.Data.newBuilder().setMetadata(metadataGrpc));
+        return stub().patchInputs(
+            InputOuterClass.PatchInputsRequest.newBuilder().setAction("overwrite").addInputs(inputGrpc).build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<ClarifaiInput> unmarshaler() {
-        return new JSONUnmarshaler<ClarifaiInput>() {
-          @NotNull @Override public ClarifaiInput fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            final JsonElement firstInput = json.getAsJsonObject().getAsJsonArray("inputs").get(0);
-            return assertNotNull(fromJson(gson, firstInput, new TypeToken<ClarifaiInput>() {}));
-          }
-        };
+      @NotNull @Override public ClarifaiInput unmarshalerGrpc(Object returnedObject) {
+        InputOuterClass.MultiInputResponse inputsResponse = (InputOuterClass.MultiInputResponse) returnedObject;
+        return ClarifaiInput.deserialize(inputsResponse.getInputs(0));
       }
     };
   }

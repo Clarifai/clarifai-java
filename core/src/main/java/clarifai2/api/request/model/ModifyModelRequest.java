@@ -1,33 +1,26 @@
 package clarifai2.api.request.model;
 
-import clarifai2.Func1;
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.DataOuterClass;
+import clarifai2.internal.grpc.api.ModelOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.prediction.Concept;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static clarifai2.internal.InternalUtil.assertNotNull;
-import static clarifai2.internal.InternalUtil.fromJson;
 
 public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptModel> {
 
   @NotNull private final String modelID;
 
-  @Nullable private Action action = null;
+  @Nullable private Action action = Action.MERGE;
   @Nullable private List<Concept> concepts = null;
   @Nullable private String name = null;
   @Nullable private Boolean conceptsMutuallyExclusive = null;
@@ -101,56 +94,54 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
     return this;
   }
 
+  @NotNull @Override protected String method() {
+    return "PATCH";
+  }
+
+  @NotNull @Override protected String subUrl() {
+    return "/v2/models";
+  }
+
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {
     return new DeserializedRequest<ConceptModel>() {
-      @NotNull @Override public Request httpRequest() {
-        final JSONObjectBuilder model = new JSONObjectBuilder().add("id", modelID);
+      @NotNull @Override public ListenableFuture httpRequestGrpc() {
+        ModelOuterClass.Model.Builder model = ModelOuterClass.Model.newBuilder()
+            .setId(modelID);
         if (name != null) {
-          model.add("name", name);
+          model.setName(name);
         }
 
-        final JSONObjectBuilder outputInfo = new JSONObjectBuilder();
+        ModelOuterClass.OutputInfo.Builder outputInfo = ModelOuterClass.OutputInfo.newBuilder();
         if (concepts != null) {
-          outputInfo
-              .add("data", new JSONObjectBuilder()
-                  .add("concepts", new JSONArrayBuilder()
-                      .addAll(concepts, new Func1<Concept, JsonElement>() {
-                        @NotNull @Override public JsonElement call(@NotNull Concept concept) {
-                          return client.gson.toJsonTree(concept);
-                        }
-                      })
-                  )
-              );
+          List<ConceptOuterClass.Concept> conceptsGrpc = new ArrayList<>();
+          for (Concept concept : concepts) {
+            conceptsGrpc.add(concept.serialize());
+          }
+          outputInfo.setData(DataOuterClass.Data.newBuilder().addAllConcepts(conceptsGrpc));
         }
-        final JSONObjectBuilder outputConfig = new JSONObjectBuilder();
-        if (language != null) {
-          outputConfig.add("language", language);
-        }
-        if (conceptsMutuallyExclusive != null || closedEnvironment != null) {
-          outputConfig
-              .add("concepts_mutually_exclusive", conceptsMutuallyExclusive)
-              .add("closed_environment", closedEnvironment);
-        }
-        outputInfo.add("output_config", outputConfig.build());
-        model.add("output_info", outputInfo);
 
-        final JsonObject body = new JSONObjectBuilder()
-            .add("models", new JSONArrayBuilder().add(model))
-            .add("action", client.gson.toJsonTree(action))
-            .build();
-        return patchRequest("/v2/models", body);
+
+        ModelOuterClass.OutputConfig.Builder outputConfig = ModelOuterClass.OutputConfig.newBuilder();
+        if (language != null) {
+          outputConfig.setLanguage(language);
+        }
+        if (conceptsMutuallyExclusive != null) {
+          outputConfig.setConceptsMutuallyExclusive(conceptsMutuallyExclusive);
+        }
+        if (closedEnvironment != null) {
+          outputConfig.setClosedEnvironment(closedEnvironment);
+        }
+        outputInfo.setOutputConfig(outputConfig);
+
+        model.setOutputInfo(outputInfo);
+        return stub().patchModels(
+            ModelOuterClass.PatchModelsRequest.newBuilder().addModels(model).setAction(action.serialize()).build()
+        );
       }
 
-      @NotNull @Override public JSONUnmarshaler<ConceptModel> unmarshaler() {
-        return new JSONUnmarshaler<ConceptModel>() {
-          @NotNull @Override public ConceptModel fromJSON(@NotNull Gson gson, @NotNull JsonElement json) {
-            return assertNotNull(fromJson(
-                gson,
-                json.getAsJsonObject().getAsJsonArray("models").get(0),
-                new TypeToken<Model<?>>() {}
-            )).asConceptModel();
-          }
-        };
+      @NotNull @Override public ConceptModel unmarshalerGrpc(Object returnedObject) {
+        ModelOuterClass.MultiModelResponse modelsResponse = (ModelOuterClass.MultiModelResponse) returnedObject;
+        return (ConceptModel) Model.deserialize(modelsResponse.getModels(0), client);
       }
     };
   }

@@ -1,9 +1,9 @@
 package clarifai2.api;
 
+import clarifai2.exception.DeprecationException;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 import java.util.List;
@@ -14,13 +14,7 @@ import java.util.concurrent.Future;
 
 public final class ClarifaiBuilder {
 
-  @Nullable
-  final String appID;
-
-  @Nullable
-  final String appSecret;
-
-  @Nullable
+  @NotNull
   final String apiKey;
 
   @NotNull
@@ -30,15 +24,14 @@ public final class ClarifaiBuilder {
   HttpUrl baseURL = HttpUrl.parse("https://api.clarifai.com");
 
   public ClarifaiBuilder(@NotNull String appID, @NotNull String appSecret) {
-    this.appID = appID;
-    this.appSecret = appSecret;
-    this.apiKey = null;
+    throw new DeprecationException(
+        "Using app ID/secret is deprecated. Please switch to using API key. See here how: " +
+            "http://help.clarifai.com/api/account-related/all-about-api-keys"
+    );
   }
 
   public ClarifaiBuilder(@NotNull String apiKey) {
     this.apiKey = apiKey;
-    this.appID = null;
-    this.appSecret = null;
   }
 
   @NotNull

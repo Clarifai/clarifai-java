@@ -1,18 +1,15 @@
 package clarifai2.api.request.model;
 
+import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.ModelVersion;
-import clarifai2.internal.InternalUtil;
-import clarifai2.internal.JSONUnmarshaler;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.Request;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class GetModelInputsRequest
@@ -36,28 +33,30 @@ public final class GetModelInputsRequest
     return fromSpecificModelVersion(modelVersion.id());
   }
 
-  @NotNull @Override protected JSONUnmarshaler<List<ClarifaiInput>> unmarshaler() {
-    return new JSONUnmarshaler<List<ClarifaiInput>>() {
-      @NotNull @Override
-      public List<ClarifaiInput> fromJSON(@NotNull final Gson gson, @NotNull final JsonElement json) {
-        return InternalUtil.fromJson(
-            gson,
-            json.getAsJsonObject().get("inputs"),
-            new TypeToken<List<ClarifaiInput>>() {}
-        );
-      }
-    };
+  @NotNull @Override protected String method() {
+    return "GET";
   }
 
-  @NotNull @Override protected Request buildRequest(final int page) {
-    final StringBuilder url = new StringBuilder("/v2/models/").append(modelID);
+  @NotNull @Override protected String subUrl(final int page) {
+    String url;
     if (modelVersionID != null) {
-      url.append("/versions/").append(modelVersionID);
+      url = "/v2/models/" + modelID + "/versions/" + modelVersionID + "/inputs";
+    } else {
+      url = "/v2/models/" + modelID + "/inputs";
     }
-    url.append("/inputs");
-    return new Request.Builder()
-        .url(buildURL(url.toString(), page))
-        .get()
-        .build();
+    return buildURL(url, page);
+  }
+
+  @NotNull @Override protected List<ClarifaiInput> unmarshalerGrpc(Object returnedObject) {
+    InputOuterClass.MultiInputResponse inputsResponse = (InputOuterClass.MultiInputResponse) returnedObject;
+    List<ClarifaiInput> inputs = new ArrayList<>();
+    for (InputOuterClass.Input input : inputsResponse.getInputsList()) {
+      inputs.add(ClarifaiInput.deserialize(input));
+    }
+    return inputs;
+  }
+
+  @NotNull @Override protected ListenableFuture buildRequestGrpc(int page) {
+    return stub(page).listModelInputs(InputOuterClass.ListModelInputsRequest.newBuilder().build());
   }
 }

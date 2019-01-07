@@ -1,27 +1,19 @@
 package clarifai2.dto.feedback;
 
-import clarifai2.Func1;
-import clarifai2.internal.JSONAdapterFactory;
-import clarifai2.internal.JSONArrayBuilder;
-import clarifai2.internal.JSONObjectBuilder;
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import clarifai2.internal.grpc.api.FaceOuterClass;
 import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-
-import static clarifai2.internal.InternalUtil.toJson;
+import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-@JsonAdapter(FaceFeedback.Adapter.class)
 public abstract class FaceFeedback {
   FaceFeedback() {} // AutoValue instances only
 
@@ -41,38 +33,25 @@ public abstract class FaceFeedback {
   @NotNull public abstract Collection<ConceptFeedback> identityConceptFeedback();
   @NotNull public abstract Collection<ConceptFeedback> ageConceptFeedback();
 
-  static class Adapter extends JSONAdapterFactory<FaceFeedback> {
-    @Nullable @Override protected Serializer<FaceFeedback> serializer() {
-      return new Serializer<FaceFeedback>() {
-        @NotNull @Override public JsonElement serialize(@Nullable FaceFeedback value, @NotNull final Gson gson) {
-          if (value == null) {
-            return JsonNull.INSTANCE;
-          }
-          final JSONObjectBuilder builder = new JSONObjectBuilder();
-          return builder
-              .add("identity", new JSONObjectBuilder()
-                  .add("concepts", new JSONArrayBuilder()
-                      .addAll(value.identityConceptFeedback(), new Func1<ConceptFeedback, JsonElement>() {
-                        @NotNull @Override public JsonElement call(@NotNull ConceptFeedback concept) {
-                          return toJson(gson, concept, ConceptFeedback.class);
-                        }
-                      })
-                  ))
-              .add("age_appearance", new JSONObjectBuilder()
-                  .add("concepts", new JSONArrayBuilder()
-                      .addAll(value.ageConceptFeedback(), new Func1<ConceptFeedback, JsonElement>() {
-                        @NotNull @Override public JsonElement call(@NotNull ConceptFeedback concept) {
-                          return toJson(gson, concept, ConceptFeedback.class);
-                        }
-                      })
-                  ))
-              .build();
-        }
-      };
+  public FaceOuterClass.Face serialize() {
+    FaceOuterClass.Face.Builder builder = FaceOuterClass.Face.newBuilder();
+
+    if (!identityConceptFeedback().isEmpty()) {
+      List<ConceptOuterClass.Concept> faceIdentityConceptsGrpc = new ArrayList<>();
+      for (ConceptFeedback conceptFeedback : identityConceptFeedback()) {
+        faceIdentityConceptsGrpc.add(conceptFeedback.serialize());
+      }
+      builder.setIdentity(FaceOuterClass.FaceIdentity.newBuilder().addAllConcepts(faceIdentityConceptsGrpc));
     }
 
-    @NotNull @Override protected TypeToken<FaceFeedback> typeToken() {
-      return new TypeToken<FaceFeedback>() {};
+    if (!ageConceptFeedback().isEmpty()) {
+      List<ConceptOuterClass.Concept> ageAppearanceConcepts = new ArrayList<>();
+      for (ConceptFeedback conceptFeedback : ageConceptFeedback()) {
+        ageAppearanceConcepts.add(conceptFeedback.serialize());
+      }
+      builder.setAgeAppearance(FaceOuterClass.FaceAge.newBuilder().addAllConcepts(ageAppearanceConcepts));
     }
+
+    return builder.build();
   }
 }
