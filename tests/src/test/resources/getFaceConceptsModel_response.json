@@ -1,0 +1,55 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "model": {
+    "id": "@modelID",
+    "name": "@modelName",
+    "created_at": "2017-05-16T19:20:38.733764Z",
+    "app_id": "main",
+    "output_info": {
+      "data": {
+        "concepts": [
+          {
+            "id": "@conceptID1",
+            "name": "deborah kagan",
+            "value": 1,
+            "created_at": "2016-10-25T19:28:34.869737Z",
+            "language": "en",
+            "app_id": "main"
+          },
+          {
+            "id": "@conceptID2",
+            "name": "deborah kara unger",
+            "value": 1,
+            "created_at": "2016-10-25T19:28:34.869737Z",
+            "language": "en",
+            "app_id": "main"
+          },
+          {
+            "id": "@conceptID3",
+            "name": "deborah kerr",
+            "value": 1,
+            "created_at": "2016-10-25T19:28:34.869737Z",
+            "language": "en",
+            "app_id": "main"
+          }
+        ]
+      },
+      "type": "concept",
+      "type_ext": "facedetect-identity"
+    },
+    "model_version": {
+      "id": "@modelVersionID",
+      "created_at": "2016-10-25T19:30:38.541073Z",
+      "status": {
+        "code": 21100,
+        "description": "Model trained successfully"
+      },
+      "active_concept_count": 10553,
+      "train_stats": {}
+    },
+    "display_name": "Celebrity"
+  }
+}

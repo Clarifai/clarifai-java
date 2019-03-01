@@ -1,0 +1,216 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "workflow": {
+    "id": "@workflowID",
+    "app_id": "@appID",
+    "created_at": "2017-06-15T15:17:30.462323Z"
+  },
+  "results": [
+    {
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "input": {
+        "id": "@inputID1",
+        "data": {
+          "image": {
+            "url": "https://some-image-url1"
+          }
+        }
+      },
+      "outputs": [
+        {
+          "id": "@outputID11",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2019-01-29T17:36:23.736685542Z",
+          "model": {
+            "id": "@modelID1",
+            "name": "food-items-v1.0",
+            "created_at": "2016-09-17T22:18:59.955626Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "@modelVersionID1",
+              "created_at": "2016-09-17T22:18:59.955626Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              },
+              "train_stats": {}
+            },
+            "display_name": "Food"
+          },
+          "data": {}
+        },
+        {
+          "id": "@outputID12",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2019-01-29T17:36:23.736712374Z",
+          "model": {
+            "id": "@modelID2",
+            "name": "general",
+            "created_at": "2016-03-09T17:11:39.608845Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "@modelVersion2",
+              "created_at": "2016-07-13T01:19:12.147644Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              },
+              "train_stats": {}
+            },
+            "display_name": "General"
+          },
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID11",
+                "name": "people",
+                "value": 0.9963381,
+                "app_id": "main"
+              },
+              {
+                "id": "@conceptID12",
+                "name": "one",
+                "value": 0.9879056,
+                "app_id": "main"
+              },
+              {
+                "id": "@conceptID13",
+                "name": "portrait",
+                "value": 0.9849082,
+                "app_id": "main"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "input": {
+        "id": "@inputID2",
+        "data": {
+          "image": {
+            "url": "https://some-image-url2"
+          }
+        }
+      },
+      "outputs": [
+        {
+          "id": "@outputID21",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2019-01-29T17:36:23.736685542Z",
+          "model": {
+            "id": "@modelID1",
+            "name": "food-items-v1.0",
+            "created_at": "2016-09-17T22:18:59.955626Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "@modelVersion1",
+              "created_at": "2016-09-17T22:18:59.955626Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              },
+              "train_stats": {}
+            },
+            "display_name": "Food"
+          },
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID21",
+                "name": "spatula",
+                "value": 0.9805687,
+                "app_id": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "@outputID22",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2019-01-29T17:36:23.736712374Z",
+          "model": {
+            "id": "@modelID2",
+            "name": "general",
+            "created_at": "2016-03-09T17:11:39.608845Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "@modelVersion2",
+              "created_at": "2016-07-13T01:19:12.147644Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              },
+              "train_stats": {}
+            },
+            "display_name": "General"
+          },
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID31",
+                "name": "eyewear",
+                "value": 0.99984586,
+                "app_id": "main"
+              },
+              {
+                "id": "@conceptID32",
+                "name": "lens",
+                "value": 0.999823,
+                "app_id": "main"
+              },
+              {
+                "id": "@conceptID33",
+                "name": "eyeglasses",
+                "value": 0.99980056,
+                "app_id": "main"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

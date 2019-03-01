@@ -1,0 +1,25 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "inputs": [{
+    "id": "@inputID",
+    "data": {
+      "image": {
+        "url": "https://imageURL"
+      },
+      "concepts": [{
+        "id": "@conceptID",
+        "name": "@conceptName",
+        "value": 1,
+        "app_id": "@conceptAppID"
+      }]
+    },
+    "created_at": "2017-10-15T16:30:52.964888Z",
+    "status": {
+      "code": 30000,
+      "description": "Download complete"
+    }
+  }]
+}

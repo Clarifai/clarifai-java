@@ -1,0 +1,21 @@
+{
+  "models": [{
+    "id": "@modelID",
+    "name": "@modelName",
+    "output_info": {
+      "data": {
+        "concepts": [
+          {
+            "id": "dog",
+            "value": 1
+          },
+          {
+            "id": "cat",
+            "value": 1
+          }
+        ]
+      },
+      "output_config": {}
+    }
+  }]
+}

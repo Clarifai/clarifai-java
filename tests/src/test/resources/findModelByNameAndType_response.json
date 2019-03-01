@@ -1,0 +1,26 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "models": [{
+    "id": "@modelID",
+    "name": "focus",
+    "created_at": "2017-03-06T22:57:00.660603Z",
+    "app_id": "main",
+    "output_info": {
+      "message": "Show output_info with: GET /models/{model_id}/output_info",
+      "type": "blur",
+      "type_ext": "focus"
+    },
+    "model_version": {
+      "id": "@modelVersionID",
+      "created_at": "2017-03-06T22:57:00.684652Z",
+      "status": {
+        "code": 21100,
+        "description": "Model trained successfully"
+      }
+    },
+    "display_name": "Focus"
+  }]
+}

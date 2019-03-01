@@ -1,0 +1,18 @@
+{
+  "query": {
+    "ands": [
+      {
+        "output": {
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID",
+                "value": 1
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "models": [{
+    "id": "@modelID",
+    "name": "@modelName"
+  }]
+}

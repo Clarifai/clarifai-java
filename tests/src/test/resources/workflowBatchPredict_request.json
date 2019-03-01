@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url1"
+        }
+      }
+    },
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url2"
+        }
+      }
+    }
+  ],
+  "output_config": {
+    "max_concepts": 3,
+    "min_value": 0.98
+  }
+}

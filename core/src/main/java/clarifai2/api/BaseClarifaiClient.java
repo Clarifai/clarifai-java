@@ -3,6 +3,9 @@ package clarifai2.api;
 import clarifai2.BuildConfig;
 import clarifai2.exception.ClarifaiClientClosedException;
 import clarifai2.exception.DeprecationException;
+import clarifai2.grpc.ClarifaiHttpClient;
+import clarifai2.grpc.ClarifaiHttpClientImpl;
+import clarifai2.grpc.FkClarifaiHttpClient;
 import clarifai2.internal.AutoValueTypeAdapterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,6 +31,9 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
 
   @NotNull
   public final OkHttpClient httpClient;
+
+  @NotNull
+  public final ClarifaiHttpClient clarifaiHttpClient;
 
   @NotNull
   public final HttpUrl baseURL;
@@ -58,6 +64,9 @@ public abstract class BaseClarifaiClient implements ClarifaiClient {
         return chain.proceed(requestBuilder.build());
       }
     }).build();
+
+    clarifaiHttpClient = builder.clarifaiHttpClient;
+    clarifaiHttpClient.client(this.httpClient);
   }
 
   private static void closeOkHttpClient(@NotNull OkHttpClient client) {

@@ -1,0 +1,12 @@
+{
+  "concepts": [
+    {
+      "id": "@conceptID1",
+      "value": 1
+    },
+    {
+      "id": "@conceptID2",
+      "value": 1
+    }
+  ]
+}

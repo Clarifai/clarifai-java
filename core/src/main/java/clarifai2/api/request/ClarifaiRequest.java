@@ -201,7 +201,7 @@ public interface ClarifaiRequest<RESULT> {
     }
 
     @NotNull public V2Grpc.V2FutureStub stub() {
-      return V2Grpc.newFutureStub(new JsonChannel(client.httpClient))
+      return V2Grpc.newFutureStub(new JsonChannel(client.clarifaiHttpClient))
           .withOption(JsonChannel.CLARIFAI_METHOD_OPTION, method())
           .withOption(JsonChannel.CLARIFAI_BASE_URL_OPTION, client.baseURL.toString())
           .withOption(JsonChannel.CLARIFAI_SUB_URL_OPTION, subUrl());
@@ -289,6 +289,7 @@ public interface ClarifaiRequest<RESULT> {
 
         JsonFormat.Printer printer = JsonFormat.printer();
         String rawJSON = printer.print((MessageOrBuilder) o);
+        // TODO(Rok) HIGH: Code is not always 200.
         int code = 200;
 
         Object statusObj;

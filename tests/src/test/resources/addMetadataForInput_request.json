@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    {
+      "id": "@inputID",
+      "data": {
+        "metadata": {
+          "@key1": "@value1",
+          "@key2": "@value2"
+        }
+      }
+    }
+  ],
+  "action":"overwrite"
+}

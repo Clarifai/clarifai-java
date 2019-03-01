@@ -1,0 +1,50 @@
+{
+  "inputs": [
+    {
+      "id": "@inputID",
+      "data": {
+        "regions": [
+          {
+            "id": "@regionID",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.1,
+                "left_col": 0.2,
+                "bottom_row": 0.3,
+                "right_col": 0.4
+              },
+              "feedback": "misplaced"
+            },
+            "data": {
+              "concepts": [
+                {
+                  "id": "@concept1",
+                  "value": 1
+                },
+                {
+                  "id": "@concept2",
+                  "value": 0
+                }
+              ],
+              "face": {
+                "identity": {
+                  "concepts": [
+                    {
+                      "id": "@faceConcept1",
+                      "value": 1
+                    },
+                    {
+                      "id": "@faceConcept2",
+                      "value": 0
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "action": "overwrite"
+}

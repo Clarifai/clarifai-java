@@ -90,6 +90,7 @@ public abstract class Concept extends Prediction implements HasClarifaiID {
     if (createdAt() != null) {
       builder.setCreatedAt(DateTimeConverter.dateToTimestamp(createdAt()));
     }
+    builder.setValue(value());
     return builder.build();
   }
 

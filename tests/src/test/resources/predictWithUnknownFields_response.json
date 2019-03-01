@@ -1,0 +1,66 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok",
+    "unknown_field": "val"
+  },
+  "outputs": [{
+    "id": "@outputID",
+    "status": {
+      "code": 10000,
+      "description": "Ok"
+    },
+    "created_at": "2017-11-17T19:32:58.760477937Z",
+    "model": {
+      "id": "@modelID",
+      "name": "@modelName",
+      "created_at": "2016-03-09T17:11:39.608845Z",
+      "app_id": "main",
+      "output_info": {
+        "message": "Show output_info with: GET /models/{model_id}/output_info",
+        "type": "concept",
+        "type_ext": "concept",
+        "unknown_field": "val"
+      },
+      "model_version": {
+        "id": "@modelVersionID",
+        "created_at": "2016-07-13T01:19:12.147644Z",
+        "status": {
+          "code": 21100,
+          "description": "Model trained successfully"
+        },
+        "unknown_field": "val"
+      },
+      "display_name": "@modelDisplayName",
+      "unknown_field": "val"
+    },
+    "input": {
+      "id": "@inputID",
+      "data": {
+        "image": {
+          "url": "https://some-image-url",
+          "unknown_field": "val"
+        },
+        "unknown_field": "val"
+      },
+      "unknown_field": "val"
+    },
+    "data": {
+      "concepts": [{
+        "id": "@conceptID1",
+        "name": "@conceptName1",
+        "value": 0.99,
+        "app_id": "main",
+        "unknown_field": "val"
+      }, {
+        "id": "@conceptID2",
+        "name": "@conceptName2",
+        "value": 0.98,
+        "app_id": "main",
+        "unknown_field": "val"
+      }],
+      "unknown_field": "val"
+    },
+    "unknown_field": "val"
+  }]
+}

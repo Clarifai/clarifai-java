@@ -1,0 +1,42 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "inputs": [
+    {
+      "id": "@inputID1",
+      "data": {
+        "image": {
+          "url": "https://some.image.url1"
+        },
+        "geo": {
+          "geo_point": {
+            "longitude": 55,
+            "latitude": 66
+          }
+        }
+      },
+      "created_at": "2019-01-17T12:43:04.895006174Z",
+      "modified_at": "2019-01-17T12:43:04.895006174Z",
+      "status": {
+        "code": 30001,
+        "description": "Download pending"
+      }
+    },
+    {
+      "id": "@inputID2",
+      "data": {
+        "image": {
+          "url": "https://some.image.url2"
+        }
+      },
+      "created_at": "2019-01-17T12:43:04.895006174Z",
+      "modified_at": "2019-01-17T12:43:04.895006174Z",
+      "status": {
+        "code": 30001,
+        "description": "Download pending"
+      }
+    }
+  ]
+}

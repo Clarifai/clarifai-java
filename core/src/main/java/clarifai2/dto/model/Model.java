@@ -123,6 +123,10 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((ColorModel) this);
   }
 
+  @NotNull public final DemographicsModel asDemographicsModel() {
+    return ((DemographicsModel) this);
+  }
+
   public final boolean isFaceDetectionModel() {
     return this instanceof FaceDetectionModel;
   }
@@ -169,6 +173,10 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
 
   @NotNull public final ClusterModel asClusterModel() {
     return ((ClusterModel) this);
+  }
+
+  @NotNull public final LogoModel asLogoModel() {
+    return ((LogoModel) this);
   }
 
   /*
@@ -289,11 +297,7 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         ._createdAt(DateTimeConverter.timestampToDate(model.getCreatedAt()))
         ._appID(model.getAppId())
         ._modelVersion(ModelVersion.deserialize(model.getModelVersion()))
-        ._outputInfo(
-            (model.hasOutputInfo() && model.getOutputInfo().hasData()) ?
-                OutputInfo.deserialize(model.getOutputInfo()) :
-                null
-        )
+        ._outputInfo(model.hasOutputInfo() ? OutputInfo.deserialize(model.getOutputInfo()) : null)
         .client(client)
         .build();
   }

@@ -6,18 +6,11 @@ import io.grpc.ClientCall;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import static clarifai2.internal.InternalUtil.MEDIA_TYPE_JSON;
 
 public class JsonChannel extends io.grpc.Channel {
 
@@ -27,10 +20,10 @@ public class JsonChannel extends io.grpc.Channel {
   public static final CallOptions.Key<String> CLARIFAI_SUB_URL_OPTION =
       CallOptions.Key.create("CLARIFAI_SUB_URL_OPTION");
 
-  private final OkHttpClient httpClient;
+  private final ClarifaiHttpClient clarifaiHttpClient;
 
-  public JsonChannel(OkHttpClient httpClient) {
-    this.httpClient = httpClient;
+  public JsonChannel(ClarifaiHttpClient clarifaiHttpClient) {
+    this.clarifaiHttpClient = clarifaiHttpClient;
   }
 
   @Override
@@ -53,7 +46,7 @@ public class JsonChannel extends io.grpc.Channel {
     }
 
     String url = baseUrl + subUrl;
-    return new JsonClientCall<>(httpClient, method, url, methodDescriptor);
+    return new JsonClientCall<>(clarifaiHttpClient, method, url, methodDescriptor);
   }
 
   @Override
@@ -63,39 +56,42 @@ public class JsonChannel extends io.grpc.Channel {
 }
 
 
-class JsonClientCall<RequestT, ResponseT> extends ClientCall {
+class JsonClientCall<RequestT, ResponseT> extends ClientCall<RequestT, ResponseT> {
 
-  private final OkHttpClient httpClient;
+  private final ClarifaiHttpClient clarifaiHttpClient;
   private final String method;
   private final String url;
   private final MethodDescriptor<RequestT, ResponseT> methodDescriptor;
 
-  private Listener responseListener;
+  private Listener<ResponseT> responseListener;
 
-  public JsonClientCall(OkHttpClient httpClient, String method, String url,
+  JsonClientCall(ClarifaiHttpClient clarifaiHttpClient, String method, String url,
       MethodDescriptor<RequestT, ResponseT> methodDescriptor) {
-    this.httpClient = httpClient;
+    this.clarifaiHttpClient = clarifaiHttpClient;
     this.method = method;
     this.url = url;
     this.methodDescriptor = methodDescriptor;
     }
 
   @Override
-  public void start(Listener responseListener, Metadata headers) {
+  public void start(Listener<ResponseT> responseListener, Metadata headers) {
     responseListener.onReady();
     this.responseListener = responseListener;
   }
 
   @Override
   public void request(int numMessages) {
+    // This never gets called.
   }
 
   @Override
   public void cancel(@Nullable String message, @Nullable Throwable cause) {
+    // This never gets called.
   }
 
   @Override
   public void halfClose() {
+    // This never gets called.
   }
 
   @Override
@@ -105,27 +101,11 @@ class JsonClientCall<RequestT, ResponseT> extends ClientCall {
 
     InputStream stream = requestMarshaller.stream((RequestT) message);
 
-    java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+    java.util.Scanner s = new java.util.Scanner(stream, "UTF-8").useDelimiter("\\A");
     String requestString = s.hasNext() ? s.next() : "";
     s.close();
 
-    RequestBody body = null;
-    if (!method.toUpperCase().equals("GET")) {
-      body = RequestBody.create(MEDIA_TYPE_JSON, requestString);
-    }
-
-    Request request = new Request.Builder()
-        .url(url)
-        .method(method, body)
-        .build();
-
-    String responseString;
-    try {
-      Response response = httpClient.newCall(request).execute();
-      responseString = response.body().string();
-    } catch (IOException e) {
-      throw new ClarifaiException(e);
-    }
+    String responseString = clarifaiHttpClient.executeRequest(url, method, requestString);
 
     ResponseT responseObject = responseMarshaller.parse(
       new ByteArrayInputStream(responseString.getBytes(StandardCharsets.UTF_8))

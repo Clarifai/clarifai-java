@@ -1,0 +1,100 @@
+{
+  "status": {
+    "code": 10010,
+    "description": "Mixed Success"
+  },
+  "outputs": [
+    {
+      "id": "@outputID1",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-20T20:25:20.302505245Z",
+      "model": {
+        "id": "@modelID",
+        "name": "general",
+        "created_at": "2016-03-09T17:11:39.608845Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "concept",
+          "type_ext": "concept"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-07-13T01:19:12.147644Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "General"
+      },
+      "input": {
+        "id": "@inputID1",
+        "data": {
+          "image": {
+            "url": "https://some-valid-url"
+          }
+        }
+      },
+      "data": {
+        "concepts": [
+          {
+            "id": "@concept1",
+            "name": "people",
+            "value": 0.9963381,
+            "app_id": "main"
+          },
+          {
+            "id": "@concept2",
+            "name": "one",
+            "value": 0.9879057,
+            "app_id": "main"
+          }
+        ]
+      }
+    },
+    {
+      "id": "@outputID2",
+      "status": {
+        "code": 30002,
+        "description": "Download failed; check URL",
+        "details": "404 Client Error: Not Found for url: @invalidURL"
+      },
+      "created_at": "2019-01-20T20:25:20.302505245Z",
+      "model": {
+        "id": "@modelID",
+        "name": "general",
+        "created_at": "2016-03-09T17:11:39.608845Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "concept",
+          "type_ext": "concept"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-07-13T01:19:12.147644Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "General"
+      },
+      "input": {
+        "id": "@inputID2",
+        "data": {
+          "image": {
+            "url": "https://some-invalid-url"
+          }
+        }
+      },
+      "data": {}
+    }
+  ]
+}

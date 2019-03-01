@@ -1,0 +1,71 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-30T16:52:30.993694779Z",
+      "model": {
+        "id": "@modelID",
+        "name": "nsfw-v1.0",
+        "created_at": "2016-09-17T22:18:59.955626Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "concept",
+          "type_ext": "concept"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2018-01-23T19:25:09.618692Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "NSFW"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "video": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "frames": [
+          {
+            "frame_info": {
+              "index": 0,
+              "time": 0
+            },
+            "data": {
+              "concepts": [
+                {
+                  "id": "@conceptID1",
+                  "name": "sfw",
+                  "value": 0.99452126,
+                  "app_id": "main"
+                },
+                {
+                  "id": "@conceptID2",
+                  "name": "nsfw",
+                  "value": 0.005478708,
+                  "app_id": "main"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

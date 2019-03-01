@@ -1,6 +1,8 @@
 package clarifai2.api;
 
 import clarifai2.exception.DeprecationException;
+import clarifai2.grpc.ClarifaiHttpClient;
+import clarifai2.grpc.ClarifaiHttpClientImpl;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,9 @@ public final class ClarifaiBuilder {
   @NotNull
   HttpUrl baseURL = HttpUrl.parse("https://api.clarifai.com");
 
+  @NotNull
+  ClarifaiHttpClient clarifaiHttpClient;
+
   public ClarifaiBuilder(@NotNull String appID, @NotNull String appSecret) {
     throw new DeprecationException(
         "Using app ID/secret is deprecated. Please switch to using API key. See here how: " +
@@ -31,12 +36,21 @@ public final class ClarifaiBuilder {
   }
 
   public ClarifaiBuilder(@NotNull String apiKey) {
-    this.apiKey = apiKey;
+    this(new ClarifaiHttpClientImpl(apiKey));
+  }
+
+  /**
+   * This constructor is only mean to be used internally to facilitate the unit testing environment.
+   */
+  public ClarifaiBuilder(@NotNull ClarifaiHttpClient clarifaiHttpClient) {
+    this.clarifaiHttpClient = clarifaiHttpClient;
+    this.apiKey = clarifaiHttpClient.apiKey();
   }
 
   @NotNull
   public ClarifaiBuilder client(@NotNull OkHttpClient client) {
     this.client = client;
+    clarifaiHttpClient.client(client);
     return this;
   }
 
@@ -57,8 +71,8 @@ public final class ClarifaiBuilder {
     final boolean isURLOnlyBase = (segments.size() == 1) && (segments.get(0).equals(""));
     if (!isURLOnlyBase) {
       throw new IllegalArgumentException(
-          "Cannot specify a baseURL for the Clarifai client that has path segments (it should be just a base host URL). "
-              + "You specified: " + baseURL
+          "Cannot specify a baseURL for the Clarifai client that has path segments (it should be just a base host "
+              + "URL). You specified: " + baseURL
       );
     }
     this.baseURL = baseURL;

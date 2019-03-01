@@ -1,0 +1,23 @@
+{
+  "models": [
+    {
+      "id": "@modelID",
+      "name": "@newModelName",
+      "output_info": {
+        "data": {
+          "concepts": [
+            {
+              "id": "@conceptID1",
+              "value": 1
+            }
+          ]
+        },
+        "output_config": {
+          "concepts_mutually_exclusive": true,
+          "closed_environment": true
+        }
+      }
+    }
+  ],
+  "action": "merge"
+}

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "data": {
+        "image": {
+          "url": "https://some-valid-url"
+        }
+      }
+    },
+    {
+      "data": {
+        "image": {
+          "url": "https://some-invalid-url"
+        }
+      }
+    }
+  ]
+}

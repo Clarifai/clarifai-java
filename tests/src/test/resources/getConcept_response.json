@@ -1,0 +1,13 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "concept": {
+    "id": "@conceptID",
+    "name": "@conceptName",
+    "created_at": "2017-10-02T11:34:20.419915Z",
+    "language": "en",
+    "app_id": "@appID"
+  }
+}

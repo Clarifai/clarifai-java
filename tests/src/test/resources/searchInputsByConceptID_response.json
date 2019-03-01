@@ -1,0 +1,24 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "hits": [
+    {
+      "score": 0.99,
+      "input": {
+        "id": "@inputID",
+        "created_at": "2016-11-22T17:06:02Z",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        },
+        "status": {
+          "code": 30000,
+          "description": "Download complete"
+        }
+      }
+    }
+  ]
+}

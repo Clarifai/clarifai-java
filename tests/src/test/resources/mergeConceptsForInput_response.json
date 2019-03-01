@@ -1,0 +1,40 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "inputs": [{
+    "id": "@inputID",
+    "data": {
+      "image": {
+        "url": "https://some-image-url"
+      },
+      "concepts": [
+        {
+          "id": "@positiveConcept1",
+          "name": "@positiveConceptName1",
+          "value": 1
+        },
+        {
+          "id": "@positiveConcept2",
+          "value": 1
+        },
+        {
+          "id": "@negativeConcept1",
+          "name": "@negativeConceptName1",
+          "value": 0
+        },
+        {
+          "id": "@negativeConcept2",
+          "value": 0
+        }
+      ]
+    },
+    "created_at": "2017-10-13T20:53:00.253139Z",
+    "modified_at": "2017-10-13T20:53:00.868659782Z",
+    "status": {
+      "code": 30200,
+      "description": "Input image modification success"
+    }
+  }]
+}

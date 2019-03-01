@@ -1,0 +1,16 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "counts": {
+    "processed": 1,
+    "to_process": 2,
+    "errors": 3,
+    "processing": 4,
+    "reindexed": 5,
+    "to_reindex": 6,
+    "reindex_errors": 7,
+    "reindexing": 8
+  }
+}

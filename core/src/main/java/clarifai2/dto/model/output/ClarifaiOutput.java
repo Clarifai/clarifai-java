@@ -86,6 +86,9 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
       }
       case DEMOGRAPHICS:
       {
+        // TODO(Rok) HIGH: We should deserialize using Demographics instead of Region. This is a breaking change for
+        //                 the users of Demographics, but IMHO has to be done, since what we currently have is
+        //                 very inconsistent.
         for (DataOuterClass.Region region : data.getRegionsList()) {
           predictions.add(Region.deserialize(region));
         }

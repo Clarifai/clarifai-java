@@ -1,0 +1,22 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "model_version": {
+    "id": "@modelVersionID",
+    "created_at": "2017-01-01T00:00:00.000000Z",
+    "status": {
+      "code": 21100,
+      "description": "Model trained successfully"
+    },
+    "active_concept_count": 2,
+    "metrics": {
+      "status": {
+        "code": 21303,
+        "description": "Model is queued for evaluation."
+      }
+    },
+    "total_input_count": 30
+  }
+}

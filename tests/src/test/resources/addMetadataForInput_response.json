@@ -1,0 +1,30 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "inputs": [{
+    "id": "@inputID",
+    "data": {
+      "image": {
+        "url": "https://some-image-url"
+      },
+      "concepts": [{
+        "id": "concept1",
+        "name": "concept1",
+        "value": 1,
+        "app_id": "@appID"
+      }],
+      "metadata": {
+        "@key1": "@value1",
+        "@key2": "@value2"
+      }
+    },
+    "created_at": "2017-11-02T15:08:22.005157Z",
+    "modified_at": "2017-11-02T15:08:23.071624222Z",
+    "status": {
+      "code": 30200,
+      "description": "Input image modification success"
+    }
+  }]
+}

@@ -60,6 +60,12 @@ public enum ModelMetricsStatus {
     this.statusCode = statusCode;
   }
 
+  public int statusCode() {
+    return statusCode;
+  }
+
+  // TODO(Rok) MEDIUM: Expose the description field.
+
   static final Map<Integer, ModelMetricsStatus> codeToStatus;
 
   static {

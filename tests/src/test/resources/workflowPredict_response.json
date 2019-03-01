@@ -1,0 +1,109 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "workflow": {
+    "id": "@workflowID",
+    "app_id": "@appID",
+    "created_at": "2017-07-10T01:45:05.672880Z"
+  },
+  "results": [
+    {
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "outputs": [
+        {
+          "id": "@outputID1",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2017-07-10T12:01:44.929928529Z",
+          "model": {
+            "id": "d16f390eb32cad478c7ae150069bd2c6",
+            "name": "moderation",
+            "created_at": "2017-05-12T21:28:00.471607Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "b42ac907ac93483484483a0040a386be",
+              "created_at": "2017-05-12T21:28:00.471607Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              }
+            }
+          },
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID11",
+                "name": "safe",
+                "value": 0.99999714,
+                "app_id": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "@outputID2",
+          "status": {
+            "code": 10000,
+            "description": "Ok"
+          },
+          "created_at": "2017-07-10T12:01:44.929941126Z",
+          "model": {
+            "id": "aaa03c23b3724a16a56b629203edc62c",
+            "name": "general-v1.3",
+            "created_at": "2016-02-26T23:38:40.086101Z",
+            "app_id": "main",
+            "output_info": {
+              "message": "Show output_info with: GET /models/{model_id}/output_info",
+              "type": "concept",
+              "type_ext": "concept"
+            },
+            "model_version": {
+              "id": "aa9ca48295b37401f8af92ad1af0d91d",
+              "created_at": "2016-07-13T00:58:55.915745Z",
+              "status": {
+                "code": 21100,
+                "description": "Model trained successfully"
+              }
+            }
+          },
+          "data": {
+            "concepts": [
+              {
+                "id": "@conceptID21",
+                "name": "train",
+                "value": 0.9989112,
+                "app_id": "main"
+              },
+              {
+                "id": "@conceptID22",
+                "name": "railway",
+                "value": 0.9975532,
+                "app_id": "main"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url"
+        }
+      }
+    }
+  ]
+}

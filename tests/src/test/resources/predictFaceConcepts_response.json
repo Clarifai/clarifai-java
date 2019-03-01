@@ -1,0 +1,111 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-30T16:12:05.692036673Z",
+      "model": {
+        "id": "@modelID",
+        "name": "celeb-v1.3",
+        "created_at": "2016-10-25T19:30:38.541073Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "concept",
+          "type_ext": "facedetect-identity"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-10-25T19:30:38.541073Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "Celebrity"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "regions": [
+          {
+            "id": "@regionID1",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.1,
+                "left_col": 0.2,
+                "bottom_row": 0.3,
+                "right_col": 0.4
+              }
+            },
+            "data": {
+              "face": {
+                "identity": {
+                  "concepts": [
+                    {
+                      "id": "@conceptID11",
+                      "name": "suri cruise",
+                      "value": 0.00035361873,
+                      "app_id": "main"
+                    },
+                    {
+                      "id": "@conceptID12",
+                      "name": "daphne blunt",
+                      "value": 0.00023266333,
+                      "app_id": "main"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "id": "@regionID2",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.5,
+                "left_col": 0.6,
+                "bottom_row": 0.7,
+                "right_col": 0.8
+              }
+            },
+            "data": {
+              "face": {
+                "identity": {
+                  "concepts": [
+                    {
+                      "id": "@conceptID21",
+                      "name": "shiloh jolie-pitt",
+                      "value": 0.0010930675,
+                      "app_id": "main"
+                    },
+                    {
+                      "id": "@conceptID22",
+                      "name": "suri cruise",
+                      "value": 0.000494421,
+                      "app_id": "main"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

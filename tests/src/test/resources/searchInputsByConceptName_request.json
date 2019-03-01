@@ -1,0 +1,18 @@
+{
+  "query": {
+    "ands": [
+      {
+        "output": {
+          "data": {
+            "concepts": [
+              {
+                "name": "@conceptName",
+                "value": 1
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

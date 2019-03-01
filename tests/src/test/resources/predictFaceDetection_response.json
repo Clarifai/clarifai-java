@@ -1,0 +1,71 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-30T16:23:07.989685196Z",
+      "model": {
+        "id": "@modelID",
+        "name": "face",
+        "created_at": "2016-10-25T19:30:38.541073Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "facedetect",
+          "type_ext": "facedetect"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2019-01-17T19:45:49.087547Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "Face Detection"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "regions": [
+          {
+            "id": "@regionID1",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.1,
+                "left_col": 0.2,
+                "bottom_row": 0.3,
+                "right_col": 0.4
+              }
+            }
+          },
+          {
+            "id": "@regionID2",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.5,
+                "left_col": 0.6,
+                "bottom_row": 0.7,
+                "right_col": 0.8
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

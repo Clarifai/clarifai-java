@@ -1,0 +1,27 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "models": [{
+    "id": "@modelID",
+    "name": "celeb-v1.3",
+    "created_at": "2016-10-25T19:30:38.541073Z",
+    "app_id": "main",
+    "output_info": {
+      "message": "Show output_info with: GET /models/{model_id}/output_info",
+      "type": "concept",
+      "type_ext": "facedetect-identity"
+    },
+    "model_version": {
+      "id": "@modelVersionID",
+      "created_at": "2016-10-25T19:30:38.541073Z",
+      "status": {
+        "code": 21100,
+        "description": "Model trained successfully"
+      },
+      "active_concept_count": 10554
+    },
+    "display_name": "Celebrity"
+  }]
+}

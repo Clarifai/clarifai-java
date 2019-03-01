@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url1"
+        }
+      }
+    },
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url2"
+        }
+      }
+    }
+  ],
+  "model": {
+    "output_info": {
+      "output_config": {
+        "language": "de",
+        "max_concepts": 2,
+        "min_value": 0.98
+      }
+    }
+  }
+}

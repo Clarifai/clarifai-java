@@ -1,0 +1,30 @@
+{
+  "inputs": [
+    {
+      "id": "@inputID",
+      "data": {
+        "concepts": [
+          {
+            "id": "@positiveConcept1",
+            "name": "@positiveConceptName1",
+            "value": 1.0
+          },
+          {
+            "id": "@positiveConcept2",
+            "value": 1.0
+          },
+          {
+            "id": "@negativeConcept1",
+            "name": "@negativeConceptName1",
+            "value": 0.0
+          },
+          {
+            "id": "@negativeConcept2",
+            "value": 0.0
+          }
+        ]
+      }
+    }
+  ],
+  "action":"merge"
+}

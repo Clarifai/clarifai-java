@@ -1,0 +1,10 @@
+{
+  "concepts": [
+    {
+      "id": "@conceptID",
+      "name": "@newConceptName",
+      "value": 1
+    }
+  ],
+  "action": "overwrite"
+}

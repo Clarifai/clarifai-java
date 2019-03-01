@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "data": {
+        "image": {
+          "url": "https://some-image-url"
+        }
+      }
+    }
+  ],
+  "model": {
+    "output_info": {
+      "output_config": {
+        "language": "de",
+        "max_concepts": 3,
+        "min_value": 0.98
+      }
+    }
+  }
+}

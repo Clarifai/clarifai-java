@@ -1,0 +1,26 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "model": {
+    "id": "@modelID",
+    "name": "general",
+    "created_at": "2016-06-17T22:01:04.144732Z",
+    "app_id": "main",
+    "output_info": {
+      "type": "embed",
+      "type_ext": "embed"
+    },
+    "model_version": {
+      "id": "@modelVersionID",
+      "created_at": "2016-07-13T01:19:12.147644Z",
+      "status": {
+        "code": 21100,
+        "description": "Model trained successfully"
+      },
+      "train_stats": {}
+    },
+    "display_name": "General Embedding"
+  }
+}

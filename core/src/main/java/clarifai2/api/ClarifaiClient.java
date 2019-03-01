@@ -77,6 +77,8 @@ public interface ClarifaiClient {
    */
   @NotNull AddInputsRequest addInputs();
 
+  // TODO(Rok) HIGH: The four methods below should be made deprecated and replaced with a method "updateInput".
+  //                 Their interface is currently inconsistent with their name since they allow updating regions.
   /**
    * Merges any specified concepts into the list of concepts that are associated with this input.
    * <p>
@@ -378,5 +380,3 @@ public interface ClarifaiClient {
    */
   void close();
 }
-
-

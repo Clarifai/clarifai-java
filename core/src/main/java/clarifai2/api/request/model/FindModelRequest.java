@@ -54,7 +54,7 @@ public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<Lis
       modelQuery.setName(name);
     }
     if (modelType != null) {
-      modelQuery.setType(modelType.typeName());
+      modelQuery.setType(modelType.typeExt());
     }
     return stub(page).postModelsSearches(
         ModelOuterClass.PostModelsSearchesRequest.newBuilder().setModelQuery(modelQuery).build()

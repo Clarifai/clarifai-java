@@ -17,6 +17,8 @@ package clarifai2.grpc;
  */
 
 
+import clarifai2.internal.grpc.api.ConceptOuterClass;
+import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Message.Builder;
@@ -32,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.HashSet;
 
 /**
  * A {@link Marshaller} for JSON.  This marshals in the Protobuf 3 format described here:
@@ -49,7 +52,15 @@ public final class JsonMarshaller {
   public static <T extends Message> Marshaller<T> jsonMarshaller(final T defaultInstance) {
     final Parser parser = JsonFormat.parser()
         .ignoringUnknownFields();
-    final Printer printer = JsonFormat.printer().preservingProtoFieldNames();
+    Descriptors.FieldDescriptor value =
+        ConceptOuterClass.Concept.newBuilder().getDescriptorForType().findFieldByName("value");
+
+    HashSet<Descriptors.FieldDescriptor> defaultValueFields = new HashSet<>();
+    defaultValueFields.add(value);
+
+    Printer printer = JsonFormat.printer()
+        .preservingProtoFieldNames()
+        .includingDefaultValueFields(defaultValueFields);
     return jsonMarshaller(defaultInstance, parser, printer);
   }
 

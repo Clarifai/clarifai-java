@@ -1,0 +1,26 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "input": {
+    "id": "@inputID",
+    "data": {
+      "image": {
+        "url": "https://some.image.url"
+      },
+      "geo": {
+        "geo_point": {
+          "longitude": 55,
+          "latitude": 66
+        }
+      }
+    },
+    "created_at": "2019-01-17T14:02:21.216473Z",
+    "modified_at": "2019-01-17T14:02:21.800792Z",
+    "status": {
+      "code": 30000,
+      "description": "Download complete"
+    }
+  }
+}

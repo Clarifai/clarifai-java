@@ -1,0 +1,57 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-30T15:53:21.949095428Z",
+      "model": {
+        "id": "@modelID",
+        "name": "general",
+        "created_at": "2016-06-17T22:01:04.144732Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "embed",
+          "type_ext": "embed"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-07-13T01:19:12.147644Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "General Embedding"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "embeddings": [
+          {
+            "vector": [
+              0.1,
+              0.2,
+              0.3
+            ],
+            "num_dimensions": 3
+          }
+        ]
+      }
+    }
+  ]
+}

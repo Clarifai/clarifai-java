@@ -39,7 +39,7 @@ public interface ClarifaiPaginatedRequest<RESULT> {
     private int perPage = 0;
 
     @NotNull protected V2Grpc.V2FutureStub stub(int page) {
-      return V2Grpc.newFutureStub(new JsonChannel(client.httpClient))
+      return V2Grpc.newFutureStub(new JsonChannel(client.clarifaiHttpClient))
           .withOption(JsonChannel.CLARIFAI_METHOD_OPTION, method())
           .withOption(JsonChannel.CLARIFAI_BASE_URL_OPTION, client.baseURL.toString())
           .withOption(JsonChannel.CLARIFAI_SUB_URL_OPTION, subUrl(page));

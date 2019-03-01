@@ -95,6 +95,12 @@ public enum ModelTrainingStatus {
     return this.isError() || this == TRAINED;
   }
 
+  public int statusCode() {
+    return statusCode;
+  }
+
+  // TODO(Rok) MEDIUM: Expose the description field.
+
   public static ModelTrainingStatus deserialize(StatusOuterClass.Status status) {
     ModelTrainingStatus model = codeToStatus.get(status.getCodeValue());
     if (model == null) {

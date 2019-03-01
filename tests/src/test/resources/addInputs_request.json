@@ -1,0 +1,28 @@
+{
+  "inputs": [
+    {
+      "id": "@inputID1",
+      "data": {
+        "image": {
+          "url": "https://some.image.url1",
+          "allow_duplicate_url": true
+        },
+        "geo": {
+          "geo_point": {
+            "longitude": 55,
+            "latitude": 66
+          }
+        }
+      }
+    },
+    {
+      "id": "@inputID2",
+      "data": {
+        "image": {
+          "url": "https://some.image.url2",
+          "allow_duplicate_url": true
+        }
+      }
+    }
+  ]
+}

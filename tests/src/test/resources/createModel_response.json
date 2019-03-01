@@ -1,0 +1,33 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "model": {
+    "id": "@modelID",
+    "name": "@modelName",
+    "created_at": "2019-01-22T11:54:12.375436048Z",
+    "app_id": "@appID",
+    "output_info": {
+      "output_config": {
+        "concepts_mutually_exclusive": false,
+        "closed_environment": false,
+        "max_concepts": 0,
+        "min_value": 0
+      },
+      "message": "Show output_info with: GET /models/{model_id}/output_info",
+      "type": "concept",
+      "type_ext": "concept"
+    },
+    "model_version": {
+      "id": "@modelVersionID",
+      "created_at": "2019-01-22T11:54:12.406406642Z",
+      "status": {
+        "code": 21102,
+        "description": "Model not yet trained"
+      },
+      "active_concept_count": 2,
+      "train_stats": {}
+    }
+  }
+}

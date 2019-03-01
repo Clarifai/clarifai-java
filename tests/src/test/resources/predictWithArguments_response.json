@@ -1,0 +1,67 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-29T17:15:32.450063489Z",
+      "model": {
+        "id": "@modelID",
+        "name": "@modelName",
+        "created_at": "2016-03-09T17:11:39.608845Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "concept",
+          "type_ext": "concept"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-07-13T01:19:12.147644Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "General"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "concepts": [
+          {
+            "id": "@conceptID1",
+            "name": "menschen",
+            "value": 0.9963381,
+            "app_id": "main"
+          },
+          {
+            "id": "@conceptID2",
+            "name": "ein",
+            "value": 0.9879057,
+            "app_id": "main"
+          },
+          {
+            "id": "@conceptID3",
+            "name": "Porträt",
+            "value": 0.98490834,
+            "app_id": "main"
+          }
+        ]
+      }
+    }
+  ]
+}

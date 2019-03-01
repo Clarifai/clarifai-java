@@ -37,6 +37,18 @@ public abstract class Prediction {
     return (FaceConcepts) this;
   }
 
+  @NotNull public final FaceEmbedding asFaceEmbedding() {
+    return (FaceEmbedding) this;
+  }
+
+  @NotNull public final Focus asFocus() {
+    return (Focus) this;
+  }
+
+  @NotNull public final Logo asLogo() {
+    return (Logo) this;
+  }
+
   public final boolean isBlur() {
     return this instanceof Blur;
   }
@@ -63,6 +75,10 @@ public abstract class Prediction {
 
   @NotNull public final Demographics asDemographics() {
     return (Demographics) this;
+  }
+
+  @NotNull public final Region asRegion() {
+    return (Region) this;
   }
 
   public final boolean isFrame() {

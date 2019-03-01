@@ -1,0 +1,22 @@
+{
+  "query": {
+    "ands": [
+      {
+        "input": {
+          "data": {
+            "geo": {
+              "geo_point": {
+                "longitude": 1.5,
+                "latitude": -1
+              },
+              "geo_limit": {
+                "type": "withinKilometers",
+                "value": 1
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

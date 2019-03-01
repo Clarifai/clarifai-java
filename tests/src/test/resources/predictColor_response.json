@@ -1,0 +1,65 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2019-01-30T10:17:40.806851955Z",
+      "model": {
+        "id": "@modelID",
+        "name": "color",
+        "created_at": "2016-05-11T18:05:45.924367Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "color",
+          "type_ext": "color"
+        },
+        "model_version": {
+          "id": "@modelVersionID",
+          "created_at": "2016-07-13T01:19:12.147644Z",
+          "status": {
+            "code": 21100,
+            "description": "Model trained successfully"
+          },
+          "train_stats": {}
+        },
+        "display_name": "Color"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "colors": [
+          {
+            "raw_hex": "#f2f2f2",
+            "w3c": {
+              "hex": "#f5f5f5",
+              "name": "WhiteSmoke"
+            },
+            "value": 0.929
+          },
+          {
+            "raw_hex": "#686078",
+            "w3c": {
+              "hex": "#708090",
+              "name": "SlateGray"
+            },
+            "value": 0.02675
+          }
+        ]
+      }
+    }
+  ]
+}
