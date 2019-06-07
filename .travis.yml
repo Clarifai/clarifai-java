@@ -22,6 +22,16 @@ cache:
     - $HOME/.gradle/native/
     - $HOME/.gradle/daemon/native/
 
+before_script:
+  - export PYTHONPATH=.
+  - export CLARIFAI_APP_ID="$(python scripts/app_and_key_for_tests.py --create-app java-travis)"
+  - export CLARIFAI_API_KEY="$(python scripts/app_and_key_for_tests.py --create-key ${CLARIFAI_APP_ID})"
+  - python scripts/app_and_key_for_tests.py --create-workflow ${CLARIFAI_API_KEY}
+
+after_script:
+  - export PYTHONPATH=.
+  - python scripts/app_and_key_for_tests.py --delete-app $CLARIFAI_APP_ID
+
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_fe71053f5cc2_key -iv $encrypted_fe71053f5cc2_iv -in gradle.properties.enc -out gradle.properties -d
   - IS_ALPHA=false; if [[ $TRAVIS_TAG == *"alpha"* ]]; then IS_ALPHA=true; fi

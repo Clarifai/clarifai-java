@@ -30,18 +30,21 @@ import static org.junit.Assert.assertNotNull;
 
 public class KeysIntTests extends BaseIntTest {
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void shouldHaveCorrectStatusWhenInvalidKey() {
     GetInputsRequest request = makeClient("some-invalid-key-321").getInputs();
     ClarifaiResponse<List<ClarifaiInput>> response = request.getPage(1).executeSync();
     assertEquals("API key not found", response.getStatus().description());
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void shouldHaveCorrectStatusWhenKeyHasNoScope() {
     GetInputsRequest request = makeClient(EnvVar.CLARIFAI_API_KEY_NO_SCOPES.value()).getInputs();
     ClarifaiResponse<List<ClarifaiInput>> response = request.getPage(1).executeSync();
     assertEquals("API key has insufficient scopes", response.getStatus().description());
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void inputsRequestShouldReturnConceptsWhenWithPermissions() {
     try {
       addInputWithConcepts(client, FAMILY_IMAGE_URL, "conceptA", "conceptB");
@@ -59,6 +62,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void inputsRequestShouldReturnNotReturnConceptsWhenNoPermissions() {
     try {
       addInputWithConcepts(client, FAMILY_IMAGE_URL, "conceptA", "conceptB");
@@ -76,6 +80,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void inputRequestShouldReturnConceptsWhenWithPermissions() {
     try {
       String inputId = addInputWithConcepts(client, FAMILY_IMAGE_URL, "conceptA", "conceptB");
@@ -91,6 +96,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void inputRequestShouldNotReturnConceptsWhenNoPermissions() {
     try {
       String inputId = addInputWithConcepts(client, FAMILY_IMAGE_URL, "conceptA", "conceptB");
@@ -105,6 +111,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void patchInputShouldNotReturnConceptsWhenNoPermissions() {
     try {
       String inputId = addInputWithConcepts(client, FAMILY_IMAGE_URL, "concept0", "concept1");
@@ -121,6 +128,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void patchInputShouldReturnConceptsWhenWithPermissions() {
     try {
       String inputId = addInputWithConcepts(client, METRO_NORTH_IMAGE_URL, "concept0", "concept1");
@@ -138,6 +146,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void getModelShouldNotReturnConceptsWhenNoPermissions() {
     GetModelRequest request = makeClient(EnvVar.CLARIFAI_API_KEY_MODELS_GET.value())
         .getModelByID(client.getDefaultModels().travelModel().id());
@@ -145,6 +154,7 @@ public class KeysIntTests extends BaseIntTest {
     assertEquals(0, response.get().asConceptModel().outputInfo().concepts().size());
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void getModelShouldReturnConceptsWhenWithPermissions() {
     GetModelRequest request = makeClient(EnvVar.CLARIFAI_API_KEY_MODELS_AND_CONCEPTS_GET.value())
         .getModelByID(client.getDefaultModels().travelModel().id());
@@ -190,6 +200,7 @@ public class KeysIntTests extends BaseIntTest {
     }
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void predictRequestShouldReturnModelEvenWhenNoPermissions() {
     PredictRequest<Prediction> request = makeClient(EnvVar.CLARIFAI_API_KEY_PREDICT_AND_INPUTS_GET.value())
         .predict(client.getDefaultModels().travelModel().id())
@@ -199,6 +210,7 @@ public class KeysIntTests extends BaseIntTest {
     assertNotNull(response.get().get(0).model().id());
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Test public void predictRequestShouldReturnConceptsWhenWithPermissions() {
     PredictRequest<Prediction> request = makeClient(
           EnvVar.CLARIFAI_API_KEY_PREDICT_AND_INPUTS_MODELS_CONCEPTS_GET.value())
@@ -210,6 +222,7 @@ public class KeysIntTests extends BaseIntTest {
   }
 
   // returns the ID or null on failure; the function has preset concepts to add
+  @Ignore("Ignore because the key doesn't exist")
   @Nullable private String addInputWithConcepts(ClarifaiClient client, String url, String ...conceptIds) {
     List<Concept> concepts = new ArrayList<>(conceptIds.length);
     for (String concept : conceptIds) {
@@ -225,6 +238,7 @@ public class KeysIntTests extends BaseIntTest {
     return response.get().get(0).id();
   }
 
+  @Ignore("Ignore because the key doesn't exist")
   @Nullable private String addModelWithInputsAndConcepts(ClarifaiClient client) {
     String conceptA = "foo";
     String conceptB = "bar";
