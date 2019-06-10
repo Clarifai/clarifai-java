@@ -1,14 +1,18 @@
 package clarifai2.integration_tests;
 
+import clarifai2.api.ClarifaiResponse;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.exception.ClarifaiException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ModelOutputInfoIntTests extends BaseIntTest {
   @Rule public final ExpectedException exception = ExpectedException.none();
@@ -41,4 +45,20 @@ public class ModelOutputInfoIntTests extends BaseIntTest {
     assertNotNull(model.outputInfo());
     assertNotNull(model.outputInfo().concepts());
   }
+
+  @Test public void shouldGetModelWithVersion() {
+    String modelID = client.getDefaultModels().generalModel().id();
+
+    // This is the first version of the general model.
+    String modelVersionID = "aa9ca48295b37401f8af92ad1af0d91d";
+
+    ClarifaiResponse<Model<?>> response = client.getModelByID(modelID)
+        .withVersion(modelVersionID)
+        .executeSync();
+
+    ConceptModel model = response.get().asConceptModel();
+    assertTrue(model.outputInfo().concepts().size() > 0);
+    assertEquals(modelVersionID, model.modelVersion().id());
+  }
+
 }

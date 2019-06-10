@@ -1,15 +1,18 @@
 package clarifai2.api.request.model;
 
+import clarifai2.dto.model.ModelVersion;
 import clarifai2.internal.grpc.api.ModelOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
 import clarifai2.dto.model.Model;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class GetModelRequest extends ClarifaiRequest.Builder<Model<?>> {
 
   @NotNull private final String modelID;
+  @Nullable private String modelVersionID;
 
   public GetModelRequest(
       @NotNull final BaseClarifaiClient helper,
@@ -19,12 +22,25 @@ public final class GetModelRequest extends ClarifaiRequest.Builder<Model<?>> {
     this.modelID = modelID;
   }
 
+  @NotNull public GetModelRequest withVersion(@NotNull ModelVersion version) {
+    return withVersion(version.id());
+  }
+
+  @NotNull public GetModelRequest withVersion(@NotNull String versionID) {
+    this.modelVersionID = versionID;
+    return this;
+  }
+
+
   @NotNull @Override protected String method() {
     return "GET";
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models/" + modelID + "/output_info";
+    if (modelVersionID == null) {
+      return "/v2/models/" + modelID + "/output_info";
+    }
+    return "/v2/models/" + modelID + "/versions/" + modelVersionID + "/output_info";
   }
 
   @NotNull @Override protected DeserializedRequest<Model<?>> request() {

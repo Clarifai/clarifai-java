@@ -75,7 +75,11 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
   }
 
   @NotNull public GetModelRequest getModelRequest() {
-    return client().getModelByID(id());
+    GetModelRequest request = client().getModelByID(id());
+    if (_modelVersion() != null) {
+      return request.withVersion(_modelVersion().id());
+    }
+    return request;
   }
 
   @NotNull private static Builder<?> getBuilder(@NotNull ModelType modelType) {
