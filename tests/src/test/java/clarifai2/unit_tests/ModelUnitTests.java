@@ -190,6 +190,22 @@ public class ModelUnitTests extends BaseUnitTest {
     assertTrue(response.isSuccessful());
   }
 
+  @Test public void deleteModelsBatch() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("deleteModelsBatch_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<JsonNull> response = client.deleteModelsBatch()
+        .plus("@modelID1", "@modelID2")
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/models"));
+    assertEquals("DELETE", httpClient.requestMethod());
+    assertJsonEquals(readResourceFile("deleteModelsBatch_request.json"), httpClient.requestBody());
+
+
+    assertTrue(response.isSuccessful());
+  }
+
   @Test public void deleteModel() throws IOException {
     FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("deleteModel_response.json"));
     ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();

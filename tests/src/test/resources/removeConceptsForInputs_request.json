@@ -1,0 +1,16 @@
+{
+  "inputs": [
+    {
+      "id": "@inputID",
+      "data": {
+        "concepts": [
+          {
+            "id": "@concept2",
+            "value": 0
+          }
+        ]
+      }
+    }
+  ],
+  "action": "remove"
+}

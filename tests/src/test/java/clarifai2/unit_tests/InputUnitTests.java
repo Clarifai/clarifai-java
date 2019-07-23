@@ -30,6 +30,8 @@ import static org.junit.Assert.assertTrue;
 
 public class InputUnitTests extends BaseUnitTest {
 
+  public static final double ERROR_MARGIN = 10e-9;
+
   @Test public void addInputs() throws IOException {
     FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("addInputs_response.json"));
     ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
@@ -161,20 +163,20 @@ public class InputUnitTests extends BaseUnitTest {
     Concept positiveConcept1 = input.concepts().get(0);
     assertEquals("@positiveConcept1", positiveConcept1.id());
     assertEquals("@positiveConceptName1", positiveConcept1.name());
-    assertEquals(1, positiveConcept1.value(), 10e-9);
+    assertEquals(1, positiveConcept1.value(), ERROR_MARGIN);
 
     Concept positiveConcept2 = input.concepts().get(1);
     assertEquals("@positiveConcept2", positiveConcept2.id());
-    assertEquals(1, positiveConcept2.value(), 10e-9);
+    assertEquals(1, positiveConcept2.value(), ERROR_MARGIN);
 
     Concept negativeConcept1 = input.concepts().get(2);
     assertEquals("@negativeConcept1", negativeConcept1.id());
     assertEquals("@negativeConceptName1", negativeConcept1.name());
-    assertEquals(0, negativeConcept1.value(), 10e-9);
+    assertEquals(0, negativeConcept1.value(), ERROR_MARGIN);
 
     Concept negativeConcept2 = input.concepts().get(3);
     assertEquals("@negativeConcept2", negativeConcept2.id());
-    assertEquals(0, negativeConcept2.value(), 10e-9);
+    assertEquals(0, negativeConcept2.value(), ERROR_MARGIN);
   }
 
   @Test public void setConceptsForInputsWithRegions() throws IOException {
@@ -210,11 +212,43 @@ public class InputUnitTests extends BaseUnitTest {
 
     Concept positiveConcept1 = input.concepts().get(0);
     assertEquals("@concept1", positiveConcept1.id());
-    assertEquals(1, positiveConcept1.value(), 10e-9);
+    assertEquals(1, positiveConcept1.value(), ERROR_MARGIN);
 
     Concept positiveConcept2 = input.concepts().get(1);
     assertEquals("@concept2", positiveConcept2.id());
-    assertEquals(0, positiveConcept2.value(), 10e-9);
+    assertEquals(0, positiveConcept2.value(), ERROR_MARGIN);
+  }
+
+  @Test public void removeConceptsForInputs() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(
+        readResourceFile("removeConceptsForInputs_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<ClarifaiInput> response = client.removeConceptsForInput("@inputID")
+        .plus(
+            Concept.forID("@concept2")
+                .withValue(false))
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/inputs"));
+    assertEquals("PATCH", httpClient.requestMethod());
+
+    assertJsonEquals(readResourceFile("removeConceptsForInputs_request.json"), httpClient.requestBody());
+
+    assertTrue(response.isSuccessful());
+
+    ClarifaiInput input = response.get();
+
+    assertEquals("@inputID", input.id());
+    assertEquals(2, input.concepts().size());
+
+    Concept positiveConcept1 = input.concepts().get(0);
+    assertEquals("@concept1", positiveConcept1.id());
+    assertEquals(1, positiveConcept1.value(), ERROR_MARGIN);
+
+    Concept positiveConcept2 = input.concepts().get(1);
+    assertEquals("@concept2", positiveConcept2.id());
+    assertEquals(0, positiveConcept2.value(), ERROR_MARGIN);
   }
 
   @Test public void addMetadataForInput() throws IOException {

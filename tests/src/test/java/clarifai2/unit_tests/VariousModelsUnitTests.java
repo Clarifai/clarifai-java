@@ -416,6 +416,52 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals("@conceptID2", logo.concepts().get(1).id());
   }
 
+  @Test public void getConceptModel() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("getConceptModel_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<Model<?>> response = client.getModelByID("@modelID")
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/output_info"));
+
+    assertTrue(response.isSuccessful());
+    ConceptModel model = response.get().asConceptModel();
+
+    assertEquals("@modelID", model.id());
+    assertEquals("@modelName", model.name());
+    assertEquals("concept", model.modelType().typeExt());
+
+    List<Concept> concepts = model.outputInfo().concepts();
+    String[] concept_id ={"@conceptID1","@conceptID2", "@conceptID3"};
+    for(int i = 0; i < 3; i++){
+      assertEquals(concept_id[i], concepts.get(i).id());
+    }
+  }
+
+  @Test public void predictConcept() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("predictConcept_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict("@modelID")
+        .withInputs(ClarifaiInput.forImage("https://some-image-url"))
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/outputs"));
+    assertEquals("POST", httpClient.requestMethod());
+    assertJsonEquals(readResourceFile("predictConcept_request.json"), httpClient.requestBody());
+
+    assertTrue(response.isSuccessful());
+    ClarifaiOutput<Prediction> output = response.get().get(0);
+
+    assertEquals("@inputID", output.input().id());
+    assertEquals("@outputID", output.id());
+
+    Frame frame = output.data().get(0).asFrame();
+    assertEquals("@conceptID1", frame.concepts().get(0).id());
+    assertEquals("@conceptID2", frame.concepts().get(1).id());
+  }
+
   @Test public void getVideoModel() throws IOException {
     FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("getVideoModel_response.json"));
     ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
