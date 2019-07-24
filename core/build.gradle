@@ -21,7 +21,7 @@ dependencies {
       "javax.annotation:javax.annotation-api:$versions.javaxAnnotationApi",
   )
 
-  apt(
+  annotationProcessor(
       "com.google.auto.value:auto-value:$versions.autoValue",
       "com.gabrielittner.auto.value:auto-value-with:$versions.autoValueWith",
       "com.github.kevinmost.auto-value-custom-hashcode-equals:processor:$versions.customHashCodeEquals",

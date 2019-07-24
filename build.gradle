@@ -1,17 +1,18 @@
 buildscript {
   repositories {
-    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://plugins.gradle.org/m2/"}
   }
   dependencies {
     classpath(
         "gradle.plugin.com.palantir.gradle.gitversion:gradle-git-version:0.5.3",
         "com.github.ben-manes:gradle-versions-plugin:0.13.0",
         "gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.4",
-        "net.ltgt.gradle:gradle-apt-plugin:0.13",
+        "net.ltgt.gradle:gradle-apt-plugin:0.21",
         "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3",
     )
   }
 }
+apply plugin: "net.ltgt.apt"
 subprojects {
   apply plugin: "java"
   apply plugin: "maven"
@@ -23,7 +24,7 @@ subprojects {
   sourceCompatibility = JavaVersion.VERSION_1_7
   targetCompatibility = JavaVersion.VERSION_1_7
 
-  // Set the group and version across all subprojects to ensure consistency
+// Set the group and version across all subprojects to ensure consistency
   group 'com.clarifai.clarifai-api2'
   def details = versionDetails()
   def tag = details.lastTag.replace(".dirty", "")
@@ -61,6 +62,7 @@ subprojects {
   ]
 }
 
-task wrapper(type: Wrapper) {
+
+wrapper {
   gradleVersion = "4.10.3"
 }
