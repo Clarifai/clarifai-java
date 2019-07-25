@@ -1,6 +1,6 @@
 buildscript {
   repositories {
-    maven { url "https://plugins.gradle.org/m2/"}
+    maven { url "https://plugins.gradle.org/m2/" }
   }
   dependencies {
     classpath(
@@ -12,7 +12,6 @@ buildscript {
     )
   }
 }
-apply plugin: "net.ltgt.apt"
 subprojects {
   apply plugin: "java"
   apply plugin: "maven"
@@ -24,7 +23,7 @@ subprojects {
   sourceCompatibility = JavaVersion.VERSION_1_7
   targetCompatibility = JavaVersion.VERSION_1_7
 
-// Set the group and version across all subprojects to ensure consistency
+  // Set the group and version across all subprojects to ensure consistency
   group 'com.clarifai.clarifai-api2'
   def details = versionDetails()
   def tag = details.lastTag.replace(".dirty", "")
@@ -61,7 +60,6 @@ subprojects {
       nullityAnnotations: "org.jetbrains:annotations:16.0.3",
   ]
 }
-
 
 wrapper {
   gradleVersion = "4.10.3"
