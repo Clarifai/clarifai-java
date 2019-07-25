@@ -99,7 +99,7 @@ public final class ModifyModelRequest extends ClarifaiRequest.Builder<ConceptMod
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models";
+    return "v2/models";
   }
 
   @NotNull @Override protected DeserializedRequest<ConceptModel> request() {

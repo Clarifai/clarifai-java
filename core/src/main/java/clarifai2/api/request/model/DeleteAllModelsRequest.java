@@ -18,7 +18,7 @@ public final class DeleteAllModelsRequest extends ClarifaiRequest.Builder<JsonNu
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models";
+    return "v2/models";
   }
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {

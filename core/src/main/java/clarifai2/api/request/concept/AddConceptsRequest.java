@@ -34,7 +34,7 @@ public final class AddConceptsRequest extends ClarifaiRequest.Builder<JsonNull> 
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/concepts";
+    return "v2/concepts";
   }
 
   @NotNull public AddConceptsRequest plus(@NotNull Concept... concepts) {

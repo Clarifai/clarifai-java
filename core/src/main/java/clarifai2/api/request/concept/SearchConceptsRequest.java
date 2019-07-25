@@ -34,7 +34,7 @@ public final class SearchConceptsRequest
   }
 
   @NotNull @Override protected String subUrl(int page) {
-    return buildURL("/v2/concepts/searches", page);
+    return buildURL("v2/concepts/searches", page);
   }
 
   @NotNull @Override protected List<Concept> unmarshalerGrpc(Object returnedObject) {

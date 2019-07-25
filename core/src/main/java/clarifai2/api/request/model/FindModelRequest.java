@@ -26,7 +26,7 @@ public final class FindModelRequest extends ClarifaiPaginatedRequest.Builder<Lis
   }
 
   @NotNull @Override protected String subUrl(final int page) {
-    return buildURL("/v2/models/searches", page);
+    return buildURL("v2/models/searches", page);
   }
 
   @NotNull public FindModelRequest withName(@Nullable String name) {

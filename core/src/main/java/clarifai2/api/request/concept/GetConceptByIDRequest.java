@@ -26,7 +26,7 @@ public final class GetConceptByIDRequest extends ClarifaiRequest.Builder<Concept
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/concepts/" + conceptID;
+    return "v2/concepts/" + conceptID;
   }
 
   @NotNull @Override protected DeserializedRequest<Concept> request() {

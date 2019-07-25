@@ -52,7 +52,7 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs";
+    return "v2/inputs";
   }
 
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {

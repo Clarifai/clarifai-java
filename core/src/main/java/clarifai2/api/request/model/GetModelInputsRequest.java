@@ -40,9 +40,9 @@ public final class GetModelInputsRequest
   @NotNull @Override protected String subUrl(final int page) {
     String url;
     if (modelVersionID != null) {
-      url = "/v2/models/" + modelID + "/versions/" + modelVersionID + "/inputs";
+      url = "v2/models/" + modelID + "/versions/" + modelVersionID + "/inputs";
     } else {
-      url = "/v2/models/" + modelID + "/inputs";
+      url = "v2/models/" + modelID + "/inputs";
     }
     return buildURL(url, page);
   }

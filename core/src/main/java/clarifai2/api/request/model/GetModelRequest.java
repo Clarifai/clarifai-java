@@ -38,9 +38,9 @@ public final class GetModelRequest extends ClarifaiRequest.Builder<Model<?>> {
 
   @NotNull @Override protected String subUrl() {
     if (modelVersionID == null) {
-      return "/v2/models/" + modelID + "/output_info";
+      return "v2/models/" + modelID + "/output_info";
     }
-    return "/v2/models/" + modelID + "/versions/" + modelVersionID + "/output_info";
+    return "v2/models/" + modelID + "/versions/" + modelVersionID + "/output_info";
   }
 
   @NotNull @Override protected DeserializedRequest<Model<?>> request() {

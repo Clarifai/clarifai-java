@@ -55,7 +55,7 @@ public final class ModerationPredictRequest<PREDICTION extends Prediction>
                   }
                 }));
         final JsonObject body = bodyBuilder.build();
-        return postRequest("/v2/models/" + modelID + "/outputs", body);
+        return postRequest("v2/models/" + modelID + "/outputs", body);
       }
 
       @NotNull @Override public JSONUnmarshaler<List<ModerationOutput<PREDICTION>>> unmarshaler() {

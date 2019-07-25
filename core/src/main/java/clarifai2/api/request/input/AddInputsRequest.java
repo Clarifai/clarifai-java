@@ -29,7 +29,7 @@ public final class AddInputsRequest extends ClarifaiRequest.Builder<List<Clarifa
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs";
+    return "v2/inputs";
   }
 
   @NotNull public AddInputsRequest plus(@NotNull ClarifaiInput... inputs) {

@@ -20,7 +20,7 @@ public final class GetInputsRequest extends ClarifaiPaginatedRequest.Builder<Lis
   }
 
   @NotNull @Override protected String subUrl(final int page) {
-    return buildURL("/v2/inputs", page);
+    return buildURL("v2/inputs", page);
   }
 
   @NotNull @Override protected List<ClarifaiInput> unmarshalerGrpc(Object returnedObject) {
