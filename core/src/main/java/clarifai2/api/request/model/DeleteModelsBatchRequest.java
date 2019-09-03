@@ -25,7 +25,7 @@ public final class DeleteModelsBatchRequest extends ClarifaiRequest.Builder<Json
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models";
+    return "v2/models";
   }
 
   @NotNull public DeleteModelsBatchRequest plus(@NotNull String... modelIDs) {

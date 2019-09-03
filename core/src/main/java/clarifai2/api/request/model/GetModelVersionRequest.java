@@ -27,7 +27,7 @@ public final class GetModelVersionRequest extends ClarifaiRequest.Builder<ModelV
   }
 
   @NotNull @Override protected String subUrl() {
-    return String.format("/v2/models/%s/versions/%s", modelID, versionID);
+    return String.format("v2/models/%s/versions/%s", modelID, versionID);
   }
 
   @NotNull @Override protected DeserializedRequest<ModelVersion> request() {

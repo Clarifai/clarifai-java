@@ -33,7 +33,7 @@ public final class PatchInputMetadataRequest extends ClarifaiRequest.Builder<Cla
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs";
+    return "v2/inputs";
   }
 
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {

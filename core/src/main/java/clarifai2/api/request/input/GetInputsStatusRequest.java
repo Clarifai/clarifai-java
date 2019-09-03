@@ -18,7 +18,7 @@ public final class GetInputsStatusRequest extends ClarifaiRequest.Builder<Clarif
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs/status";
+    return "v2/inputs/status";
   }
 
   @NotNull @Override protected DeserializedRequest<ClarifaiInputsStatus> request() {

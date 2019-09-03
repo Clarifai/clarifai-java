@@ -54,7 +54,7 @@ public final class WorkflowPredictRequest
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/workflows/" + workflowID + "/results";
+    return "v2/workflows/" + workflowID + "/results";
   }
 
   @NotNull @Override protected DeserializedRequest<WorkflowPredictResult> request() {

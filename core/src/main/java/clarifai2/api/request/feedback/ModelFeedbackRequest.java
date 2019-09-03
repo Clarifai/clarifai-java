@@ -97,9 +97,9 @@ public final class ModelFeedbackRequest extends ClarifaiRequest.Builder<JsonNull
 
   @NotNull @Override protected String subUrl() {
     if (version == null) {
-      return "/v2/models/" + modelID + "/feedback";
+      return "v2/models/" + modelID + "/feedback";
     }
-    return "/v2/models/" + modelID + "/versions/" + version.id() + "/feedback";
+    return "v2/models/" + modelID + "/versions/" + version.id() + "/feedback";
   }
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {

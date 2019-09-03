@@ -25,7 +25,7 @@ public final class GetModelVersionsRequest
   }
 
   @NotNull @Override protected String subUrl(int page) {
-    return buildURL("/v2/models/" + modelID + "/versions", page);
+    return buildURL("v2/models/" + modelID + "/versions", page);
   }
 
   @NotNull @Override protected List<ModelVersion> unmarshalerGrpc(Object returnedObject) {

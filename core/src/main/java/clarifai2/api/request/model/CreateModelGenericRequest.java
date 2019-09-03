@@ -35,7 +35,7 @@ public final class CreateModelGenericRequest<T extends Model<?>> extends Clarifa
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models";
+    return "v2/models";
   }
 
   @NotNull @Override protected DeserializedRequest<T> request() {

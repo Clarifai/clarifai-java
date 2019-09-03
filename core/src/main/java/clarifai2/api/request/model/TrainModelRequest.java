@@ -22,7 +22,7 @@ public final class TrainModelRequest extends ClarifaiRequest.Builder<Model<?>> {
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models/" + modelID + "/versions";
+    return "v2/models/" + modelID + "/versions";
   }
 
   @NotNull @Override protected DeserializedRequest<Model<?>> request() {

@@ -21,7 +21,7 @@ public final class GetInputRequest extends ClarifaiRequest.Builder<ClarifaiInput
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs/" + inputID;
+    return "v2/inputs/" + inputID;
   }
 
   @NotNull @Override protected DeserializedRequest<ClarifaiInput> request() {

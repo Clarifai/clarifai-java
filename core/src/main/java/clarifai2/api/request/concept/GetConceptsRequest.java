@@ -21,7 +21,7 @@ public final class GetConceptsRequest extends ClarifaiPaginatedRequest.Builder<L
   }
 
   @NotNull @Override protected String subUrl(final int page) {
-    return buildURL("/v2/concepts", page);
+    return buildURL("v2/concepts", page);
   }
 
   @NotNull @Override protected List<Concept> unmarshalerGrpc(Object returnedObject) {

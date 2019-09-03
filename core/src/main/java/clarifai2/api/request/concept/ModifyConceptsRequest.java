@@ -35,7 +35,7 @@ public final class ModifyConceptsRequest extends ClarifaiRequest.Builder<List<Co
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/concepts";
+    return "v2/concepts";
   }
 
   @NotNull @Override protected DeserializedRequest<List<Concept>> request() {

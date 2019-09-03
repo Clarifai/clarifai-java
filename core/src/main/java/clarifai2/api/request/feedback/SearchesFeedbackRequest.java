@@ -27,7 +27,7 @@ public final class SearchesFeedbackRequest extends ClarifaiRequest.Builder<JsonN
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/searches/feedback/";
+    return "v2/searches/feedback/";
   }
 
   @NotNull public SearchesFeedbackRequest withId(@Nullable String id) {

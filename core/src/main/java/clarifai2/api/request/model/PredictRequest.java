@@ -105,9 +105,9 @@ public final class PredictRequest<PREDICTION extends Prediction>
 
   @NotNull @Override protected String subUrl() {
     if (modelVersionID == null) {
-      return "/v2/models/" + modelID + "/outputs";
+      return "v2/models/" + modelID + "/outputs";
     }
-    return "/v2/models/" + modelID + "/versions/" + modelVersionID + "/outputs";
+    return "v2/models/" + modelID + "/versions/" + modelVersionID + "/outputs";
   }
 
   @NotNull @Override protected DeserializedRequest<List<ClarifaiOutput<PREDICTION>>> request() {

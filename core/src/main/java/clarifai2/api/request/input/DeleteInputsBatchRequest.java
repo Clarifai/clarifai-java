@@ -25,7 +25,7 @@ public class DeleteInputsBatchRequest extends ClarifaiRequest.Builder<JsonNull> 
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs";
+    return "v2/inputs";
   }
 
   @NotNull public DeleteInputsBatchRequest plus(@NotNull String... inputIDs) {

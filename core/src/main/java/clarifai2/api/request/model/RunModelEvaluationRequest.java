@@ -23,7 +23,7 @@ public final class RunModelEvaluationRequest extends ClarifaiRequest.Builder<Mod
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/models/" + modelID + "/versions/" + versionID + "/metrics";
+    return "v2/models/" + modelID + "/versions/" + versionID + "/metrics";
   }
 
   @NotNull @Override protected DeserializedRequest<ModelVersion> request() {

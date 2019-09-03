@@ -21,7 +21,7 @@ public final class DeleteInputRequest extends ClarifaiRequest.Builder<JsonNull> 
   }
 
   @NotNull @Override protected String subUrl() {
-    return "/v2/inputs/" + inputID;
+    return "v2/inputs/" + inputID;
   }
 
   @NotNull @Override protected DeserializedRequest<JsonNull> request() {

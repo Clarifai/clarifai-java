@@ -29,7 +29,7 @@ public final class SearchInputsRequest extends ClarifaiPaginatedRequest.Builder<
   }
 
   @NotNull @Override protected String subUrl(final int page) {
-    return buildURL("/v2/searches", page);
+    return buildURL("v2/searches", page);
   }
 
   /**

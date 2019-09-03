@@ -21,7 +21,7 @@ public final class GetModelsRequest extends ClarifaiPaginatedRequest.Builder<Lis
   }
 
   @NotNull @Override protected String subUrl(int page) {
-    return buildURL("/v2/models", page);
+    return buildURL("v2/models", page);
   }
 
   @NotNull @Override protected List<Model<?>> unmarshalerGrpc(Object returnedObject) {
