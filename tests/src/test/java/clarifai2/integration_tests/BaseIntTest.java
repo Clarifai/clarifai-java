@@ -110,7 +110,7 @@ public abstract class BaseIntTest {
     retryAndTimeout(2, TimeUnit.MINUTES, () -> {
       // If the input has been downloaded successfully, quit the loop.
       final ClarifaiResponse<ClarifaiInput> r = client.getInputByID(inputID).executeSync();
-      return r.isSuccessful() || r.get().status().statusCode() == 30000;
+      return r.isSuccessful() && r.get().status().statusCode() == 30000;
     });
   }
 
