@@ -31,6 +31,9 @@ public class ModelEvaluationIntTests extends BaseIntTest {
           .executeSync()
           .get();
 
+      waitForInputToDownload(client, inputs.get(0).id());
+      waitForInputToDownload(client, inputs.get(1).id());
+
       // Create and train a model.
       ConceptModel model = client.createModel(modelId).executeSync().get();
       model = model.modify()

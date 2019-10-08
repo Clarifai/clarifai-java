@@ -1,5 +1,6 @@
 package clarifai2.dto.input;
 
+import clarifai2.dto.ClarifaiStatus;
 import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.internal.grpc.api.DataOuterClass;
 import clarifai2.internal.grpc.api.GeoOuterClass;
@@ -31,7 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static clarifai2.dto.input.ClarifaiImage.of;
 import static clarifai2.internal.InternalUtil.assertJsonIs;
 import static clarifai2.internal.InternalUtil.fromJson;
 import static clarifai2.internal.InternalUtil.isJsonNull;
@@ -145,7 +145,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
 
   @NotNull public static ClarifaiInput forInputValue(@NotNull ClarifaiInputValue inputValue) {
     return new AutoValue_ClarifaiInput(null, null, inputValue, new JsonObject(), Collections.<Concept>emptyList(), null,
-        null);
+        null, null);
   }
 
   @Nullable public abstract Date createdAt();
@@ -178,6 +178,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
 
   @Nullable public abstract List<Region> regions();
 
+  @Nullable public abstract ClarifaiStatus status();
+
   /**
    * @param id the ID to assign to this input
    * @return a copy of this {@link ClarifaiInput} with its ID set to the specified value
@@ -191,7 +193,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    * @return a copy of this {@link ClarifaiInput} with its geographic coordinate set to the specified value
    */
   @NotNull public final ClarifaiInput withGeo(@Nullable PointF geo) {
-    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata(), concepts(), geo, regions());
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata(), concepts(), geo, regions(), status());
   }
 
   /**
@@ -200,7 +202,7 @@ public abstract class ClarifaiInput implements HasClarifaiID {
    */
   @NotNull public final ClarifaiInput withMetadata(@NotNull JsonObject metadata) {
     InternalUtil.assertMetadataHasNoNulls(metadata);
-    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata, concepts(), geo(), regions());
+    return new AutoValue_ClarifaiInput(id(), createdAt(), inputValue(), metadata, concepts(), geo(), regions(), status());
   }
 
   // Hide the ugly casing that auto-value-with requires
@@ -217,6 +219,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
   }
 
   public static ClarifaiInput deserialize(InputOuterClass.Input input) {
+    final ClarifaiStatus status = ClarifaiStatus.deserialize(input.getStatus());
+
     final DataOuterClass.Data data = input.getData();
 
     final List<Concept> concepts = new ArrayList<>();
@@ -244,7 +248,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
         metadata,
         concepts,
         geoPoint,
-        regions
+        regions,
+        status
     );
   }
 
@@ -366,7 +371,8 @@ public abstract class ClarifaiInput implements HasClarifaiID {
                   gson,
                   data.get("regions"),
                   new TypeToken<List<Region>>() {}
-              ) : Collections.<Region>emptyList()
+              ) : Collections.<Region>emptyList(),
+              gson.fromJson(root.getAsJsonObject("status"), ClarifaiStatus.class)
           );
         }
       };

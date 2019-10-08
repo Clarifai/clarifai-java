@@ -53,7 +53,7 @@ public class QuickstartGuideExamples extends BaseIntTest {
 
     // All concepts need at least one "positive example" (ie, an input whose image file contains that concept)
     // So we will add a positive and a negative example of Boscoe
-    client.addInputs()
+    final List<ClarifaiInput> inputs = client.addInputs()
         .plus(
             ClarifaiInput.forInputValue(ClarifaiImage.of("@@samplePuppy"))
                 .withConcepts(
@@ -64,7 +64,10 @@ public class QuickstartGuideExamples extends BaseIntTest {
                     Concept.forID("boscoe").withValue(false)
                 )
         )
-        .executeSync();
+        .executeSync().get();
+
+    waitForInputToDownload(client, inputs.get(0).id());
+    waitForInputToDownload(client, inputs.get(1).id());
 
 
     // Now that you have created the boscoe concept, and you have positive

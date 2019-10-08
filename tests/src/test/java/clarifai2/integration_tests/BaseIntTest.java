@@ -6,6 +6,7 @@ import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
 import clarifai2.api.request.ClarifaiPaginatedRequest;
 import clarifai2.api.request.ClarifaiRequest;
+import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.internal.InternalUtil;
 import com.kevinmost.junit_retry_rule.RetryRule;
 import okhttp3.OkHttpClient;
@@ -102,6 +103,15 @@ public abstract class BaseIntTest {
       }
       InternalUtil.sleep(1000);
     }
+  }
+
+  static void waitForInputToDownload(@NotNull ClarifaiClient client, @NotNull String inputID) {
+    // Need to wait until the input is processed for the search to work.
+    retryAndTimeout(2, TimeUnit.MINUTES, () -> {
+      // If the input has been downloaded successfully, quit the loop.
+      final ClarifaiResponse<ClarifaiInput> r = client.getInputByID(inputID).executeSync();
+      return r.isSuccessful() || r.get().status().statusCode() == 30000;
+    });
   }
 
   @Before public void logTestNameBeginning() {

@@ -246,12 +246,15 @@ public class VariousIntTests extends BaseIntTest {
 
   @Retry
   @Test public void t15_trainModel() {
-    assertSuccess(client.addInputs()
+    final String inputID = assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(PENGUIN_IMAGE_URL)
             .withConcepts(Concept.forID("outdoors23"))
         )
         .allowDuplicateURLs(true)
-    );
+    ).get(0).id();
+
+    waitForInputToDownload(client, inputID);
+
     assertSuccess(client.trainModel(getModelID()));
     retryAndTimeout(2, TimeUnit.MINUTES, () -> {
       final ModelVersion version = assertSuccess(client.getModelByID(getModelID())).modelVersion();
@@ -355,10 +358,12 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Test public void t17e_searchInputsWithModel_geo() {
-    assertSuccess(client.addInputs().plus(
+    final String inputID = assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)
-            .withGeo(PointF.at(90F, 23F))
-    ));
+            .withGeo(PointF.at(90F, 23F)))).get(0).id();
+
+    waitForInputToDownload(client, inputID);
+
     assertSuccess(
         client.searchInputs(matchConcept(Concept.forID("outdoors23").withValue(true)))
             .and(SearchClause.matchImageURL(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)))
@@ -375,10 +380,14 @@ public class VariousIntTests extends BaseIntTest {
       ).searchHits();
       assertEquals(0, hitsBeforeAdding.size());
     }
-    assertSuccess(client.addInputs().plus(
+
+    final String inputID = assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
             .withGeo(PointF.at(60F, 29.75F))
-    ));
+    )).get(0).id();
+
+    waitForInputToDownload(client, inputID);
+
     {
       final List<SearchHit> hitsAfterAdding = assertSuccess(
           client.searchInputs(SearchClause.matchGeo(PointF.at(59F, 29.75F), Radius.of(500, Radius.Unit.MILE)))
@@ -572,11 +581,14 @@ public class VariousIntTests extends BaseIntTest {
 
   @Retry
   @Test public void testDeleteBatch() {
-    assertSuccess(client.addInputs().plus(
+    final List<ClarifaiInput> inputs = assertSuccess(client.addInputs().plus(
         ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("kotlin"),
         ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE).withID("train")
     ));
-    sleep(5000);
+
+    waitForInputToDownload(client, inputs.get(0).id());
+    waitForInputToDownload(client, inputs.get(1).id());
+
     assertSuccess(client.deleteInputsBatch().plus("kotlin", "train"));
   }
 
@@ -667,7 +679,9 @@ public class VariousIntTests extends BaseIntTest {
         .plus(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)
         )
     ).get(0).id();
-    assertNotNull(inputID);
+
+    waitForInputToDownload(client, inputID);
+
     final JsonObject newMetadata = assertSuccess(
         client.addMetadataForInput(
             inputID,
