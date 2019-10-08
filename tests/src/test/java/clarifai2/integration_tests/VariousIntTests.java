@@ -80,7 +80,7 @@ public class VariousIntTests extends BaseIntTest {
 
   @Retry
   @Test public void t01a_addInputs() throws Exception {
-    assertSuccess(client.addInputs()
+    final String inputID = assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
                 .withCrop(Crop.create()
                     .top(0.1F)
@@ -91,15 +91,16 @@ public class VariousIntTests extends BaseIntTest {
             )
                 .withID("foo1")
                 .withConcepts(Concept.forID("concept1").withValue(false))
-        )
-    );
+        )).get(0).id();
+    // We wait here so the next tests using this input pass properly.
+    waitForInputToDownload(client, inputID);
   }
 
   @Retry
   @Test public void t01b_addInputs_bulk() throws Exception {
     final Concept ferrari23 = Concept.forID("ferrari23");
     final Concept outdoors23 = Concept.forID("outdoors23");
-    assertSuccess(client.addInputs()
+    final List<ClarifaiInput> inputs = assertSuccess(client.addInputs()
         .plus(
             ClarifaiInput.forImage(FERRARI_IMAGE_URL)
                 .withConcepts(
@@ -137,17 +138,26 @@ public class VariousIntTests extends BaseIntTest {
                 )
         )
     );
+    waitForInputToDownload(client, inputs.get(0).id());
+    waitForInputToDownload(client, inputs.get(1).id());
+    waitForInputToDownload(client, inputs.get(2).id());
+    waitForInputToDownload(client, inputs.get(3).id());
+    waitForInputToDownload(client, inputs.get(4).id());
+    waitForInputToDownload(client, inputs.get(5).id());
+    waitForInputToDownload(client, inputs.get(6).id());
   }
 
   @Retry
   @Test public void t01c_addInputWithMetadata() {
-    assertSuccess(client.addInputs().plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
+
+    final String inputID = assertSuccess(client.addInputs()
+        .plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
         .withID("inputWithMetadata")
         .withMetadata(new JSONObjectBuilder()
             .add("foo", "bar")
-            .build()
-        )
-    ));
+            .build()))).get(0).id();
+    // We wait here so the next tests using this input pass properly.
+    waitForInputToDownload(client, inputID);
   }
 
   @Retry
