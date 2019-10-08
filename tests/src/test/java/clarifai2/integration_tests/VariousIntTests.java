@@ -101,6 +101,7 @@ public class VariousIntTests extends BaseIntTest {
     final Concept ferrari23 = Concept.forID("ferrari23");
     final Concept outdoors23 = Concept.forID("outdoors23");
     final List<ClarifaiInput> inputs = assertSuccess(client.addInputs()
+        .allowDuplicateURLs(true)
         .plus(
             ClarifaiInput.forImage(FERRARI_IMAGE_URL)
                 .withConcepts(
@@ -135,7 +136,7 @@ public class VariousIntTests extends BaseIntTest {
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
-                ).allowDuplicateURLs(true)
+                )
         )
     );
     inputs.forEach(input -> waitForInputToDownload(client, input.id()));
