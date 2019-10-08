@@ -135,7 +135,7 @@ public class VariousIntTests extends BaseIntTest {
                 .withConcepts(
                     ferrari23.withValue(false),
                     outdoors23
-                )
+                ).allowDuplicateURLs(true)
         )
     );
     inputs.forEach(input -> waitForInputToDownload(client, input.id()));
