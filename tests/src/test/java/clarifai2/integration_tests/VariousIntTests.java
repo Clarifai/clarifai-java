@@ -138,13 +138,7 @@ public class VariousIntTests extends BaseIntTest {
                 )
         )
     );
-    waitForInputToDownload(client, inputs.get(0).id());
-    waitForInputToDownload(client, inputs.get(1).id());
-    waitForInputToDownload(client, inputs.get(2).id());
-    waitForInputToDownload(client, inputs.get(3).id());
-    waitForInputToDownload(client, inputs.get(4).id());
-    waitForInputToDownload(client, inputs.get(5).id());
-    waitForInputToDownload(client, inputs.get(6).id());
+    inputs.forEach(input -> waitForInputToDownload(client, input.id()));
   }
 
   @Retry
