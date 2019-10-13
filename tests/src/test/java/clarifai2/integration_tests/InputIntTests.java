@@ -24,21 +24,21 @@ public class InputIntTests extends BaseIntTest {
             ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE)
         );
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void shouldBeSuccessfulWhenValidUrlImage() {
     PredictRequest<Concept> request = client.getDefaultModels().generalModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL));
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void shouldBeSuccessfulWhenValidUrlVideo() {
     PredictRequest<Frame> request = client.getDefaultModels().generalVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(VIDEO_URL));
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> response = request.executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void shouldBeSuccessfulWhenValidVideoFile() {
@@ -47,7 +47,7 @@ public class InputIntTests extends BaseIntTest {
             ClarifaiInput.forVideo(BEER_VIDEO_FILE)
         );
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> response = request.executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void shouldBeSuccessfulWhenTwoImages() {
@@ -57,7 +57,7 @@ public class InputIntTests extends BaseIntTest {
             ClarifaiInput.forImage(METRO_NORTH_IMAGE_FILE)
         );
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void shouldBeSuccessfulWhenSpecifyingModelVersionID() {
@@ -70,7 +70,7 @@ public class InputIntTests extends BaseIntTest {
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL))
         .withVersion(modelVersionID)
         .executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Test public void videoURLShouldBeSuccessfulWhenSpecifyingSampleMs() {
@@ -80,7 +80,7 @@ public class InputIntTests extends BaseIntTest {
         .withInputs(ClarifaiInput.forVideo(VIDEO_URL))
         .withSampleMs(2000)
         .executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
 
     for (Prediction prediction : response.get().get(0).data()) {
       Frame frame = prediction.asFrame();
@@ -95,7 +95,7 @@ public class InputIntTests extends BaseIntTest {
         .withInputs(ClarifaiInput.forVideo(BEER_VIDEO_FILE))
         .withSampleMs(2000)
         .executeSync();
-    Assert.assertTrue(response.isSuccessful());
+    assertSuccess(response);
 
     for (Prediction prediction : response.get().get(0).data()) {
       Frame frame = prediction.asFrame();

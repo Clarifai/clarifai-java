@@ -139,4 +139,28 @@ public abstract class BaseIntTest {
     logger.debug(result.toString());
     return result;
   }
+
+  void assertSuccess(@NotNull ClarifaiResponse response) {
+    if (!response.isSuccessful()) {
+      logger.error("Expected a success response from the API, but instead gotten:");
+      logger.error(response.rawBody());
+      Assert.fail("Expected success response");
+    }
+  }
+
+  void assertMixedSuccess(@NotNull ClarifaiResponse response) {
+    if (!response.isMixedSuccess()) {
+      logger.error("Expected a mixed success response the API, but instead gotten:");
+      logger.error(response.rawBody());
+      Assert.fail("Expected mixed success response");
+    }
+  }
+
+  void assertFailure(@NotNull ClarifaiResponse response) {
+    if (response.isSuccessful()) {
+      logger.error("Expected a non-success response from the API, but instead gotten success:");
+      logger.error(response.rawBody());
+      Assert.fail("Expected non-success response");
+    }
+  }
 }

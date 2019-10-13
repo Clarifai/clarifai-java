@@ -74,7 +74,7 @@ public class WorkflowPredictIntTests extends BaseIntTest {
     ClarifaiResponse<WorkflowPredictResult> response = wf1
             .withInputs(clarifaiInput)
             .executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @NotNull private WorkflowPredictRequest makeWorkflowPredictRequestForFoodAndGeneral() {

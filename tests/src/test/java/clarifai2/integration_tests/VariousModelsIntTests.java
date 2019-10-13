@@ -24,7 +24,8 @@ public class VariousModelsIntTests extends BaseIntTest {
   @Test public void shouldBeSuccessfulForModerationModel() {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().moderationModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
+
     List<Concept> concepts = response.get().get(0).data();
     assertNotNull(concepts);
     assertTrue(concepts.size() > 0);
@@ -33,7 +34,7 @@ public class VariousModelsIntTests extends BaseIntTest {
   @Test public void shouldBeCorrectForFoodModel() {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().foodModel().predict()
         .withInputs(ClarifaiInput.forImage(FOOD_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).id());
   }
 
@@ -41,7 +42,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().apparelModel().predict()
         .withInputs(ClarifaiInput.forImage(SUNGLASSES_IMAGE_URL))
         .executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -49,7 +50,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
         client.getDefaultModels().landscapeQualityModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     List<Concept> concepts = response.get().get(0).data();
     assertNotNull(concepts);
     assertTrue(concepts.size() > 0);
@@ -59,7 +60,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
         client.getDefaultModels().portraitQualityModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     List<Concept> concepts = response.get().get(0).data();
     assertNotNull(concepts);
     assertTrue(concepts.size() > 0);
@@ -69,7 +70,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =
         client.getDefaultModels().texturesAndPatternsModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     List<Concept> concepts = response.get().get(0).data();
     assertNotNull(concepts);
     assertTrue(concepts.size() > 0);
@@ -78,21 +79,21 @@ public class VariousModelsIntTests extends BaseIntTest {
   @Test public void shouldBeCorrectForLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> response = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
   @Test public void shouldBeCorrectForColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> response = client.getDefaultModels().colorModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
   @Test public void shouldBeSuccessfulForFocusModel() {
     ClarifaiResponse<List<ClarifaiOutput<Focus>>> response = client.getDefaultModels().focusModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     Focus focus = response.get().get(0).data().get(0);
     assertTrue(focus.value() >= 0);
     assertTrue(focus.value() <= 1);
@@ -108,7 +109,7 @@ public class VariousModelsIntTests extends BaseIntTest {
         .predict()
         .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
         .executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -116,7 +117,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Region>>> response = client.getDefaultModels().demographicsModel().predict()
         .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
         .executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     Region region = response.get().get(0).data().get(0);
     assertNotNull(region.crop());
     assertNotNull(region.multiculturalAppearances().get(0).name());
@@ -128,7 +129,7 @@ public class VariousModelsIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<FaceConcepts>>> response = client.getDefaultModels().celebrityModel()
         .predict()
         .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL)).executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -137,7 +138,7 @@ public class VariousModelsIntTests extends BaseIntTest {
         client.getDefaultModels().generalEmbeddingModel().predict()
             .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
             .executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -147,7 +148,7 @@ public class VariousModelsIntTests extends BaseIntTest {
             .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
             .executeSync();
 
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -157,7 +158,7 @@ public class VariousModelsIntTests extends BaseIntTest {
             .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
             .executeSync();
 
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
 
@@ -167,7 +168,7 @@ public class VariousModelsIntTests extends BaseIntTest {
         .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL))
         .executeSync();
 
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
     assertNotNull(response.get());
     assertNotNull(response.get().get(0));
     List<FaceEmbedding> embeddings = response.get().get(0).data();

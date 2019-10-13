@@ -303,7 +303,7 @@ public class VariousIntTests extends BaseIntTest {
         .withInputs(inputs);
     assertSuccess(request);
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Retry
@@ -315,7 +315,7 @@ public class VariousIntTests extends BaseIntTest {
         .withInputs(inputs);
     assertSuccess(request);
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
-    assertTrue(response.isSuccessful());
+    assertSuccess(response);
   }
 
   @Retry
@@ -417,7 +417,7 @@ public class VariousIntTests extends BaseIntTest {
     batch.add(ClarifaiInput.forImage("https://this_should_fail.jpg"));
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = client.getDefaultModels().generalModel().predict()
         .withInputs(batch).executeSync();
-    assertTrue(response.isMixedSuccess());
+    assertMixedSuccess(response);
     assertNotNull(response.get());
     List<ClarifaiOutput<Concept>> concepts = response.get();
     assertEquals(concepts.get(2).status().statusCode(), 30002);

@@ -27,7 +27,7 @@ public class PredictIntTests extends BaseIntTest {
     PredictRequest<Prediction> request = makePredictRequest()
         .withMaxConcepts(201);
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> predictionsResponse = request.executeSync();
-    assertFalse(predictionsResponse.isSuccessful());
+    assertFailure(predictionsResponse);
     assertEquals(21202, predictionsResponse.getStatus().statusCode());
     assertEquals("Invalid model argument", predictionsResponse.getStatus().description());
     assertEquals("'max_concepts' must be within the interval (0, 200]", predictionsResponse.getStatus().errorDetails());
@@ -37,7 +37,7 @@ public class PredictIntTests extends BaseIntTest {
     PredictRequest<Prediction> request = makePredictRequest()
         .withMinValue(1.01);
     ClarifaiResponse<List<ClarifaiOutput<Prediction>>> predictionsResponse = request.executeSync();
-    assertFalse(predictionsResponse.isSuccessful());
+    assertFailure(predictionsResponse);
     assertEquals(21202, predictionsResponse.getStatus().statusCode());
     assertEquals("Invalid model argument", predictionsResponse.getStatus().description());
     assertEquals("'min_value' must be within the interval [0,1].",
