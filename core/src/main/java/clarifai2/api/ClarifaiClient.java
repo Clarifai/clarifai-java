@@ -5,8 +5,6 @@ import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.ModifyConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
-import clarifai2.api.request.feedback.ModelFeedbackRequest;
-import clarifai2.api.request.feedback.SearchesFeedbackRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
@@ -337,21 +335,6 @@ public interface ClarifaiClient {
   @NotNull PredictRequest<Prediction> predict(@NotNull String modelID);
 
   /**
-   * Adds feedback for the searches in order to improve its future performance.
-   *
-   * @return a request builder that, when executed, adds feedback for the searches
-   */
-  @NotNull SearchesFeedbackRequest searchesFeedback();
-
-  /**
-   * Adds feedback to the model in order to improve its future performance.
-   *
-   * @param modelID the ID of the model to use
-   * @return a request builder that, when executed, adds feedback to the model
-   */
-  @NotNull ModelFeedbackRequest modelFeedback(@NotNull String modelID);
-
-  /**
    * Predicts using multiple models under the given workflow ID.
    *
    * @param workflowID the ID of the workflow to use
@@ -378,5 +361,3 @@ public interface ClarifaiClient {
    */
   void close();
 }
-
-

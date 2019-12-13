@@ -14,121 +14,6 @@ public final class DataOuterClass {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  /**
-   * Protobuf enum {@code clarifai.api.RegionInfoFeedback}
-   */
-  public enum RegionInfoFeedback
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>accurate = 0;</code>
-     */
-    accurate(0),
-    /**
-     * <code>misplaced = 1;</code>
-     */
-    misplaced(1),
-    /**
-     * <code>not_detected = 2;</code>
-     */
-    not_detected(2),
-    /**
-     * <code>false_positive = 3;</code>
-     */
-    false_positive(3),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>accurate = 0;</code>
-     */
-    public static final int accurate_VALUE = 0;
-    /**
-     * <code>misplaced = 1;</code>
-     */
-    public static final int misplaced_VALUE = 1;
-    /**
-     * <code>not_detected = 2;</code>
-     */
-    public static final int not_detected_VALUE = 2;
-    /**
-     * <code>false_positive = 3;</code>
-     */
-    public static final int false_positive_VALUE = 3;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static RegionInfoFeedback valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static RegionInfoFeedback forNumber(int value) {
-      switch (value) {
-        case 0: return accurate;
-        case 1: return misplaced;
-        case 2: return not_detected;
-        case 3: return false_positive;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<RegionInfoFeedback>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        RegionInfoFeedback> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<RegionInfoFeedback>() {
-            public RegionInfoFeedback findValueByNumber(int number) {
-              return RegionInfoFeedback.forNumber(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      return getDescriptor().getValues().get(ordinal());
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return clarifai2.internal.grpc.api.DataOuterClass.getDescriptor().getEnumTypes().get(0);
-    }
-
-    private static final RegionInfoFeedback[] VALUES = values();
-
-    public static RegionInfoFeedback valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private RegionInfoFeedback(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:clarifai.api.RegionInfoFeedback)
-  }
 
   public interface DataOrBuilder extends
       // @@protoc_insertion_point(interface_extends:clarifai.api.Data)
@@ -163,7 +48,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Concept concepts = 3;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.ConceptOuterClass.Concept> 
+    java.util.List<clarifai2.internal.grpc.api.ConceptOuterClass.Concept>
         getConceptsList();
     /**
      * <code>repeated .clarifai.api.Concept concepts = 3;</code>
@@ -176,7 +61,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Concept concepts = 3;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder>
         getConceptsOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Concept concepts = 3;</code>
@@ -226,7 +111,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Color colors = 7;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.ColorOuterClass.Color> 
+    java.util.List<clarifai2.internal.grpc.api.ColorOuterClass.Color>
         getColorsList();
     /**
      * <code>repeated .clarifai.api.Color colors = 7;</code>
@@ -239,7 +124,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Color colors = 7;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder>
         getColorsOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Color colors = 7;</code>
@@ -250,7 +135,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.ClusterOuterClass.Cluster> 
+    java.util.List<clarifai2.internal.grpc.api.ClusterOuterClass.Cluster>
         getClustersList();
     /**
      * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
@@ -263,7 +148,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder>
         getClustersOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
@@ -274,7 +159,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding> 
+    java.util.List<clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding>
         getEmbeddingsList();
     /**
      * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
@@ -287,7 +172,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder>
         getEmbeddingsOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
@@ -311,7 +196,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Region regions = 11;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Region> 
+    java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Region>
         getRegionsList();
     /**
      * <code>repeated .clarifai.api.Region regions = 11;</code>
@@ -324,7 +209,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Region regions = 11;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder>
         getRegionsOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Region regions = 11;</code>
@@ -335,7 +220,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Frame frames = 12;</code>
      */
-    java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Frame> 
+    java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Frame>
         getFramesList();
     /**
      * <code>repeated .clarifai.api.Frame frames = 12;</code>
@@ -348,7 +233,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Frame frames = 12;</code>
      */
-    java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder> 
+    java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder>
         getFramesOrBuilderList();
     /**
      * <code>repeated .clarifai.api.Frame frames = 12;</code>
@@ -662,7 +547,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Concept concepts = 3;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder>
         getConceptsOrBuilderList() {
       return concepts_;
     }
@@ -760,7 +645,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Color colors = 7;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder>
         getColorsOrBuilderList() {
       return colors_;
     }
@@ -795,7 +680,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder>
         getClustersOrBuilderList() {
       return clusters_;
     }
@@ -830,7 +715,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder>
         getEmbeddingsOrBuilderList() {
       return embeddings_;
     }
@@ -886,7 +771,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Region regions = 11;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder>
         getRegionsOrBuilderList() {
       return regions_;
     }
@@ -921,7 +806,7 @@ public final class DataOuterClass {
     /**
      * <code>repeated .clarifai.api.Frame frames = 12;</code>
      */
-    public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder> 
+    public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder>
         getFramesOrBuilderList() {
       return frames_;
     }
@@ -1595,7 +1480,7 @@ public final class DataOuterClass {
               conceptsBuilder_ = null;
               concepts_ = other.concepts_;
               bitField0_ = (bitField0_ & ~0x00000004);
-              conceptsBuilder_ = 
+              conceptsBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getConceptsFieldBuilder() : null;
             } else {
@@ -1630,7 +1515,7 @@ public final class DataOuterClass {
               colorsBuilder_ = null;
               colors_ = other.colors_;
               bitField0_ = (bitField0_ & ~0x00000040);
-              colorsBuilder_ = 
+              colorsBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getColorsFieldBuilder() : null;
             } else {
@@ -1656,7 +1541,7 @@ public final class DataOuterClass {
               clustersBuilder_ = null;
               clusters_ = other.clusters_;
               bitField0_ = (bitField0_ & ~0x00000080);
-              clustersBuilder_ = 
+              clustersBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getClustersFieldBuilder() : null;
             } else {
@@ -1682,7 +1567,7 @@ public final class DataOuterClass {
               embeddingsBuilder_ = null;
               embeddings_ = other.embeddings_;
               bitField0_ = (bitField0_ & ~0x00000100);
-              embeddingsBuilder_ = 
+              embeddingsBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getEmbeddingsFieldBuilder() : null;
             } else {
@@ -1711,7 +1596,7 @@ public final class DataOuterClass {
               regionsBuilder_ = null;
               regions_ = other.regions_;
               bitField0_ = (bitField0_ & ~0x00000400);
-              regionsBuilder_ = 
+              regionsBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getRegionsFieldBuilder() : null;
             } else {
@@ -1737,7 +1622,7 @@ public final class DataOuterClass {
               framesBuilder_ = null;
               frames_ = other.frames_;
               bitField0_ = (bitField0_ & ~0x00000800);
-              framesBuilder_ = 
+              framesBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getFramesFieldBuilder() : null;
             } else {
@@ -1861,7 +1746,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Image image = 1;</code>
        */
       public clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder getImageBuilder() {
-        
+
         onChanged();
         return getImageFieldBuilder().getBuilder();
       }
@@ -1880,7 +1765,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Image image = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.ImageOuterClass.Image, clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder, clarifai2.internal.grpc.api.ImageOuterClass.ImageOrBuilder> 
+          clarifai2.internal.grpc.api.ImageOuterClass.Image, clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder, clarifai2.internal.grpc.api.ImageOuterClass.ImageOrBuilder>
           getImageFieldBuilder() {
         if (imageBuilder_ == null) {
           imageBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -1978,7 +1863,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Video video = 2;</code>
        */
       public clarifai2.internal.grpc.api.VideoOuterClass.Video.Builder getVideoBuilder() {
-        
+
         onChanged();
         return getVideoFieldBuilder().getBuilder();
       }
@@ -1997,7 +1882,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Video video = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.VideoOuterClass.Video, clarifai2.internal.grpc.api.VideoOuterClass.Video.Builder, clarifai2.internal.grpc.api.VideoOuterClass.VideoOrBuilder> 
+          clarifai2.internal.grpc.api.VideoOuterClass.Video, clarifai2.internal.grpc.api.VideoOuterClass.Video.Builder, clarifai2.internal.grpc.api.VideoOuterClass.VideoOrBuilder>
           getVideoFieldBuilder() {
         if (videoBuilder_ == null) {
           videoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -2205,7 +2090,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Concept concepts = 3;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder>
            getConceptsOrBuilderList() {
         if (conceptsBuilder_ != null) {
           return conceptsBuilder_.getMessageOrBuilderList();
@@ -2231,12 +2116,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Concept concepts = 3;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.ConceptOuterClass.Concept.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.ConceptOuterClass.Concept.Builder>
            getConceptsBuilderList() {
         return getConceptsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.ConceptOuterClass.Concept, clarifai2.internal.grpc.api.ConceptOuterClass.Concept.Builder, clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder> 
+          clarifai2.internal.grpc.api.ConceptOuterClass.Concept, clarifai2.internal.grpc.api.ConceptOuterClass.Concept.Builder, clarifai2.internal.grpc.api.ConceptOuterClass.ConceptOrBuilder>
           getConceptsFieldBuilder() {
         if (conceptsBuilder_ == null) {
           conceptsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -2335,7 +2220,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Face face = 4;</code>
        */
       public clarifai2.internal.grpc.api.FaceOuterClass.Face.Builder getFaceBuilder() {
-        
+
         onChanged();
         return getFaceFieldBuilder().getBuilder();
       }
@@ -2354,7 +2239,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Face face = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.FaceOuterClass.Face, clarifai2.internal.grpc.api.FaceOuterClass.Face.Builder, clarifai2.internal.grpc.api.FaceOuterClass.FaceOrBuilder> 
+          clarifai2.internal.grpc.api.FaceOuterClass.Face, clarifai2.internal.grpc.api.FaceOuterClass.Face.Builder, clarifai2.internal.grpc.api.FaceOuterClass.FaceOrBuilder>
           getFaceFieldBuilder() {
         if (faceBuilder_ == null) {
           faceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -2452,7 +2337,7 @@ public final class DataOuterClass {
        * <code>.google.protobuf.Struct metadata = 5;</code>
        */
       public com.google.protobuf.Struct.Builder getMetadataBuilder() {
-        
+
         onChanged();
         return getMetadataFieldBuilder().getBuilder();
       }
@@ -2471,7 +2356,7 @@ public final class DataOuterClass {
        * <code>.google.protobuf.Struct metadata = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> 
+          com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
           getMetadataFieldBuilder() {
         if (metadataBuilder_ == null) {
           metadataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -2569,7 +2454,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Geo geo = 6;</code>
        */
       public clarifai2.internal.grpc.api.GeoOuterClass.Geo.Builder getGeoBuilder() {
-        
+
         onChanged();
         return getGeoFieldBuilder().getBuilder();
       }
@@ -2588,7 +2473,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Geo geo = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.GeoOuterClass.Geo, clarifai2.internal.grpc.api.GeoOuterClass.Geo.Builder, clarifai2.internal.grpc.api.GeoOuterClass.GeoOrBuilder> 
+          clarifai2.internal.grpc.api.GeoOuterClass.Geo, clarifai2.internal.grpc.api.GeoOuterClass.Geo.Builder, clarifai2.internal.grpc.api.GeoOuterClass.GeoOrBuilder>
           getGeoFieldBuilder() {
         if (geoBuilder_ == null) {
           geoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -2796,7 +2681,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Color colors = 7;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder>
            getColorsOrBuilderList() {
         if (colorsBuilder_ != null) {
           return colorsBuilder_.getMessageOrBuilderList();
@@ -2822,12 +2707,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Color colors = 7;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder>
            getColorsBuilderList() {
         return getColorsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.ColorOuterClass.Color, clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder, clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder> 
+          clarifai2.internal.grpc.api.ColorOuterClass.Color, clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder, clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder>
           getColorsFieldBuilder() {
         if (colorsBuilder_ == null) {
           colorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -3036,7 +2921,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder>
            getClustersOrBuilderList() {
         if (clustersBuilder_ != null) {
           return clustersBuilder_.getMessageOrBuilderList();
@@ -3062,12 +2947,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Cluster clusters = 8;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.ClusterOuterClass.Cluster.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.ClusterOuterClass.Cluster.Builder>
            getClustersBuilderList() {
         return getClustersFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.ClusterOuterClass.Cluster, clarifai2.internal.grpc.api.ClusterOuterClass.Cluster.Builder, clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder> 
+          clarifai2.internal.grpc.api.ClusterOuterClass.Cluster, clarifai2.internal.grpc.api.ClusterOuterClass.Cluster.Builder, clarifai2.internal.grpc.api.ClusterOuterClass.ClusterOrBuilder>
           getClustersFieldBuilder() {
         if (clustersBuilder_ == null) {
           clustersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -3276,7 +3161,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder>
            getEmbeddingsOrBuilderList() {
         if (embeddingsBuilder_ != null) {
           return embeddingsBuilder_.getMessageOrBuilderList();
@@ -3302,12 +3187,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Embedding embeddings = 9;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding.Builder>
            getEmbeddingsBuilderList() {
         return getEmbeddingsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding, clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding.Builder, clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder> 
+          clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding, clarifai2.internal.grpc.api.EmbeddingOuterClass.Embedding.Builder, clarifai2.internal.grpc.api.EmbeddingOuterClass.EmbeddingOrBuilder>
           getEmbeddingsFieldBuilder() {
         if (embeddingsBuilder_ == null) {
           embeddingsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -3406,7 +3291,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Focus focus = 10;</code>
        */
       public clarifai2.internal.grpc.api.FocusOuterClass.Focus.Builder getFocusBuilder() {
-        
+
         onChanged();
         return getFocusFieldBuilder().getBuilder();
       }
@@ -3425,7 +3310,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Focus focus = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.FocusOuterClass.Focus, clarifai2.internal.grpc.api.FocusOuterClass.Focus.Builder, clarifai2.internal.grpc.api.FocusOuterClass.FocusOrBuilder> 
+          clarifai2.internal.grpc.api.FocusOuterClass.Focus, clarifai2.internal.grpc.api.FocusOuterClass.Focus.Builder, clarifai2.internal.grpc.api.FocusOuterClass.FocusOrBuilder>
           getFocusFieldBuilder() {
         if (focusBuilder_ == null) {
           focusBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -3633,7 +3518,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Region regions = 11;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder>
            getRegionsOrBuilderList() {
         if (regionsBuilder_ != null) {
           return regionsBuilder_.getMessageOrBuilderList();
@@ -3659,12 +3544,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Region regions = 11;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Region.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Region.Builder>
            getRegionsBuilderList() {
         return getRegionsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.Region, clarifai2.internal.grpc.api.DataOuterClass.Region.Builder, clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.Region, clarifai2.internal.grpc.api.DataOuterClass.Region.Builder, clarifai2.internal.grpc.api.DataOuterClass.RegionOrBuilder>
           getRegionsFieldBuilder() {
         if (regionsBuilder_ == null) {
           regionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -3873,7 +3758,7 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Frame frames = 12;</code>
        */
-      public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder> 
+      public java.util.List<? extends clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder>
            getFramesOrBuilderList() {
         if (framesBuilder_ != null) {
           return framesBuilder_.getMessageOrBuilderList();
@@ -3899,12 +3784,12 @@ public final class DataOuterClass {
       /**
        * <code>repeated .clarifai.api.Frame frames = 12;</code>
        */
-      public java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Frame.Builder> 
+      public java.util.List<clarifai2.internal.grpc.api.DataOuterClass.Frame.Builder>
            getFramesBuilderList() {
         return getFramesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.Frame, clarifai2.internal.grpc.api.DataOuterClass.Frame.Builder, clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.Frame, clarifai2.internal.grpc.api.DataOuterClass.Frame.Builder, clarifai2.internal.grpc.api.DataOuterClass.FrameOrBuilder>
           getFramesFieldBuilder() {
         if (framesBuilder_ == null) {
           framesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -4003,7 +3888,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Text text = 13;</code>
        */
       public clarifai2.internal.grpc.api.TextOuterClass.Text.Builder getTextBuilder() {
-        
+
         onChanged();
         return getTextFieldBuilder().getBuilder();
       }
@@ -4022,7 +3907,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Text text = 13;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.TextOuterClass.Text, clarifai2.internal.grpc.api.TextOuterClass.Text.Builder, clarifai2.internal.grpc.api.TextOuterClass.TextOrBuilder> 
+          clarifai2.internal.grpc.api.TextOuterClass.Text, clarifai2.internal.grpc.api.TextOuterClass.Text.Builder, clarifai2.internal.grpc.api.TextOuterClass.TextOrBuilder>
           getTextFieldBuilder() {
         if (textBuilder_ == null) {
           textBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -4236,7 +4121,7 @@ public final class DataOuterClass {
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
-        com.google.protobuf.ByteString bs = 
+        com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
         id_ = s;
@@ -4250,7 +4135,7 @@ public final class DataOuterClass {
         getIdBytes() {
       java.lang.Object ref = id_;
       if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         id_ = b;
@@ -4668,7 +4553,7 @@ public final class DataOuterClass {
           getIdBytes() {
         java.lang.Object ref = id_;
         if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString b =
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
           id_ = b;
@@ -4685,7 +4570,7 @@ public final class DataOuterClass {
         if (value == null) {
     throw new NullPointerException();
   }
-  
+
         id_ = value;
         onChanged();
         return this;
@@ -4694,7 +4579,7 @@ public final class DataOuterClass {
        * <code>string id = 1;</code>
        */
       public Builder clearId() {
-        
+
         id_ = getDefaultInstance().getId();
         onChanged();
         return this;
@@ -4708,7 +4593,7 @@ public final class DataOuterClass {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
+
         id_ = value;
         onChanged();
         return this;
@@ -4799,7 +4684,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.RegionInfo region_info = 2;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.RegionInfo.Builder getRegionInfoBuilder() {
-        
+
         onChanged();
         return getRegionInfoFieldBuilder().getBuilder();
       }
@@ -4818,7 +4703,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.RegionInfo region_info = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.RegionInfo, clarifai2.internal.grpc.api.DataOuterClass.RegionInfo.Builder, clarifai2.internal.grpc.api.DataOuterClass.RegionInfoOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.RegionInfo, clarifai2.internal.grpc.api.DataOuterClass.RegionInfo.Builder, clarifai2.internal.grpc.api.DataOuterClass.RegionInfoOrBuilder>
           getRegionInfoFieldBuilder() {
         if (regionInfoBuilder_ == null) {
           regionInfoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -4916,7 +4801,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Data data = 3;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.Data.Builder getDataBuilder() {
-        
+
         onChanged();
         return getDataFieldBuilder().getBuilder();
       }
@@ -4935,7 +4820,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Data data = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.Data, clarifai2.internal.grpc.api.DataOuterClass.Data.Builder, clarifai2.internal.grpc.api.DataOuterClass.DataOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.Data, clarifai2.internal.grpc.api.DataOuterClass.Data.Builder, clarifai2.internal.grpc.api.DataOuterClass.DataOrBuilder>
           getDataFieldBuilder() {
         if (dataBuilder_ == null) {
           dataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -5017,15 +4902,6 @@ public final class DataOuterClass {
      * <code>float value = 2;</code>
      */
     float getValue();
-
-    /**
-     * <code>.clarifai.api.RegionInfoFeedback feedback = 3;</code>
-     */
-    int getFeedbackValue();
-    /**
-     * <code>.clarifai.api.RegionInfoFeedback feedback = 3;</code>
-     */
-    clarifai2.internal.grpc.api.DataOuterClass.RegionInfoFeedback getFeedback();
 
     /**
      * <code>.clarifai.api.Mask mask = 4;</code>
@@ -5663,7 +5539,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.BoundingBox bounding_box = 1;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.BoundingBox.Builder getBoundingBoxBuilder() {
-        
+
         onChanged();
         return getBoundingBoxFieldBuilder().getBuilder();
       }
@@ -5682,7 +5558,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.BoundingBox bounding_box = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.BoundingBox, clarifai2.internal.grpc.api.DataOuterClass.BoundingBox.Builder, clarifai2.internal.grpc.api.DataOuterClass.BoundingBoxOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.BoundingBox, clarifai2.internal.grpc.api.DataOuterClass.BoundingBox.Builder, clarifai2.internal.grpc.api.DataOuterClass.BoundingBoxOrBuilder>
           getBoundingBoxFieldBuilder() {
         if (boundingBoxBuilder_ == null) {
           boundingBoxBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -5706,7 +5582,7 @@ public final class DataOuterClass {
        * <code>float value = 2;</code>
        */
       public Builder setValue(float value) {
-        
+
         value_ = value;
         onChanged();
         return this;
@@ -5715,7 +5591,7 @@ public final class DataOuterClass {
        * <code>float value = 2;</code>
        */
       public Builder clearValue() {
-        
+
         value_ = 0F;
         onChanged();
         return this;
@@ -5750,7 +5626,7 @@ public final class DataOuterClass {
         if (value == null) {
           throw new NullPointerException();
         }
-        
+
         feedback_ = value.getNumber();
         onChanged();
         return this;
@@ -5759,7 +5635,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.RegionInfoFeedback feedback = 3;</code>
        */
       public Builder clearFeedback() {
-        
+
         feedback_ = 0;
         onChanged();
         return this;
@@ -5850,7 +5726,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Mask mask = 4;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.Mask.Builder getMaskBuilder() {
-        
+
         onChanged();
         return getMaskFieldBuilder().getBuilder();
       }
@@ -5869,7 +5745,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Mask mask = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.Mask, clarifai2.internal.grpc.api.DataOuterClass.Mask.Builder, clarifai2.internal.grpc.api.DataOuterClass.MaskOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.Mask, clarifai2.internal.grpc.api.DataOuterClass.Mask.Builder, clarifai2.internal.grpc.api.DataOuterClass.MaskOrBuilder>
           getMaskFieldBuilder() {
         if (maskBuilder_ == null) {
           maskBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -6441,7 +6317,7 @@ public final class DataOuterClass {
        * <code>float top_row = 1 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setTopRow(float value) {
-        
+
         topRow_ = value;
         onChanged();
         return this;
@@ -6450,7 +6326,7 @@ public final class DataOuterClass {
        * <code>float top_row = 1 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearTopRow() {
-        
+
         topRow_ = 0F;
         onChanged();
         return this;
@@ -6467,7 +6343,7 @@ public final class DataOuterClass {
        * <code>float left_col = 2 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setLeftCol(float value) {
-        
+
         leftCol_ = value;
         onChanged();
         return this;
@@ -6476,7 +6352,7 @@ public final class DataOuterClass {
        * <code>float left_col = 2 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearLeftCol() {
-        
+
         leftCol_ = 0F;
         onChanged();
         return this;
@@ -6493,7 +6369,7 @@ public final class DataOuterClass {
        * <code>float bottom_row = 3 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setBottomRow(float value) {
-        
+
         bottomRow_ = value;
         onChanged();
         return this;
@@ -6502,7 +6378,7 @@ public final class DataOuterClass {
        * <code>float bottom_row = 3 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearBottomRow() {
-        
+
         bottomRow_ = 0F;
         onChanged();
         return this;
@@ -6519,7 +6395,7 @@ public final class DataOuterClass {
        * <code>float right_col = 4 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setRightCol(float value) {
-        
+
         rightCol_ = value;
         onChanged();
         return this;
@@ -6528,7 +6404,7 @@ public final class DataOuterClass {
        * <code>float right_col = 4 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearRightCol() {
-        
+
         rightCol_ = 0F;
         onChanged();
         return this;
@@ -7007,7 +6883,7 @@ public final class DataOuterClass {
        * <code>uint32 index = 1 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setIndex(int value) {
-        
+
         index_ = value;
         onChanged();
         return this;
@@ -7016,7 +6892,7 @@ public final class DataOuterClass {
        * <code>uint32 index = 1 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearIndex() {
-        
+
         index_ = 0;
         onChanged();
         return this;
@@ -7033,7 +6909,7 @@ public final class DataOuterClass {
        * <code>uint32 time = 2 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder setTime(int value) {
-        
+
         time_ = value;
         onChanged();
         return this;
@@ -7042,7 +6918,7 @@ public final class DataOuterClass {
        * <code>uint32 time = 2 [(.clarifai.api.utils.cl_show_if_empty) = true];</code>
        */
       public Builder clearTime() {
-        
+
         time_ = 0;
         onChanged();
         return this;
@@ -7675,7 +7551,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.FrameInfo frame_info = 1;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.FrameInfo.Builder getFrameInfoBuilder() {
-        
+
         onChanged();
         return getFrameInfoFieldBuilder().getBuilder();
       }
@@ -7694,7 +7570,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.FrameInfo frame_info = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.FrameInfo, clarifai2.internal.grpc.api.DataOuterClass.FrameInfo.Builder, clarifai2.internal.grpc.api.DataOuterClass.FrameInfoOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.FrameInfo, clarifai2.internal.grpc.api.DataOuterClass.FrameInfo.Builder, clarifai2.internal.grpc.api.DataOuterClass.FrameInfoOrBuilder>
           getFrameInfoFieldBuilder() {
         if (frameInfoBuilder_ == null) {
           frameInfoBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7792,7 +7668,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Data data = 2;</code>
        */
       public clarifai2.internal.grpc.api.DataOuterClass.Data.Builder getDataBuilder() {
-        
+
         onChanged();
         return getDataFieldBuilder().getBuilder();
       }
@@ -7811,7 +7687,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Data data = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.DataOuterClass.Data, clarifai2.internal.grpc.api.DataOuterClass.Data.Builder, clarifai2.internal.grpc.api.DataOuterClass.DataOrBuilder> 
+          clarifai2.internal.grpc.api.DataOuterClass.Data, clarifai2.internal.grpc.api.DataOuterClass.Data.Builder, clarifai2.internal.grpc.api.DataOuterClass.DataOrBuilder>
           getDataFieldBuilder() {
         if (dataBuilder_ == null) {
           dataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8451,7 +8327,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Color color = 1;</code>
        */
       public clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder getColorBuilder() {
-        
+
         onChanged();
         return getColorFieldBuilder().getBuilder();
       }
@@ -8470,7 +8346,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Color color = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.ColorOuterClass.Color, clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder, clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder> 
+          clarifai2.internal.grpc.api.ColorOuterClass.Color, clarifai2.internal.grpc.api.ColorOuterClass.Color.Builder, clarifai2.internal.grpc.api.ColorOuterClass.ColorOrBuilder>
           getColorFieldBuilder() {
         if (colorBuilder_ == null) {
           colorBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8568,7 +8444,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Image image = 2;</code>
        */
       public clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder getImageBuilder() {
-        
+
         onChanged();
         return getImageFieldBuilder().getBuilder();
       }
@@ -8587,7 +8463,7 @@ public final class DataOuterClass {
        * <code>.clarifai.api.Image image = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          clarifai2.internal.grpc.api.ImageOuterClass.Image, clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder, clarifai2.internal.grpc.api.ImageOuterClass.ImageOrBuilder> 
+          clarifai2.internal.grpc.api.ImageOuterClass.Image, clarifai2.internal.grpc.api.ImageOuterClass.Image.Builder, clarifai2.internal.grpc.api.ImageOuterClass.ImageOrBuilder>
           getImageFieldBuilder() {
         if (imageBuilder_ == null) {
           imageBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -8650,37 +8526,37 @@ public final class DataOuterClass {
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_Data_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_Data_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_Region_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_Region_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_RegionInfo_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_RegionInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_BoundingBox_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_BoundingBox_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_FrameInfo_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_FrameInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_Frame_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_Frame_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_clarifai_api_Mask_descriptor;
-  private static final 
+  private static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_clarifai_api_Mask_fieldAccessorTable;
 

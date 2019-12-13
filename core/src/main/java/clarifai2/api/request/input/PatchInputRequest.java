@@ -5,7 +5,6 @@ import clarifai2.internal.grpc.api.DataOuterClass;
 import clarifai2.internal.grpc.api.InputOuterClass;
 import clarifai2.api.BaseClarifaiClient;
 import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.feedback.RegionFeedback;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.prediction.Concept;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -21,7 +20,6 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
   @NotNull private final String inputID;
 
   @NotNull private final List<Concept> concepts = new ArrayList<>();
-  @NotNull private final List<RegionFeedback> regionFeedbacks = new ArrayList<>();
 
   public PatchInputRequest(@NotNull BaseClarifaiClient client, @NotNull String inputID, @NotNull String action) {
     super(client);
@@ -35,15 +33,6 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
 
   @NotNull public PatchInputRequest plus(@NotNull Collection<Concept> concepts) {
     this.concepts.addAll(concepts);
-    return this;
-  }
-
-  @NotNull public PatchInputRequest plusRegionFeedbacks(@NotNull RegionFeedback... regionFeedbacks) {
-    return plusRegionFeedbacks(Arrays.asList(regionFeedbacks));
-  }
-
-  @NotNull public PatchInputRequest plusRegionFeedbacks(@NotNull Collection<RegionFeedback> regionFeedbacks) {
-    this.regionFeedbacks.addAll(regionFeedbacks);
     return this;
   }
 
@@ -65,13 +54,6 @@ public final class PatchInputRequest extends ClarifaiRequest.Builder<ClarifaiInp
             conceptsGrpc.add(concept.serialize());
           }
           dataBuilder.addAllConcepts(conceptsGrpc);
-        }
-        if (!regionFeedbacks.isEmpty()) {
-          List<DataOuterClass.Region> regionFeedbacksGrpc = new ArrayList<>();
-          for (RegionFeedback regionFeedback : regionFeedbacks) {
-            regionFeedbacksGrpc.add(regionFeedback.serialize());
-          }
-          dataBuilder.addAllRegions(regionFeedbacksGrpc);
         }
         return stub().patchInputs(
             InputOuterClass.PatchInputsRequest.newBuilder()
