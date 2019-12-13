@@ -5,8 +5,6 @@ import clarifai2.api.request.concept.GetConceptByIDRequest;
 import clarifai2.api.request.concept.GetConceptsRequest;
 import clarifai2.api.request.concept.ModifyConceptsRequest;
 import clarifai2.api.request.concept.SearchConceptsRequest;
-import clarifai2.api.request.feedback.ModelFeedbackRequest;
-import clarifai2.api.request.feedback.SearchesFeedbackRequest;
 import clarifai2.api.request.input.AddInputsRequest;
 import clarifai2.api.request.input.DeleteAllInputsRequest;
 import clarifai2.api.request.input.DeleteInputRequest;
@@ -220,14 +218,6 @@ final class ClarifaiClientImpl extends BaseClarifaiClient implements ClarifaiCli
 
   @NotNull @Override public PredictRequest<Prediction> predict(@NotNull String modelID) {
     return new PredictRequest<>(this, modelID);
-  }
-
-  @NotNull @Override public SearchesFeedbackRequest searchesFeedback() {
-    return new SearchesFeedbackRequest(this);
-  }
-
-  @NotNull @Override public ModelFeedbackRequest modelFeedback(@NotNull String modelID) {
-    return new ModelFeedbackRequest(this, modelID);
   }
 
   @NotNull @Override public WorkflowPredictRequest workflowPredict(@NotNull String workflowID) {

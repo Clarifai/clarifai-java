@@ -3,11 +3,7 @@ package clarifai2.unit_tests;
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
-import clarifai2.api.request.feedback.Feedback;
 import clarifai2.dto.PointF;
-import clarifai2.dto.feedback.ConceptFeedback;
-import clarifai2.dto.feedback.FaceFeedback;
-import clarifai2.dto.feedback.RegionFeedback;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiInputsStatus;
 import clarifai2.dto.input.ClarifaiURLImage;
@@ -177,46 +173,6 @@ public class InputUnitTests extends BaseUnitTest {
     Concept negativeConcept2 = input.concepts().get(3);
     assertEquals("@negativeConcept2", negativeConcept2.id());
     assertEquals(0, negativeConcept2.value(), ERROR_MARGIN);
-  }
-
-  @Test public void setConceptsForInputsWithRegions() throws IOException {
-    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(
-        readResourceFile("setConceptsForInputWithRegions_response.json"));
-    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
-
-    ClarifaiResponse<ClarifaiInput> response = client.setConceptsForInput("@inputID")
-        .plusRegionFeedbacks(
-            RegionFeedback.make(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), Feedback.MISPLACED)
-            .withConceptFeedbacks(
-                ConceptFeedback.forIdAndValue("@concept1", true),
-                ConceptFeedback.forIdAndValue("@concept2", false)
-            )
-            .withID("@regionID")
-            .withFaceFeedback(FaceFeedback.make(
-                ConceptFeedback.forIdAndValue("@faceConcept1", true),
-                ConceptFeedback.forIdAndValue("@faceConcept2", false)
-            ))
-        )
-        .executeSync();
-
-    assertTrue(httpClient.requestUrl().endsWith("/v2/inputs"));
-    assertEquals("PATCH", httpClient.requestMethod());
-
-    assertJsonEquals(readResourceFile("setConceptsForInputWithRegions_request.json"), httpClient.requestBody());
-
-    assertTrue(response.isSuccessful());
-
-    ClarifaiInput input = response.get();
-
-    assertEquals("@inputID", input.id());
-
-    Concept positiveConcept1 = input.concepts().get(0);
-    assertEquals("@concept1", positiveConcept1.id());
-    assertEquals(1, positiveConcept1.value(), ERROR_MARGIN);
-
-    Concept positiveConcept2 = input.concepts().get(1);
-    assertEquals("@concept2", positiveConcept2.id());
-    assertEquals(0, positiveConcept2.value(), ERROR_MARGIN);
   }
 
   @Test public void removeConceptsForInputs() throws IOException {
