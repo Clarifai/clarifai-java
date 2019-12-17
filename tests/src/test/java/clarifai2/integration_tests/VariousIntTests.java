@@ -299,7 +299,7 @@ public class VariousIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
     assertSuccess(response);
   }
-<
+
   @Retry
   @Test public void t16d_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
