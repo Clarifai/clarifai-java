@@ -27,7 +27,7 @@ import static clarifai2.internal.InternalUtil.fromJson;
 public abstract class ClarifaiImage implements ClarifaiInputValue {
 
   @NotNull public static ClarifaiFileImage of(@NotNull byte[] imageBytes) {
-    return new AutoValue_ClarifaiFileImage(Crop.create(), imageBytes);
+    return new AutoValue_ClarifaiFileImage(imageBytes);
   }
 
   @NotNull public static ClarifaiFileImage of(@NotNull File imageFile) {
@@ -45,12 +45,8 @@ public abstract class ClarifaiImage implements ClarifaiInputValue {
   }
 
   @NotNull public static ClarifaiURLImage of(@NotNull URL imageURL) {
-    return new AutoValue_ClarifaiURLImage(Crop.create(), imageURL);
+    return new AutoValue_ClarifaiURLImage(imageURL);
   }
-
-  @Nullable public abstract Crop crop();
-
-  @NotNull public abstract ClarifaiImage withCrop(@NotNull Crop crop);
 
   @NotNull public ImageOuterClass.Image serialize() {
     return serialize(false);

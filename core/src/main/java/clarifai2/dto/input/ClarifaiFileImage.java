@@ -32,15 +32,10 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
     return Arrays.copyOf(bytes, bytes.length);
   }
 
-  @NotNull @Override public abstract ClarifaiFileImage withCrop(@NotNull Crop crop);
-
   @SuppressWarnings("mutable") @NotNull abstract byte[] bytes();
 
   public static ClarifaiFileImage deserializeInner(ImageOuterClass.Image imageResponse) {
     ClarifaiFileImage image = ClarifaiImage.of(imageResponse.getBase64().toByteArray());
-    if (!imageResponse.getCropList().isEmpty()) {
-      image.withCrop(Crop.deserialize(imageResponse.getCropList()));
-    }
     return image;
   }
 
@@ -61,7 +56,6 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
           }
           return new JSONObjectBuilder()
               .add("base64", ByteString.of(value.bytes()).base64())
-              .add("crop", toJson(gson, value.crop(), Crop.class))
               .build();
         }
       };
@@ -77,8 +71,7 @@ public abstract class ClarifaiFileImage extends ClarifaiImage {
           final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
           String base64 = root.get("base64").getAsString();
           byte[] bytes = ByteString.decodeBase64(base64).toByteArray();
-          return ClarifaiImage.of(bytes)
-              .withCrop(gson.fromJson(root.get("crop"), Crop.class));
+          return ClarifaiImage.of(bytes);
         }
       };
     }
