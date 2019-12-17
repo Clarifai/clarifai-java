@@ -78,12 +78,13 @@ public class VariousIntTests extends BaseIntTest {
     );
   }
 
-  @Test public void t01a_addInputs_single() throws Exception {
+  @Retry
+  @Test public void t01a_addInputs() throws Exception {
     final String inputID = assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
-                                          .withID("foo1")
-                                          .withConcepts(Concept.forID("concept1").withValue(false))
-                                          )).get(0).id();
+        .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE))
+                .withID("foo1")
+                .withConcepts(Concept.forID("concept1").withValue(false))
+        )).get(0).id();
     // We wait here so the next tests using this input pass properly.
     waitForInputToDownload(client, inputID);
   }
