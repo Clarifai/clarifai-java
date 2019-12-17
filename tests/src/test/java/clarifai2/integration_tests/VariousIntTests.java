@@ -79,25 +79,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t01a_addInputs() throws Exception {
-    final String inputID = assertSuccess(client.addInputs()
-        .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
-                .withCrop(Crop.create()
-                    .top(0.1F)
-                    .left(0.1F)
-                    .bottom(0.9F)
-                    .right(0.9F)
-                )
-            )
-                .withID("foo1")
-                .withConcepts(Concept.forID("concept1").withValue(false))
-        )).get(0).id();
-    // We wait here so the next tests using this input pass properly.
-    waitForInputToDownload(client, inputID);
-  }
-
-  @Retry
-  @Test public void t01b_addInputs_bulk() throws Exception {
+  @Test public void t01a_addInputs_bulk() throws Exception {
     final Concept ferrari23 = Concept.forID("ferrari23");
     final Concept outdoors23 = Concept.forID("outdoors23");
     final List<ClarifaiInput> inputs = assertSuccess(client.addInputs()
@@ -143,7 +125,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t01c_addInputWithMetadata() {
+  @Test public void t01b_addInputWithMetadata() {
 
     final String inputID = assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
@@ -284,18 +266,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t16b_predictWithModel_00() {
-    assertSuccess(client.getDefaultModels().generalModel().predict()
-        .withInputs(ClarifaiInput.forInputValue(ClarifaiImage.of(METRO_NORTH_IMAGE_URL)
-            .withCrop(Crop.create()
-                .top(0.1F)
-                .bottom(0.8F)
-            )
-        )));
-  }
-
-  @Retry
-  @Test public void t16c_predictBatchWithModel_01() {
+  @Test public void t16b_predictBatchWithModel_01() {
     List<ClarifaiInput> inputs = new ArrayList<>();
     inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID1"));
     inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID2"));
@@ -307,7 +278,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t16d_predictBatchBase64WithModel() {
+  @Test public void t16c_predictBatchBase64WithModel() {
     List<ClarifaiInput> inputs = new ArrayList<>();
     inputs.add(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("myID1"));
     inputs.add(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE).withID("myID2"));
@@ -319,7 +290,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t16f_predictWithModel_multi_lang() {
+  @Test public void t16d_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
         .withInputs(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE))
         .withLanguage("zh")

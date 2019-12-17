@@ -4,7 +4,6 @@ import clarifai2.api.request.input.SearchClause;
 import clarifai2.api.request.model.Action;
 import clarifai2.dto.input.ClarifaiImage;
 import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.input.Crop;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.ModelType;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
@@ -353,23 +352,6 @@ public class GuideExamples extends BaseIntTest {
             SearchClause.matchImageVisually(ClarifaiImage.of("@@sampleTrain"))
         )
         .getPage(1)
-        .executeSync();
-  }
-
-  @Test public void cropping() {
-    client.addInputs()
-        .plus(
-            ClarifaiInput.forInputValue(
-                ClarifaiImage.of("@@sampleTrain")
-                    .withCrop(Crop.create()
-                        .top(0.2F)
-                        .left(0.4F)
-                        .bottom(0.3F)
-                        .right(0.6F)
-                    )
-            )
-        )
-        .allowDuplicateURLs(true)
         .executeSync();
   }
 
