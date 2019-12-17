@@ -78,8 +78,18 @@ public class VariousIntTests extends BaseIntTest {
     );
   }
 
+  @Test public void t01a_addInputs_single() throws Exception {
+    final String inputID = assertSuccess(client.addInputs()
+        .plus(ClarifaiInput.forInputValue(ClarifaiImage.of(KOTLIN_LOGO_IMAGE_FILE)
+                                          .withID("foo1")
+                                          .withConcepts(Concept.forID("concept1").withValue(false))
+                                          )).get(0).id();
+    // We wait here so the next tests using this input pass properly.
+    waitForInputToDownload(client, inputID);
+  }
+
   @Retry
-  @Test public void t01a_addInputs_bulk() throws Exception {
+  @Test public void t01b_addInputs_bulk() throws Exception {
     final Concept ferrari23 = Concept.forID("ferrari23");
     final Concept outdoors23 = Concept.forID("outdoors23");
     final List<ClarifaiInput> inputs = assertSuccess(client.addInputs()
@@ -125,7 +135,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t01b_addInputWithMetadata() {
+  @Test public void t01c_addInputWithMetadata() {
 
     final String inputID = assertSuccess(client.addInputs()
         .plus(ClarifaiInput.forImage(KOTLIN_LOGO_IMAGE_FILE)
@@ -288,7 +298,7 @@ public class VariousIntTests extends BaseIntTest {
     ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = request.executeSync();
     assertSuccess(response);
   }
-
+<
   @Retry
   @Test public void t16d_predictWithModel_multi_lang() {
     assertSuccess(client.predict(client.getDefaultModels().generalModel().id())
