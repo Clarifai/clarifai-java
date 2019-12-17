@@ -13,12 +13,8 @@ import java.net.URL;
 @SuppressWarnings("NullableProblems")
 public abstract class ClarifaiVideo implements ClarifaiInputValue {
 
-  @Nullable public abstract Crop crop();
-
-  @NotNull public abstract ClarifaiVideo withCrop(@NotNull Crop crop);
-
   @NotNull public static ClarifaiURLVideo of(@NotNull URL videoURL) {
-    return new AutoValue_ClarifaiURLVideo(Crop.create(), videoURL);
+    return new AutoValue_ClarifaiURLVideo(videoURL);
   }
 
   @NotNull public static ClarifaiURLVideo of(@NotNull String videoURL) {
@@ -32,7 +28,7 @@ public abstract class ClarifaiVideo implements ClarifaiInputValue {
   }
 
   @NotNull public static ClarifaiFileVideo of(@NotNull byte[] videoBytes) {
-    return new AutoValue_ClarifaiFileVideo(Crop.create(), videoBytes);
+    return new AutoValue_ClarifaiFileVideo(videoBytes);
   }
 
   @NotNull public static ClarifaiFileVideo of(@NotNull File videoFile) {

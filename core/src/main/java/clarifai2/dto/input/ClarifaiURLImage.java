@@ -28,8 +28,6 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
 
   @NotNull public abstract URL url();
 
-  @NotNull @Override public abstract ClarifaiURLImage withCrop(@NotNull Crop crop);
-
   /**
    * @param allowDuplicateUrl should allow duplicate url
    * @return a {@link ClarifaiInput}
@@ -57,9 +55,6 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
 
   @NotNull public static ClarifaiURLImage deserializeInner(ImageOuterClass.Image imageResponse) {
     ClarifaiURLImage image = ClarifaiURLImage.of(imageResponse.getUrl());
-    if (imageResponse.getCropCount() > 0) {
-      image.withCrop(Crop.deserialize(imageResponse.getCropList()));
-    }
     return image;
   }
 
@@ -73,7 +68,6 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
           }
           return new JSONObjectBuilder()
               .add("url", value.url().toString())
-              .addIfNotNull("crop", toJson(gson, value.crop(), Crop.class))
               .addIfNotNull("allow_duplicate_url", value.allowDuplicateUrl()).build();
         }
       };
@@ -87,8 +81,7 @@ public abstract class ClarifaiURLImage extends ClarifaiImage {
             @NotNull TypeToken<ClarifaiURLImage> type,
             @NotNull Gson gson) {
           final JsonObject root = InternalUtil.assertJsonIs(json, JsonObject.class);
-          return ClarifaiImage.of(root.get("url").getAsString())
-              .withCrop(gson.fromJson(root.get("crop"), Crop.class));
+          return ClarifaiImage.of(root.get("url").getAsString());
         }
       };
     }

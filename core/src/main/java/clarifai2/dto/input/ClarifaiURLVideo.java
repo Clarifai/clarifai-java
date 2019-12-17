@@ -12,8 +12,6 @@ public abstract class ClarifaiURLVideo extends ClarifaiVideo {
 
   @NotNull public abstract URL url();
 
-  @NotNull @Override public abstract ClarifaiURLVideo withCrop(@NotNull Crop crop);
-
   @NotNull @Override public VideoOuterClass.Video serialize(boolean allowDuplicateUrl) {
     VideoOuterClass.Video video = VideoOuterClass.Video.newBuilder()
         .setUrl(url().toString())
