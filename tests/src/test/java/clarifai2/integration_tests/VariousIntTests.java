@@ -230,7 +230,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t14b_addConceptsToModel_00() {
+  @Test public void t14b_addConceptsToModel() {
     assertSuccess(client.getModelByID(getModelID()).executeSync().get().asConceptModel()
         .modify().withConcepts(Action.MERGE, Concept.forID("outdoors23"))
     );
@@ -277,7 +277,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t16b_predictBatchWithModel_01() {
+  @Test public void t16b_predictBatchWithModel() {
     List<ClarifaiInput> inputs = new ArrayList<>();
     inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID1"));
     inputs.add(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL).withID("myID2"));
