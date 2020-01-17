@@ -48,6 +48,14 @@ public abstract class ClarifaiImage implements ClarifaiInputValue {
     return new AutoValue_ClarifaiURLImage(imageURL);
   }
 
+  @Nullable public Crop crop() {
+    throw new ClarifaiException("The `crop` method is not used/supported by ClarifaiImage.");
+  }
+
+  @NotNull public ClarifaiImage withCrop(@NotNull Crop crop) {
+    throw new ClarifaiException("The `withCrop` method is not used/supported by ClarifaiImage.");
+  }
+
   @NotNull public ImageOuterClass.Image serialize() {
     return serialize(false);
   }

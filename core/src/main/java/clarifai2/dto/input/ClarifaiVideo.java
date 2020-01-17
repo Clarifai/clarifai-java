@@ -13,6 +13,14 @@ import java.net.URL;
 @SuppressWarnings("NullableProblems")
 public abstract class ClarifaiVideo implements ClarifaiInputValue {
 
+  @Nullable public Crop crop() {
+    throw new ClarifaiException("The `crop` method is not used/supported by ClarifaiVideo.");
+  }
+
+  @NotNull public ClarifaiImage withCrop(@NotNull Crop crop) {
+    throw new ClarifaiException("The `withCrop` method is not used/supported by ClarifaiVideo.");
+  }
+
   @NotNull public static ClarifaiURLVideo of(@NotNull URL videoURL) {
     return new AutoValue_ClarifaiURLVideo(videoURL);
   }
