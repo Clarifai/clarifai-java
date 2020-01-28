@@ -9,7 +9,6 @@ import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceConcepts;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.FaceEmbedding;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
 import org.junit.Test;
@@ -88,20 +87,6 @@ public class VariousModelsIntTests extends BaseIntTest {
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
     assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
-  }
-
-  @Test public void shouldBeSuccessfulForFocusModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Focus>>> response = client.getDefaultModels().focusModel().predict()
-        .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL)).executeSync();
-    assertSuccess(response);
-    Focus focus = response.get().get(0).data().get(0);
-    assertTrue(focus.value() >= 0);
-    assertTrue(focus.value() <= 1);
-    assertTrue(focus.crop().bottom() >= 0);
-    assertTrue(focus.crop().top() >= 0);
-    assertTrue(focus.crop().left() >= 0);
-    assertTrue(focus.crop().right() >= 0);
-    assertTrue(focus.density() >= 0);
   }
 
   @Test public void shouldBeCorrectForFaceDetectionModel() {

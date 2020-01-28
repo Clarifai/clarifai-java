@@ -12,7 +12,6 @@ import clarifai2.dto.model.EmbeddingModel;
 import clarifai2.dto.model.FaceConceptsModel;
 import clarifai2.dto.model.FaceDetectionModel;
 import clarifai2.dto.model.FaceEmbeddingModel;
-import clarifai2.dto.model.FocusModel;
 import clarifai2.dto.model.LogoModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.VideoModel;
@@ -24,7 +23,6 @@ import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceConcepts;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.FaceEmbedding;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
@@ -326,48 +324,6 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals(0.1, embedding[0], 10e-6);
     assertEquals(0.2, embedding[1], 10e-6);
     assertEquals(0.3, embedding[2], 10e-6);
-  }
-
-  @Test public void getFocusModel() throws IOException {
-    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("getFocusModel_response.json"));
-    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
-
-    ClarifaiResponse<Model<?>> response = client.getModelByID("@modelID")
-        .executeSync();
-
-    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/output_info"));
-
-    assertTrue(response.isSuccessful());
-    FocusModel model = response.get().asFocusModel();
-
-    assertEquals("@modelID", model.id());
-    assertEquals("focus", model.name());
-    assertEquals("focus", model.modelType().typeExt());
-  }
-
-  @Test public void predictFocus() throws IOException {
-    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("predictFocus_response.json"));
-    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
-
-    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict("@modelID")
-        .withInputs(ClarifaiInput.forImage("https://some-image-url"))
-        .executeSync();
-
-    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/outputs"));
-    assertEquals("POST", httpClient.requestMethod());
-    assertJsonEquals(readResourceFile("predictFocus_request.json"), httpClient.requestBody());
-
-    assertTrue(response.isSuccessful());
-    ClarifaiOutput<Prediction> output = response.get().get(0);
-
-    assertEquals("@inputID", output.input().id());
-    assertEquals("@outputID", output.id());
-
-    Focus focus = output.data().get(0).asFocus();
-    assertEquals(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), focus.crop());
-
-    assertEquals(0.5, focus.density(), 10e-6);
-    assertEquals(0.8, focus.value(), 10e-6);
   }
 
   @Test public void getLogoModel() throws IOException {

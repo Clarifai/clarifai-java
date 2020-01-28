@@ -22,7 +22,6 @@ import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Region;
@@ -421,18 +420,6 @@ public class VariousIntTests extends BaseIntTest {
     assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
         .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL))
     );
-  }
-
-  @Retry
-  @Test public void t22_testFocusModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Focus>>> focii = client.getDefaultModels().focusModel().predict()
-        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
-        .executeSync();
-    Assert.assertNotNull(focii.get());
-    Assert.assertNotNull(focii.get().get(0));
-    Assert.assertNotNull(focii.get().get(0).data());
-    Assert.assertNotNull(focii.get().get(0).data().get(0));
-    Assert.assertNotNull(focii.get().get(0).data().get(0).crop());
   }
 
   @Retry

@@ -41,10 +41,6 @@ public abstract class Prediction {
     return (FaceEmbedding) this;
   }
 
-  @NotNull public final Focus asFocus() {
-    return (Focus) this;
-  }
-
   @NotNull public final Logo asLogo() {
     return (Logo) this;
   }
