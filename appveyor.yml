@@ -12,7 +12,7 @@ build_script:
   - gradlew.bat assemble --info --no-daemon
 
 before_test:
-  - cd C:\projects\private-clarifai-java
+  - cd C:\projects\clarifai-java
   - for /f %%i in ('C:\Python36\python.exe scripts\app_and_key_for_tests.py --create-app java-appveyor') do set CLARIFAI_APP_ID=%%i
   - for /f %%i in ('C:\Python36\python.exe scripts\app_and_key_for_tests.py --create-key %CLARIFAI_APP_ID%') do set CLARIFAI_API_KEY=%%i
   - for /f %%i in ('C:\Python36\python.exe scripts\app_and_key_for_tests.py --create-workflow %CLARIFAI_API_KEY%') do rem
@@ -21,7 +21,7 @@ test_script:
   - gradlew.bat check --info --no-daemon
 
 after_test:
-  - cd C:\projects\private-clarifai-java
+  - cd C:\projects\clarifai-java
   - 'C:\Python36\python.exe scripts\app_and_key_for_tests.py --delete-app %CLARIFAI_APP_ID%'
 
 cache:
