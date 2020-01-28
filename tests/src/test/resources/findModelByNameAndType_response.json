@@ -1,7 +1,7 @@
 {
     "status": {
         "code": 10000,
-        "description": "Ok",
+        "description": "Ok"
     },
     "models": [
         {
@@ -20,7 +20,7 @@
                 "status": {
                     "code": 21100,
                     "description": "Model is trained and ready"
-                },
+                }
             },
             "display_name": "Color"
         }
