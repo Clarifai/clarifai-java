@@ -45,7 +45,7 @@ public class FindModelsUnitTests extends BaseUnitTest {
 
     ClarifaiResponse<List<Model<?>>> response = client.findModel()
         .withName("*")
-        .withModelType(ModelType.FOCUS)
+        .withModelType(ModelType.COLOR)
         .getPage(1)
         .executeSync();
 

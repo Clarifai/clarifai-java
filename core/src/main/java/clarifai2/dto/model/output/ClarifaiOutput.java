@@ -17,7 +17,6 @@ import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceConcepts;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.FaceEmbedding;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
@@ -119,13 +118,6 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
       {
         for (DataOuterClass.Region region : data.getRegionsList()) {
           predictions.add(FaceEmbedding.deserialize(region));
-        }
-        break;
-      }
-      case FOCUS:
-      {
-        for (DataOuterClass.Region region : data.getRegionsList()) {
-          predictions.add(Focus.deserialize(region, data.getFocus().getValue()));
         }
         break;
       }

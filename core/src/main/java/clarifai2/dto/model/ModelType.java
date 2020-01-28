@@ -10,7 +10,6 @@ import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
 import clarifai2.dto.model.output_info.FaceEmbeddingOutputInfo;
-import clarifai2.dto.model.output_info.FocusOutputInfo;
 import clarifai2.dto.model.output_info.LogoOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
@@ -22,7 +21,6 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.FaceEmbedding;
-import clarifai2.dto.prediction.Focus;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
@@ -73,12 +71,6 @@ public enum ModelType {
       "facedetect-identity",
       FaceConceptsOutputInfo.class,
       FaceConcepts.class
-  ),
-  FOCUS(
-      "blur",
-      "focus",
-      FocusOutputInfo.class,
-      Focus.class
   ),
   CLUSTER(
       "cluster",
