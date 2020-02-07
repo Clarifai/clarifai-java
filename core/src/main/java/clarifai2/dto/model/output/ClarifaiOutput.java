@@ -16,7 +16,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Frame;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.grpc.DateTimeConverter;
@@ -94,10 +94,10 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
         }
         break;
       }
-      case LOGO:
+      case DETECT_CONCEPT:
       {
-        for (DataOuterClass.Region logo : data.getRegionsList()) {
-          predictions.add(Logo.deserialize(logo));
+        for (DataOuterClass.Region detection : data.getRegionsList()) {
+          predictions.add(Detection.deserialize(detection));
         }
         break;
       }

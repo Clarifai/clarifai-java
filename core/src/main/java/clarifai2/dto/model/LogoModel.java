@@ -1,27 +1,27 @@
 package clarifai2.dto.model;
 
-import clarifai2.dto.model.output_info.LogoOutputInfo;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.model.output_info.DetectionOutputInfo;
+import clarifai2.dto.prediction.Detection;
 import com.google.auto.value.AutoValue;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-public abstract class LogoModel extends Model<Logo> {
-  LogoModel() {}
+public abstract class DetectionModel extends Model<Detection> {
+  DetectionModel() {}
 
   @NotNull @Override public final ModelType modelType() { return modelTypeStatic(); }
-  public static ModelType modelTypeStatic() { return ModelType.LOGO; }
+  public static ModelType modelTypeStatic() { return ModelType.DETECT_CONCEPT; }
 
   @SuppressWarnings("ConstantConditions")
   @NotNull
   @Override
-  public final LogoOutputInfo outputInfo() {
-    return (LogoOutputInfo) super.outputInfo();
+  public final DetectionOutputInfo outputInfo() {
+    return (DetectionOutputInfo) super.outputInfo();
   }
 
   @AutoValue.Builder
-  public interface Builder extends Model.Builder<LogoModel.Builder> {
-    @NotNull @Override LogoModel build();
+  public interface Builder extends Model.Builder<DetectionModel.Builder> {
+    @NotNull @Override DetectionModel build();
   }
 }

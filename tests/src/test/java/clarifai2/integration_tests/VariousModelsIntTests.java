@@ -7,7 +7,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceEmbedding;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Detection;
 import org.junit.Test;
 
 import java.util.List;
@@ -72,8 +72,8 @@ public class VariousModelsIntTests extends BaseIntTest {
     assertTrue(concepts.size() > 0);
   }
 
-  @Test public void shouldBeCorrectForLogoModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Logo>>> response = client.getDefaultModels().logoModel().predict()
+  @Test public void shouldBeCorrectForDetectionModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
     assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));

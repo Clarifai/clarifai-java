@@ -8,7 +8,7 @@ import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
-import clarifai2.dto.model.output_info.LogoOutputInfo;
+import clarifai2.dto.model.output_info.DetectionOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
 import clarifai2.dto.model.output_info.VideoOutputInfo;
@@ -17,7 +17,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Frame;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.dto.prediction.Unknown;
 import com.google.gson.JsonElement;
@@ -54,11 +54,11 @@ public enum ModelType {
       ClusterOutputInfo.class,
       Cluster.class
   ),
-  LOGO(
-      "logo",
-      "detection",
-      LogoOutputInfo.class,
-      Logo.class
+  DETECT_CONCEPT(
+      "detect-concept",
+      "detect-concept",
+      DetectionOutputInfo.class,
+      Detection.class
   ),
   VIDEO(
       "video",

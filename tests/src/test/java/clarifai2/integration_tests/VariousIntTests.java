@@ -23,7 +23,7 @@ import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.Frame;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiClientClosedException;
 import clarifai2.internal.JSONObjectBuilder;
@@ -425,8 +425,8 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t23_testLogoModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
+  @Test public void t23_testDetectionModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Detection>>> logos = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL))
         .executeSync();
     Assert.assertNotNull(logos.get());

@@ -25,8 +25,8 @@ public abstract class Prediction {
     return (FaceEmbedding) this;
   }
 
-  @NotNull public final Logo asLogo() {
-    return (Logo) this;
+  @NotNull public final Detection asDetection() {
+    return (Detection) this;
   }
 
   public final boolean isBlur() {

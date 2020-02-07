@@ -9,7 +9,7 @@ import clarifai2.dto.model.ColorModel;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.EmbeddingModel;
 import clarifai2.dto.model.FaceEmbeddingModel;
-import clarifai2.dto.model.LogoModel;
+import clarifai2.dto.model.DetectionModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Color;
@@ -17,7 +17,7 @@ import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
 import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.dto.prediction.Frame;
-import clarifai2.dto.prediction.Logo;
+import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Prediction;
 import clarifai2.grpc.FkClarifaiHttpClient;
 import org.junit.Test;
@@ -173,7 +173,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals(0.3, embedding[2], 10e-6);
   }
 
-  @Test public void getLogoModel() throws IOException {
+  @Test public void getDetectionModel() throws IOException {
     FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("getLogoModel_response.json"));
     ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
 
@@ -183,7 +183,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/output_info"));
 
     assertTrue(response.isSuccessful());
-    LogoModel model = response.get().asLogoModel();
+    DetectionModel model = response.get().asDetectionModel();
 
     assertEquals("@modelID", model.id());
     assertEquals("logo", model.name());
@@ -194,7 +194,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals("@conceptID2", concepts.get(1).id());
   }
 
-  @Test public void predictLogo() throws IOException {
+  @Test public void predictDetection() throws IOException {
     FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("predictLogo_response.json"));
     ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
 
@@ -212,7 +212,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals("@inputID", output.input().id());
     assertEquals("@outputID", output.id());
 
-    Logo logo = output.data().get(0).asLogo();
+    Detection logo = output.data().get(0).asDetection();
     assertEquals(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), logo.boundingBox());
 
     assertEquals("@conceptID1", logo.concepts().get(0).id());

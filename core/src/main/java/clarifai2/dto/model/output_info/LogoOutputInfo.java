@@ -13,9 +13,9 @@ import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 @AutoValue
-public abstract class LogoOutputInfo extends OutputInfo {
+public abstract class DetectionOutputInfo extends OutputInfo {
 
-  LogoOutputInfo() {} // AutoValue instances only
+  DetectionOutputInfo() {} // AutoValue instances only
 
   @NotNull public abstract String type();
 
@@ -27,11 +27,11 @@ public abstract class LogoOutputInfo extends OutputInfo {
     throw new ClarifaiException(this.getClass().getSimpleName() + " is not serializable");
   }
 
-  @NotNull public static LogoOutputInfo deserializeInner(ModelOuterClass.OutputInfo outputInfo) {
+  @NotNull public static DetectionOutputInfo deserializeInner(ModelOuterClass.OutputInfo outputInfo) {
     List<Concept> concepts = new ArrayList<>();
     for (ConceptOuterClass.Concept concept : outputInfo.getData().getConceptsList()) {
       concepts.add(Concept.deserialize(concept));
     }
-    return new AutoValue_LogoOutputInfo(outputInfo.getType(), outputInfo.getTypeExt(), concepts);
+    return new AutoValue_DetectionOutputInfo(outputInfo.getType(), outputInfo.getTypeExt(), concepts);
   }
 }

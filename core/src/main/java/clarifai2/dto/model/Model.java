@@ -94,8 +94,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_EmbeddingModel.Builder();
       case FACE_EMBEDDING:
         return new AutoValue_FaceEmbeddingModel.Builder();
-      case LOGO:
-        return new AutoValue_LogoModel.Builder();
+      case DETECT_CONCEPT:
+        return new AutoValue_DetectionModel.Builder();
       case VIDEO:
         return new AutoValue_VideoModel.Builder();
       default:
@@ -143,8 +143,8 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
     return ((ClusterModel) this);
   }
 
-  @NotNull public final LogoModel asLogoModel() {
-    return ((LogoModel) this);
+  @NotNull public final DetectionModel asDetectionModel() {
+    return ((DetectionModel) this);
   }
 
   /*

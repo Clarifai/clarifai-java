@@ -21,7 +21,10 @@ public final class DefaultModels {
   @NotNull private final ConceptModel landscapeQuality;
   @NotNull private final ConceptModel portraitQuality;
   @NotNull private final ConceptModel texturesAndPatterns;
-  @NotNull private final LogoModel logo;
+  @NotNull private final DetectionModel logo;
+  @NotNull private final DetectionModel face;
+  @NotNull private final DetectionModel demographics;
+  @NotNull private final DetectionModel celebrity;
   @NotNull private final ColorModel color;
   @NotNull private final EmbeddingModel generalEmbed;
   @NotNull private final FaceEmbeddingModel faceEmbed;
@@ -43,8 +46,11 @@ public final class DefaultModels {
     landscapeQuality = create(ModelType.CONCEPT, client, "bec14810deb94c40a05f1f0eb3c91403", "landscape-quality");
     portraitQuality = create(ModelType.CONCEPT, client, "de9bd05cfdbf4534af151beb2a5d0953", "portrait-quality");
     texturesAndPatterns = create(ModelType.CONCEPT, client, "fbefb47f9fdb410e8ce14f24f54b47ff", "textures-patterns");
-    logo = create(ModelType.LOGO, client, "c443119bf2ed4da98487520d01a0b1e3", "logo-v0.4");
+    logo = create(ModelType.DETECT_CONCEPT, client, "c443119bf2ed4da98487520d01a0b1e3", "logo-v0.4");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
+    face = create(ModelType.DETECT_CONCEPT, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
+    celebrity = create(ModelType.DETECT_CONCEPT, client, "e466caa0619f444ab97497640cefc4dc", "celeb-v1.3");
+    demographics = create(ModelType.DETECT_CONCEPT, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
     generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
     faceEmbed = create(ModelType.FACE_EMBEDDING, client, "d02b4508df58432fbb84e800597b8959", "face-embed");
 
@@ -87,9 +93,12 @@ public final class DefaultModels {
 
   @NotNull public ConceptModel texturesAndPatternsModel() { return texturesAndPatterns; }
 
-  @NotNull public LogoModel logoModel() { return logo; }
+  @NotNull public DetectionModel logoModel() { return logo; }
 
   @NotNull public ColorModel colorModel() { return color; }
+  @NotNull public DetectionModel faceDetectionModel() { return face; }
+  @NotNull public DetectionModel demographicsModel() { return demographics; }
+  @NotNull public DetectionModel celebrityModel() { return celebrity; }
 
   @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed; }
   @NotNull public FaceEmbeddingModel faceEmbeddingModel() { return faceEmbed; }
