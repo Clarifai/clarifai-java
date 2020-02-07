@@ -7,7 +7,6 @@ import clarifai2.api.request.model.Action;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.model.ConceptModel;
-import clarifai2.dto.model.FaceDetectionModel;
 import clarifai2.dto.model.FaceEmbeddingModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
@@ -98,10 +97,10 @@ public class ModelUnitTests extends BaseUnitTest {
 
     assertEquals(2, models.size());
 
-    FaceDetectionModel model1 = (FaceDetectionModel) models.get(0);
+    ConceptModel model1 = (ConceptModel) models.get(0);
     assertEquals("@modelID1", model1.id());
     assertEquals("@modelName1", model1.name());
-    assertEquals("facedetect", model1.modelType().typeExt());
+    assertEquals("concept", model1.modelType().typeExt());
 
     FaceEmbeddingModel model2 = (FaceEmbeddingModel) models.get(1);
     assertEquals("@modelID2", model2.id());

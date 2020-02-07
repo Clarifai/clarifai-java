@@ -21,22 +21,6 @@ public abstract class Prediction {
     return (Color) this;
   }
 
-  public final boolean isFaceDetection() {
-    return this instanceof FaceDetection;
-  }
-
-  @NotNull public final FaceDetection asFaceDetection() {
-    return (FaceDetection) this;
-  }
-
-  public final boolean isFaceConcepts() {
-    return this instanceof FaceConcepts;
-  }
-
-  @NotNull public final FaceConcepts asFaceConcepts() {
-    return (FaceConcepts) this;
-  }
-
   @NotNull public final FaceEmbedding asFaceEmbedding() {
     return (FaceEmbedding) this;
   }
@@ -67,10 +51,6 @@ public abstract class Prediction {
 
   @NotNull public final Cluster asCluster() {
     return (Cluster) this;
-  }
-
-  @NotNull public final Demographics asDemographics() {
-    return (Demographics) this;
   }
 
   @NotNull public final Region asRegion() {

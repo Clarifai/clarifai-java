@@ -405,25 +405,14 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t20_testDemographicsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Region>>> faceDetects = client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
-        .executeSync();
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).crop());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).ageAppearances());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).genderAppearances());
-    Assert.assertNotNull(faceDetects.get().get(0).data().get(0).multiculturalAppearances());
-  }
-
-  @Retry
-  @Test public void t21_testApparelModel() {
+  @Test public void t20_testApparelModel() {
     assertSuccess(client.predict(client.getDefaultModels().apparelModel().id())
         .withInputs(ClarifaiInput.forImage(FAMILY_IMAGE_URL))
     );
   }
 
   @Retry
-  @Test public void t23_testgeneralEmbedModel() {
+  @Test public void t22_testgeneralEmbedModel() {
     ClarifaiResponse<List<ClarifaiOutput<Embedding>>> embeddings = client.getDefaultModels().generalEmbeddingModel()
         .predict()
         .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
@@ -436,7 +425,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t24_testLogoModel() {
+  @Test public void t23_testLogoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Logo>>> logos = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL))
         .executeSync();
@@ -446,7 +435,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t25_testColorModel() {
+  @Test public void t24_testColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> colors = client.getDefaultModels().colorModel().predict()
         .withInputs(ClarifaiInput.forImage(METRO_NORTH_IMAGE_URL))
         .executeSync();
@@ -460,7 +449,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t26_testGeneralVideoModel() {
+  @Test public void t25_testGeneralVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().generalVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
@@ -474,7 +463,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t27_testFoodVideoModel() {
+  @Test public void t26_testFoodVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().foodVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
@@ -488,7 +477,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t28_testTravelVideoModel() {
+  @Test public void t27_testTravelVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().travelVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
@@ -502,7 +491,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t29_testNSFWVideoModel() {
+  @Test public void t28_testNSFWVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().nsfwVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
@@ -516,7 +505,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t30_testWeddingVideoModel() {
+  @Test public void t29_testWeddingVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().weddingVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();
@@ -530,7 +519,7 @@ public class VariousIntTests extends BaseIntTest {
   }
 
   @Retry
-  @Test public void t31_testApparelVideoModel() {
+  @Test public void t30_testApparelVideoModel() {
     ClarifaiResponse<List<ClarifaiOutput<Frame>>> frames = client.getDefaultModels().apparelVideoModel().predict()
         .withInputs(ClarifaiInput.forVideo(CONAN_GIF_URL))
         .executeSync();

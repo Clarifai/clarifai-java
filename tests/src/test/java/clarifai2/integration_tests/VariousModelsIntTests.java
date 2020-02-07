@@ -6,11 +6,8 @@ import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.FaceConcepts;
-import clarifai2.dto.prediction.FaceDetection;
 import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.dto.prediction.Logo;
-import clarifai2.dto.prediction.Region;
 import org.junit.Test;
 
 import java.util.List;
@@ -89,60 +86,11 @@ public class VariousModelsIntTests extends BaseIntTest {
     assertNotNull(response.get().get(0).data().get(0));
   }
 
-  @Test public void shouldBeCorrectForFaceDetectionModel() {
-    ClarifaiResponse<List<ClarifaiOutput<FaceDetection>>> response = client.getDefaultModels().faceDetectionModel()
-        .predict()
-        .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
-        .executeSync();
-    assertSuccess(response);
-    assertNotNull(response.get().get(0).data().get(0));
-  }
-
-  @Test public void shouldBeCorrectForDemographicsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Region>>> response = client.getDefaultModels().demographicsModel().predict()
-        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
-        .executeSync();
-    assertSuccess(response);
-    Region region = response.get().get(0).data().get(0);
-    assertNotNull(region.crop());
-    assertNotNull(region.multiculturalAppearances().get(0).name());
-    assertNotNull(region.genderAppearances().get(0).name());
-    assertNotNull(region.ageAppearances().get(0).name());
-  }
-
-  @Test public void shouldBeCorrectForFaceConceptsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<FaceConcepts>>> response = client.getDefaultModels().celebrityModel()
-        .predict()
-        .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL)).executeSync();
-    assertSuccess(response);
-    assertNotNull(response.get().get(0).data().get(0));
-  }
-
   @Test public void shouldBeCorrectForGeneralEmbeddingModel() {
     ClarifaiResponse<List<ClarifaiOutput<Embedding>>> response =
         client.getDefaultModels().generalEmbeddingModel().predict()
             .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
             .executeSync();
-    assertSuccess(response);
-    assertNotNull(response.get().get(0).data().get(0));
-  }
-
-  @Test public void shouldBeSuccessfulForDemographicsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Region>>> response =
-        client.getDefaultModels().demographicsModel().predict()
-            .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
-            .executeSync();
-
-    assertSuccess(response);
-    assertNotNull(response.get().get(0).data().get(0));
-  }
-
-  @Test public void shouldBeSuccessfulForFaceDetectionModel() {
-    ClarifaiResponse<List<ClarifaiOutput<FaceDetection>>> response =
-        client.getDefaultModels().faceDetectionModel().predict()
-            .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
-            .executeSync();
-
     assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }

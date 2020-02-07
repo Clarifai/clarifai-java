@@ -96,12 +96,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         return new AutoValue_FaceEmbeddingModel.Builder();
       case LOGO:
         return new AutoValue_LogoModel.Builder();
-      case FACE_DETECTION:
-        return new AutoValue_FaceDetectionModel.Builder();
-      case FACE_CONCEPTS:
-        return new AutoValue_FaceConceptsModel.Builder();
-      case DEMOGRAPHICS:
-        return new AutoValue_DemographicsModel.Builder();
       case VIDEO:
         return new AutoValue_VideoModel.Builder();
       default:
@@ -123,26 +117,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
 
   @NotNull public final ColorModel asColorModel() {
     return ((ColorModel) this);
-  }
-
-  @NotNull public final DemographicsModel asDemographicsModel() {
-    return ((DemographicsModel) this);
-  }
-
-  public final boolean isFaceDetectionModel() {
-    return this instanceof FaceDetectionModel;
-  }
-
-  @NotNull public final FaceDetectionModel asFaceDetectionModel() {
-    return ((FaceDetectionModel) this);
-  }
-
-  public final boolean isFaceConceptsModel() {
-    return this instanceof FaceConceptsModel;
-  }
-
-  @NotNull public final FaceConceptsModel asFaceConceptsModel() {
-    return ((FaceConceptsModel) this);
   }
 
   public final boolean isEmbeddingModel() {
@@ -277,14 +251,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
 
   @NotNull public static Model deserialize(ModelOuterClass.Model model, BaseClarifaiClient client) {
     ModelType modelType = ModelType.determineModelType(model.getOutputInfo());
-    // hacky solution needed because of model type ambiguity.
-    if (modelType == ModelType.DEMOGRAPHICS || modelType == ModelType.FACE_DETECTION) {
-      if (model.getName().equals("demographics")) {
-        modelType = ModelType.DEMOGRAPHICS;
-      } else {
-        modelType = ModelType.FACE_DETECTION;
-      }
-    }
     return getBuilder(modelType)
         .id(model.getId())
         .name(model.getName())
@@ -326,14 +292,6 @@ public abstract class Model<PREDICTION extends Prediction> implements HasClarifa
         ) {
           final JsonObject root = json.getAsJsonObject();
           ModelType modelType = ModelType.determineModelType(root.get("output_info"));
-          // hacky solution needed because of model type ambiguity.
-          if (modelType == ModelType.DEMOGRAPHICS || modelType == ModelType.FACE_DETECTION) {
-            if (root.getAsJsonPrimitive("name").getAsString().equals("demographics")) {
-              modelType = ModelType.DEMOGRAPHICS;
-            } else {
-              modelType = ModelType.FACE_DETECTION;
-            }
-          }
           return getBuilder(modelType)
               .id(root.get("id").getAsString())
               .name(root.get("name").getAsString())

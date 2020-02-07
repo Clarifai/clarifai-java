@@ -1,5 +1,6 @@
 package clarifai2.dto.model.output;
 
+import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.internal.grpc.api.ColorOuterClass;
 import clarifai2.internal.grpc.api.ConceptOuterClass;
 import clarifai2.internal.grpc.api.DataOuterClass;
@@ -14,13 +15,9 @@ import clarifai2.dto.model.ModelType;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.FaceConcepts;
-import clarifai2.dto.prediction.FaceDetection;
-import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.dto.prediction.Region;
 import clarifai2.exception.ClarifaiException;
 import clarifai2.grpc.DateTimeConverter;
 import com.google.auto.value.AutoValue;
@@ -83,34 +80,10 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
         }
         break;
       }
-      case DEMOGRAPHICS:
-      {
-        // TODO(Rok) HIGH: We should deserialize using Demographics instead of Region. This is a breaking change for
-        //                 the users of Demographics, but IMHO has to be done, since what we currently have is
-        //                 very inconsistent.
-        for (DataOuterClass.Region region : data.getRegionsList()) {
-          predictions.add(Region.deserialize(region));
-        }
-        break;
-      }
       case EMBEDDING:
       {
         for (EmbeddingOuterClass.Embedding embedding : data.getEmbeddingsList()) {
           predictions.add(Embedding.deserialize(embedding));
-        }
-        break;
-      }
-      case FACE_CONCEPTS:
-      {
-        for (DataOuterClass.Region region : data.getRegionsList()) {
-          predictions.add(FaceConcepts.deserialize(region));
-        }
-        break;
-      }
-      case FACE_DETECTION:
-      {
-        for (DataOuterClass.Region region : data.getRegionsList()) {
-          predictions.add(FaceDetection.deserialize(region));
         }
         break;
       }

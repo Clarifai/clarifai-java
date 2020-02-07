@@ -11,8 +11,8 @@
       "app_id": "main",
       "output_info": {
         "message": "Show output_info with: GET /models/{model_id}/output_info",
-        "type": "facedetect",
-        "type_ext": "facedetect"
+        "type": "concept",
+        "type_ext": "concept"
       },
       "model_version": {
         "id": "28b2ff6148684aa2b18a34cd004b4fac",
@@ -23,7 +23,7 @@
         },
         "train_stats": {}
       },
-      "display_name": "Face Detection"
+      "display_name": "Moderation"
     },
     {
       "id": "@modelID2",

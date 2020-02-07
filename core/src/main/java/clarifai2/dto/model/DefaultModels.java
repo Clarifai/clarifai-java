@@ -23,9 +23,6 @@ public final class DefaultModels {
   @NotNull private final ConceptModel texturesAndPatterns;
   @NotNull private final LogoModel logo;
   @NotNull private final ColorModel color;
-  @NotNull private final FaceDetectionModel face;
-  @NotNull private final DemographicsModel demographics;
-  @NotNull private final FaceConceptsModel celebrity;
   @NotNull private final EmbeddingModel generalEmbed;
   @NotNull private final FaceEmbeddingModel faceEmbed;
   @NotNull private final VideoModel generalVideo;
@@ -48,9 +45,6 @@ public final class DefaultModels {
     texturesAndPatterns = create(ModelType.CONCEPT, client, "fbefb47f9fdb410e8ce14f24f54b47ff", "textures-patterns");
     logo = create(ModelType.LOGO, client, "c443119bf2ed4da98487520d01a0b1e3", "logo-v0.4");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
-    face = create(ModelType.FACE_DETECTION, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
-    celebrity = create(ModelType.FACE_CONCEPTS, client, "e466caa0619f444ab97497640cefc4dc", "celeb-v1.3");
-    demographics = create(ModelType.DEMOGRAPHICS, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
     generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
     faceEmbed = create(ModelType.FACE_EMBEDDING, client, "d02b4508df58432fbb84e800597b8959", "face-embed");
 
@@ -96,12 +90,6 @@ public final class DefaultModels {
   @NotNull public LogoModel logoModel() { return logo; }
 
   @NotNull public ColorModel colorModel() { return color; }
-
-  @NotNull public FaceDetectionModel faceDetectionModel() { return face; }
-
-  @NotNull public DemographicsModel demographicsModel() { return demographics; }
-
-  @NotNull public FaceConceptsModel celebrityModel() { return celebrity; }
 
   @NotNull public EmbeddingModel generalEmbeddingModel() { return generalEmbed; }
   @NotNull public FaceEmbeddingModel faceEmbeddingModel() { return faceEmbed; }

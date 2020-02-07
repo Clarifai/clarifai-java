@@ -405,12 +405,6 @@ public class GuideExamples extends BaseIntTest {
         .executeSync();
   }
 
-  @Test public void faceDetectionModel() {
-    client.getDefaultModels().faceDetectionModel().predict()
-        .withInputs(ClarifaiInput.forImage("@@sampleTrain"))
-        .executeSync();
-  }
-
   /*@Test public void demographicsModel() {
     client.getDefaultModels().demographicsModel().predict()
         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of("@@sampleTrain")))

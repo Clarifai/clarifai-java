@@ -7,7 +7,6 @@ import clarifai2.api.request.model.Action;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.ClarifaiURLImage;
 import clarifai2.dto.model.ConceptModel;
-import clarifai2.dto.model.FaceDetectionModel;
 import clarifai2.dto.model.FaceEmbeddingModel;
 import clarifai2.dto.model.Model;
 import clarifai2.dto.model.ModelVersion;

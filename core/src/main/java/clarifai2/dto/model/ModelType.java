@@ -1,30 +1,24 @@
 package clarifai2.dto.model;
 
+import clarifai2.dto.model.output_info.FaceEmbeddingOutputInfo;
+import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.internal.grpc.api.ModelOuterClass;
 import clarifai2.internal.grpc.api.OutputOuterClass;
-import clarifai2.dto.model.output_info.FaceConceptsOutputInfo;
 import clarifai2.dto.model.output_info.ClusterOutputInfo;
 import clarifai2.dto.model.output_info.ColorOutputInfo;
 import clarifai2.dto.model.output_info.ConceptOutputInfo;
-import clarifai2.dto.model.output_info.DemographicsOutputInfo;
 import clarifai2.dto.model.output_info.EmbeddingOutputInfo;
-import clarifai2.dto.model.output_info.FaceDetectionOutputInfo;
-import clarifai2.dto.model.output_info.FaceEmbeddingOutputInfo;
 import clarifai2.dto.model.output_info.LogoOutputInfo;
 import clarifai2.dto.model.output_info.OutputInfo;
 import clarifai2.dto.model.output_info.UnknownOutputInfo;
 import clarifai2.dto.model.output_info.VideoOutputInfo;
-import clarifai2.dto.prediction.FaceConcepts;
 import clarifai2.dto.prediction.Cluster;
 import clarifai2.dto.prediction.Color;
 import clarifai2.dto.prediction.Concept;
 import clarifai2.dto.prediction.Embedding;
-import clarifai2.dto.prediction.FaceDetection;
-import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Logo;
 import clarifai2.dto.prediction.Prediction;
-import clarifai2.dto.prediction.Region;
 import clarifai2.dto.prediction.Unknown;
 import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
@@ -53,24 +47,6 @@ public enum ModelType {
       "color",
       ColorOutputInfo.class,
       Color.class
-  ),
-  DEMOGRAPHICS(
-      "facedetect",
-      "facedetect-demographics",
-      DemographicsOutputInfo.class,
-      Region.class
-  ),
-  FACE_DETECTION(
-      "facedetect",
-      "facedetect",
-      FaceDetectionOutputInfo.class,
-      FaceDetection.class
-  ),
-  FACE_CONCEPTS(
-      "facedetect",
-      "facedetect-identity",
-      FaceConceptsOutputInfo.class,
-      FaceConcepts.class
   ),
   CLUSTER(
       "cluster",
@@ -137,9 +113,6 @@ public enum ModelType {
   }
 
   @NotNull public static ModelType determineModelType(@NotNull String typeExt) {
-    if (typeExt.equals("facedetect-celebrity")) {
-      typeExt = "facedetect-identity";
-    }
     for (final ModelType value : values()) {
       if (value.typeExt().equals(typeExt)) {
         return value;
