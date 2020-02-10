@@ -19,7 +19,7 @@ public abstract class FaceEmbeddingOutputInfo extends OutputInfo {
     throw new ClarifaiException(this.getClass().getSimpleName() + " is not serializable");
   }
 
-  @NotNull public static FaceDetectionOutputInfo deserializeInner(ModelOuterClass.OutputInfo outputInfo) {
-    return new AutoValue_FaceDetectionOutputInfo(outputInfo.getType(), outputInfo.getTypeExt());
+  @NotNull public static FaceEmbeddingOutputInfo deserializeInner(ModelOuterClass.OutputInfo outputInfo) {
+    return new AutoValue_FaceEmbeddingOutputInfo(outputInfo.getType(), outputInfo.getTypeExt());
   }
 }
