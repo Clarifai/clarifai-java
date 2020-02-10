@@ -101,6 +101,13 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
         }
         break;
       }
+      case DETECTION:
+      {
+        for (DataOuterClass.Region detection : data.getRegionsList()) {
+          predictions.add(Detection.deserialize(detection));
+        }
+        break;
+      }
       case VIDEO:
       {
         for (DataOuterClass.Frame frame : data.getFramesList()) {

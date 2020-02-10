@@ -60,6 +60,12 @@ public enum ModelType {
       DetectionOutputInfo.class,
       Detection.class
   ),
+  DETECTION(
+      "detection",
+      "detection",
+      DetectionOutputInfo.class,
+      Detection.class
+  ),
   VIDEO(
       "video",
       "video",
