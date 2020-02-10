@@ -29,7 +29,7 @@
           }
         ]
       },
-      "type": "concept",
+      "type": "detection",
       "type_ext": "detection"
     },
     "model_version": {
