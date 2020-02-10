@@ -18,8 +18,8 @@
         "app_id": "main",
         "output_info": {
           "message": "Show output_info with: GET /models/{model_id}/output_info",
-          "type": "concept",
-          "type_ext": "detection"
+          "type": "detect-concept",
+          "type_ext": "detect-concept"
         },
         "model_version": {
           "id": "@modelVersionID",

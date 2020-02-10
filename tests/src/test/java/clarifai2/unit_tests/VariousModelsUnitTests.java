@@ -187,7 +187,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
 
     assertEquals("@modelID", model.id());
     assertEquals("logo", model.name());
-    assertEquals("detection", model.modelType().typeExt());
+    assertEquals("detect-concept", model.modelType().typeExt());
 
     List<Concept> concepts = model.outputInfo().concepts();
     assertEquals("@conceptID1", concepts.get(0).id());

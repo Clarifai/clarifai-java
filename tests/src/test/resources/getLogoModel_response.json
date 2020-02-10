@@ -29,8 +29,8 @@
           }
         ]
       },
-      "type": "detection",
-      "type_ext": "detection"
+      "type": "detect-concept",
+      "type_ext": "detect-concept"
     },
     "model_version": {
       "id": "@modelVersionID",
