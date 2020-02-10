@@ -5,6 +5,7 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.Model;
 import clarifai2.exception.ClarifaiException;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,7 +31,7 @@ public class ModelOutputInfoIntTests extends BaseIntTest {
   /**
    * Models received using GetModelsRequest should have outputInfo populated.
    */
-  @Test public void shouldNotHaveOutputInfoAfterGetModelsRequest() {
+  @Test @Ignore public void shouldNotHaveOutputInfoAfterGetModelsRequest() {
     Model<?> model = client.getModels().getPage(1).executeSync().get().get(0);
 
     assertNotNull(model.outputInfo());
