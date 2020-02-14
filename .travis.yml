@@ -42,7 +42,7 @@ deploy:
       - ./gradlew bintrayUpload
     skip_cleanup: true
     on:
-      jdk: oraclejdk11
+      jdk: openjdk11
       tags: true
       repo: Clarifai/clarifai-java
   - provider: releases
@@ -52,7 +52,7 @@ deploy:
     file:
       - core/build/libs/core-*.jar
     on:
-      jdk: oraclejdk11
+      jdk: openjdk11
       tags: true
       repo: Clarifai/clarifai-java
     prerelease: $IS_ALPHA
