@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [[2.8.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.8.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.8.0) - 2020-02-14
+
+See the API changes for more details on the Face proto deprecation and the facedetect* model type cleanup:
+https://docs.clarifai.com/product-updates/upcoming-api-changes
+
+### Changed
+- Use Protobuf/gRPC for JSON (de)serialization
+
+### Added
+- DetectionModel
+
+### Removed
+- DemographicsModel, LogoModel, FaceConceptsModel, FaceDetectionModel, FocusModel.
+- Feedback
+
 ## [[2.7.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.7.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.7.0) - 2018-12-10
 
 ### Added
