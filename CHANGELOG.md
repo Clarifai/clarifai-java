@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [[2.8.1]](https://github.com/Clarifai/clarifai-java/releases/tag/2.8.1) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.8.1) - 2020-02-16
+
+### Added
+- Add the appearances fields to Detection
+
+### Changed
+- Rename Detection's boundingBox field to crop, to make it consistent with other classes
+
+
 ## [[2.8.0]](https://github.com/Clarifai/clarifai-java/releases/tag/2.8.0) - [jCenter](https://bintray.com/clarifai/Clarifai/Clarifai/2.8.0) - 2020-02-14
 
 See the API changes for more details on the Face proto deprecation and the facedetect* model type cleanup:
