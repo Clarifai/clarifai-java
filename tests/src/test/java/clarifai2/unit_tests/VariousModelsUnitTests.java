@@ -19,6 +19,7 @@ import clarifai2.dto.prediction.FaceEmbedding;
 import clarifai2.dto.prediction.Frame;
 import clarifai2.dto.prediction.Detection;
 import clarifai2.dto.prediction.Prediction;
+import clarifai2.dto.prediction.Region;
 import clarifai2.grpc.FkClarifaiHttpClient;
 import org.junit.Test;
 
@@ -84,6 +85,60 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals("#686078", color2.hex());
     assertEquals("#708090", color2.webSafeHex());
     assertEquals(0.02675, color2.value(), 20e-6);
+  }
+
+    @Test public void getDemographicsModel() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("getDemographicsModel_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<Model<?>> response = client.getModelByID("@modelID")
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/output_info"));
+
+    assertTrue(response.isSuccessful());
+    DetectionModel model = response.get().asDetectionModel();
+
+    assertEquals("@modelID", model.id());
+    assertEquals("demographics", model.name());
+    assertEquals("detect-concept", model.modelType().typeExt());
+
+    List<Concept> concepts = model.outputInfo().concepts();
+
+    assertEquals("@conceptID1", concepts.get(0).id());
+    assertEquals("@conceptID2", concepts.get(1).id());
+  }
+
+  @Test public void predictDemographics() throws IOException {
+    FkClarifaiHttpClient httpClient = new FkClarifaiHttpClient(readResourceFile("predictDemographics_response.json"));
+    ClarifaiClient client = new ClarifaiBuilder(httpClient).buildSync();
+
+    ClarifaiResponse<List<ClarifaiOutput<Prediction>>> response = client.predict("@modelID")
+        .withInputs(ClarifaiInput.forImage("https://some-image-url"))
+        .executeSync();
+
+    assertTrue(httpClient.requestUrl().endsWith("/v2/models/@modelID/outputs"));
+    assertEquals("POST", httpClient.requestMethod());
+    assertJsonEquals(readResourceFile("predictDemographics_request.json"), httpClient.requestBody());
+
+    assertTrue(response.isSuccessful());
+    ClarifaiOutput<Prediction> output = response.get().get(0);
+
+    assertEquals("@inputID", output.input().id());
+    assertEquals("@outputID", output.id());
+
+    Detection demo = output.data().get(0).asDetection();
+
+    assertEquals(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), demo.crop());
+
+    assertEquals("@ageConcept1", demo.ageAppearances().get(0).id());
+    assertEquals("@ageConcept2", demo.ageAppearances().get(1).id());
+
+    assertEquals("@genderConcept1", demo.genderAppearances().get(0).id());
+    assertEquals("@genderConcept2", demo.genderAppearances().get(1).id());
+
+    assertEquals("@culturalConcept1", demo.multiculturalAppearances().get(0).id());
+    assertEquals("@culturalConcept2", demo.multiculturalAppearances().get(1).id());
   }
 
   @Test public void getEmbeddingModel() throws IOException {
@@ -213,7 +268,7 @@ public class VariousModelsUnitTests extends BaseUnitTest {
     assertEquals("@outputID", output.id());
 
     Detection logo = output.data().get(0).asDetection();
-    assertEquals(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), logo.boundingBox());
+    assertEquals(Crop.create().top(0.1f).left(0.2f).bottom(0.3f).right(0.4f), logo.crop());
 
     assertEquals("@conceptID1", logo.concepts().get(0).id());
     assertEquals("@conceptID2", logo.concepts().get(1).id());

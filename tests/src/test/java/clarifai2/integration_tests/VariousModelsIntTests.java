@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -75,6 +76,36 @@ public class VariousModelsIntTests extends BaseIntTest {
   @Test public void shouldBeCorrectForDetectionModel() {
     ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().logoModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
+    assertSuccess(response);
+    assertNotNull(response.get().get(0).data().get(0));
+  }
+
+  @Test public void shouldBeCorrectForFaceDetectionModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().faceDetectionModel()
+        .predict()
+        .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL))
+        .executeSync();
+    assertSuccess(response);
+    assertNotNull(response.get().get(0).data().get(0));
+  }
+
+  @Test public void shouldBeCorrectForDemographicsModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().demographicsModel().predict()
+        .withInputs(ClarifaiInput.forImage(STREETBAND_IMAGE_URL))
+        .executeSync();
+    assertSuccess(response);
+    Detection detection = response.get().get(0).data().get(0);
+    assertNotNull(detection.crop());
+
+    assertNotEquals(0, detection.multiculturalAppearances());
+    assertNotEquals(0, detection.genderAppearances());
+    assertNotEquals(0, detection.ageAppearances());
+  }
+
+  @Test public void shouldBeCorrectForFaceConceptsModel() {
+    ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().celebrityModel()
+        .predict()
+        .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL)).executeSync();
     assertSuccess(response);
     assertNotNull(response.get().get(0).data().get(0));
   }
