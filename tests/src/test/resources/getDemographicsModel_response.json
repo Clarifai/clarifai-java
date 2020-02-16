@@ -1,0 +1,48 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok",
+    "req_id": "1fb47f5db0c64f1b8bd3cca36fbddb47"
+  },
+  "model": {
+    "id": "@modelID",
+    "name": "demographics",
+    "created_at": "2016-12-23T06:08:44.271674Z",
+    "app_id": "main",
+    "output_info": {
+      "data": {
+        "concepts": [
+          {
+            "id": "@conceptID1",
+            "name": "0",
+            "value": 1,
+            "created_at": "2017-03-28T22:11:16.610298Z",
+            "language": "en",
+            "app_id": "main"
+          },
+          {
+            "id": "@conceptID2",
+            "name": "1",
+            "value": 1,
+            "created_at": "2017-03-28T22:11:16.610298Z",
+            "language": "en",
+            "app_id": "main"
+          }
+        ]
+      },
+      "type": "detect-concept",
+      "type_ext": "detect-concept"
+    },
+    "model_version": {
+      "id": "f783f0807c52474c8c6ad20c8cf45fc0",
+      "created_at": "2016-12-23T06:08:44.271674Z",
+      "status": {
+        "code": 21100,
+        "description": "Model is trained and ready"
+      },
+      "active_concept_count": 104,
+      "worker_id": "ea769b45b38d4455b400ca949cd70d9e"
+    },
+    "display_name": "Demographics"
+  }
+}

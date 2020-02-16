@@ -1,0 +1,135 @@
+{
+  "status": {
+    "code": 10000,
+    "description": "Ok",
+    "req_id": "613f83e27d7c425b94561124246a2f6d"
+  },
+  "outputs": [
+    {
+      "id": "@outputID",
+      "status": {
+        "code": 10000,
+        "description": "Ok"
+      },
+      "created_at": "2020-02-16T19:11:04.417714845Z",
+      "model": {
+        "id": "c0c0ac362b03416da06ab3fa36fb58e3",
+        "name": "demographics",
+        "created_at": "2016-12-23T06:08:44.271674Z",
+        "app_id": "main",
+        "output_info": {
+          "message": "Show output_info with: GET /models/{model_id}/output_info",
+          "type": "detect-concept",
+          "type_ext": "detect-concept"
+        },
+        "model_version": {
+          "id": "f783f0807c52474c8c6ad20c8cf45fc0",
+          "created_at": "2016-12-23T06:08:44.271674Z",
+          "status": {
+            "code": 21100,
+            "description": "Model is trained and ready"
+          },
+          "worker_id": "ea769b45b38d4455b400ca949cd70d9e"
+        },
+        "display_name": "Demographics"
+      },
+      "input": {
+        "id": "@inputID",
+        "data": {
+          "image": {
+            "url": "https://some-image-url"
+          }
+        }
+      },
+      "data": {
+        "regions": [
+          {
+            "id": "abm8z69xmfgq",
+            "region_info": {
+              "bounding_box": {
+                "top_row": 0.1,
+                "left_col": 0.2,
+                "bottom_row": 0.3,
+                "right_col": 0.4
+              }
+            },
+            "data": {
+              "concepts": [
+                {
+                  "id": "@concept1",
+                  "name": "66",
+                  "value": 0.48853946,
+                  "app_id": "main",
+                  "vocab_id": "age_appearance"
+                },
+                {
+                  "id": "@concept2",
+                  "name": "64",
+                  "value": 0.48748416,
+                  "app_id": "main",
+                  "vocab_id": "age_appearance"
+                }
+              ],
+              "face": {
+                "age_appearance": {
+                  "concepts": [
+                    {
+                      "id": "@ageConcept1",
+                      "name": "66",
+                      "value": 0.48853946,
+                      "app_id": "main",
+                      "vocab_id": "age_appearance"
+                    },
+                    {
+                      "id": "@ageConcept2",
+                      "name": "64",
+                      "value": 0.48748416,
+                      "app_id": "main",
+                      "vocab_id": "age_appearance"
+                    }
+                  ]
+                },
+                "gender_appearance": {
+                  "concepts": [
+                    {
+                      "id": "@genderConcept1",
+                      "name": "masculine",
+                      "value": 0.92702556,
+                      "app_id": "main",
+                      "vocab_id": "gender_appearance"
+                    },
+                    {
+                      "id": "@genderConcept2",
+                      "name": "feminine",
+                      "value": 0.07297441,
+                      "app_id": "main",
+                      "vocab_id": "gender_appearance"
+                    }
+                  ]
+                },
+                "multicultural_appearance": {
+                  "concepts": [
+                    {
+                      "id": "@culturalConcept1",
+                      "name": "white",
+                      "value": 0.99550754,
+                      "app_id": "main",
+                      "vocab_id": "multicultural_appearance"
+                    },
+                    {
+                      "id": "@culturalConcept2",
+                      "name": "american indian or alaska native",
+                      "value": 0.016118784,
+                      "app_id": "main",
+                      "vocab_id": "multicultural_appearance"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
