@@ -15,7 +15,7 @@ public abstract class Detection extends Prediction {
 
   Detection() {} // AutoValue instances only
 
-  @NotNull public abstract Crop boundingBox();
+  @NotNull public abstract Crop crop();
 
   @NotNull public abstract List<Concept> concepts();
 
