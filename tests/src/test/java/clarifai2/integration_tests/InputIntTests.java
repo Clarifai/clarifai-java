@@ -84,7 +84,7 @@ public class InputIntTests extends BaseIntTest {
 
     for (Prediction prediction : response.get().get(0).data()) {
       Frame frame = prediction.asFrame();
-      Assert.assertEquals(0, (frame.time() - 1000) % 2000);
+      Assert.assertEquals(0, (frame.time() + 1000) % 2000);
     }
   }
 
@@ -99,7 +99,7 @@ public class InputIntTests extends BaseIntTest {
 
     for (Prediction prediction : response.get().get(0).data()) {
       Frame frame = prediction.asFrame();
-      Assert.assertEquals(0, (frame.time() - 1000) % 2000);
+      Assert.assertEquals(0, (frame.time() + 1000) % 2000);
     }
   }
 }
