@@ -63,7 +63,19 @@ public enum ModelTrainingStatus {
   /**
    * Training request was unexpectedly redelivered, contact support@clarifai.com if this continues to happen.
    */
-  MODEL_TRAINING_UNEXPECTED_REDELIVERY_ERROR(21116),;
+  MODEL_TRAINING_UNEXPECTED_REDELIVERY_ERROR(21116),
+  /**
+   * Training got error due to insufficient labelled data.
+   */
+  MODEL_TRAINING_INSUFFICIENT_DATA(21117),
+  /**
+   * Invalid parameters.
+   */
+  MODEL_TRAINING_INVALID_PARAMS(21118),
+  /**
+   * Training is stopped because too much data was dropped
+   */
+  MODEL_TRAINING_INVALID_DATA_TOLERANCE_EXCEEDED(21119),;
 
   private final int statusCode;
 
