@@ -75,7 +75,23 @@ public enum ModelTrainingStatus {
   /**
    * Training is stopped because too much data was dropped
    */
-  MODEL_TRAINING_INVALID_DATA_TOLERANCE_EXCEEDED(21119),;
+  MODEL_TRAINING_INVALID_DATA_TOLERANCE_EXCEEDED(21119),
+  /**
+   * The model doesn't exist
+   */
+  MODEL_DOES_NOT_EXIST(21200),
+  /**
+   * Permission denied
+   */
+  MODEL_PERMISSION_DENIED(21201),
+  /**
+   * Invalid argument
+   */
+  MODEL_INVALID_ARGUMENT(21202),
+  /**
+   * Invalid request
+   */
+  MODEL_INVALID_REQUEST(21203);
 
   private final int statusCode;
 
