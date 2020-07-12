@@ -1,5 +1,9 @@
 ![Clarifai logo](logo.png)
 
+# DECPRECATED: This API Client is no longer supported. 
+
+Please use https://github.com/Clarifai/clarifai-java-grpc instead which is more feature rich, faster and supported.
+
 # Clarifai API Java Client
 
 * Try the Clarifai demo at: https://clarifai.com/demo
