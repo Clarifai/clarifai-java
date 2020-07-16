@@ -1,10 +1,10 @@
 package clarifai2.integration_tests;
 
-import clarifai2.api.request.model.Action;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.ModelTrainingStatus;
 import clarifai2.dto.model.ModelVersion;
+import clarifai2.dto.model.output_info.ConceptOutputInfo;
 import clarifai2.dto.prediction.Concept;
 import org.junit.Test;
 
@@ -35,9 +35,8 @@ public class ModelEvaluationIntTests extends BaseIntTest {
       waitForInputToDownload(client, inputs.get(1).id());
 
       // Create and train a model.
-      ConceptModel model = client.createModel(modelId).executeSync().get();
-      model = model.modify()
-          .withConcepts(Action.MERGE, Concept.forID("metro"), Concept.forID("family"))
+      ConceptModel model = client.createModel(modelId)
+          .withOutputInfo(ConceptOutputInfo.forConcepts(Concept.forID("metro"), Concept.forID("family")))
           .executeSync().get();
       model = model.train().executeSync().get().asConceptModel();
 
