@@ -115,6 +115,13 @@ public abstract class ClarifaiOutput<PREDICTION extends Prediction> implements H
         }
         break;
       }
+      case CLUSTER:
+      {
+        for (DataOuterClass.Region detection : data.getRegionsList()) {
+          predictions.add(Detection.deserialize(detection));
+        }
+        break;
+      }
       default:
       {
         throw new ClarifaiException("Deserialization of " + modelType.toString() + " is not implemented");

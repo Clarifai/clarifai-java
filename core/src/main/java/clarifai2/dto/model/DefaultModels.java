@@ -48,11 +48,11 @@ public final class DefaultModels {
     texturesAndPatterns = create(ModelType.CONCEPT, client, "fbefb47f9fdb410e8ce14f24f54b47ff", "textures-patterns");
     logo = create(ModelType.DETECT_CONCEPT, client, "c443119bf2ed4da98487520d01a0b1e3", "logo-v0.4");
     color = create(ModelType.COLOR, client, "eeed0b6733a644cea07cf4c60f87ebb7", "color");
-    face = create(ModelType.DETECT_CONCEPT, client, "a403429f2ddf4b49b307e318f00e528b", "face-v1.3");
+    face = create(ModelType.DETECT_CONCEPT, client, "53e1df302c079b3db8a0a36033ed2d15", "face-v3.1-cluster");
     celebrity = create(ModelType.DETECT_CONCEPT, client, "e466caa0619f444ab97497640cefc4dc", "celeb-v1.3");
     demographics = create(ModelType.DETECT_CONCEPT, client, "c0c0ac362b03416da06ab3fa36fb58e3", "age-gender-ethnicity");
     generalEmbed = create(ModelType.EMBEDDING, client, "bbb5f41425b8468d9b7a554ff10f8581", "general-v1.3");
-    faceEmbed = create(ModelType.FACE_EMBEDDING, client, "d02b4508df58432fbb84e800597b8959", "face-embed");
+    faceEmbed = create(ModelType.FACE_EMBEDDING, client, "e15d0f873e66047e579f90cf82c9882z", "face-v3.1");
 
     // This is very poor practice, the user should just be able to enter either an image or a video, and the client
     // should just handle it as needed. However, the client will need to be refactored before this is possible.
