@@ -102,14 +102,6 @@ public class VariousModelsIntTests extends BaseIntTest {
     assertNotEquals(0, detection.ageAppearances());
   }
 
-  @Test public void shouldBeCorrectForFaceConceptsModel() {
-    ClarifaiResponse<List<ClarifaiOutput<Detection>>> response = client.getDefaultModels().celebrityModel()
-        .predict()
-        .withInputs(ClarifaiInput.forImage(CELEBRITY_IMAGE_URL)).executeSync();
-    assertSuccess(response);
-    assertNotNull(response.get().get(0).data().get(0));
-  }
-
   @Test public void shouldBeCorrectForColorModel() {
     ClarifaiResponse<List<ClarifaiOutput<Color>>> response = client.getDefaultModels().colorModel().predict()
         .withInputs(ClarifaiInput.forImage(LOGO_IMAGE_URL)).executeSync();
